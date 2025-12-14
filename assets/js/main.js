@@ -1,3 +1,13 @@
+// Firebase SDKs
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
 // Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyByQBpGmHivJhXDqgB-JLpIHUYRr1ZGM7Q",
@@ -8,22 +18,23 @@ const firebaseConfig = {
   appId: "1:703694544124:web:3d51ddb7fe3182c51e4b79"
 };
 
-// Init Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+// Init
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 console.log("🔥 JioMart Digital – Firebase Connected");
 
 // Load products
-const productsDiv = document.getElementById("products");
+async function loadProducts() {
+  const grid = document.getElementById("productsGrid");
+  grid.innerHTML = "";
 
-db.collection("products")
-  .orderBy("createdAt", "desc")
-  .onSnapshot(snapshot => {
-    productsDiv.innerHTML = "";
+  try {
+    const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
-      productsDiv.innerHTML = "<p>No products added yet.</p>";
+      grid.innerHTML = "<p>No products found</p>";
       return;
     }
 
@@ -33,18 +44,27 @@ db.collection("products")
       const card = document.createElement("div");
       card.className = "product-card";
 
-      card.innerHTML = `
-        <h3>${p.name}</h3>
-        <p class="category">${p.category}</p>
-        <p class="price">₹ ${p.price}</p>
+      const img = document.createElement("img");
+      img.src = (p.images && p.images[0]) || "https://dummyimage.com/400x400/cccccc/000000&text=No+Image";
 
-        <a class="btn small whatsapp"
-          href="https://wa.me/91XXXXXXXXXX?text=I am interested in ${encodeURIComponent(p.name)}"
-          target="_blank">
-          Enquire on WhatsApp
-        </a>
-      `;
+      const title = document.createElement("h3");
+      title.innerText = p.name_en || "Unnamed Product";
 
-      productsDiv.appendChild(card);
+      const price = document.createElement("p");
+      price.innerText = "₹" + (p.price || "--");
+
+      card.appendChild(img);
+      card.appendChild(title);
+      card.appendChild(price);
+
+      grid.appendChild(card);
     });
-  });
+
+  } catch (err) {
+    console.error("❌ Error loading products:", err);
+    grid.innerHTML = "<p>Error loading products</p>";
+  }
+}
+
+// Run
+loadProducts();
