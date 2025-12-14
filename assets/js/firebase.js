@@ -1,32 +1,24 @@
-// assets/js/firebase.js
-// =======================
-// Firebase Initialization
-// =======================
+// Firebase CDN (v9 compat)
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
-// 🔴 STEP 1: Firebase SDKs
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getDatabase } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyByQBpGmHivJhXDqgB-JLpIHUYRr1ZGM7Q",
+    authDomain: "jiomart-digital.firebaseapp.com",
+    projectId: "jiomart-digital",
+    storageBucket: "jiomart-digital.appspot.com",
+    messagingSenderId: "703694544124",
+    appId: "1:703694544124:web:3d51ddb7fe3182c51e4b79"
+  };
 
-// 🔴 STEP 2: Firebase Config (TEMP — replace later)
-const firebaseConfig = {
-  apiKey: "PASTE_YOUR_API_KEY",
-  authDomain: "PASTE_YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://PASTE_YOUR_PROJECT.firebaseio.com",
-  projectId: "PASTE_YOUR_PROJECT",
-  storageBucket: "PASTE_YOUR_PROJECT.appspot.com",
-  messagingSenderId: "PASTE_SENDER_ID",
-  appId: "PASTE_APP_ID"
-};
+  firebase.initializeApp(firebaseConfig);
 
-// 🔴 STEP 3: Initialize Firebase
-export const app = initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const storage = firebase.storage();
 
-// 🔴 STEP 4: Services
-export const auth = getAuth(app);
-export const db = getDatabase(app);
-export const storage = getStorage(app);
-
-// 🔴 STEP 5: Console check
-console.log("🔥 Firebase Connected Successfully");
+  console.log("🔥 Firebase connected");
+</script>
