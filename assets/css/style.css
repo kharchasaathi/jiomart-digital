@@ -1,47 +1,133 @@
-body {
+/* ===============================
+   RESET & BASE
+================================ */
+* {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f7f7f7;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  background: #f5f7fa;
   color: #222;
+  line-height: 1.6;
 }
 
+/* ===============================
+   HEADER
+================================ */
 .header {
-  background: #0a1d37;
-  color: white;
-  padding: 40px 20px;
+  background: linear-gradient(135deg, #0f3cc9, #1b5cff);
+  color: #fff;
   text-align: center;
+  padding: 40px 20px;
 }
 
-.services {
-  display: flex;
-  gap: 20px;
-  padding: 30px;
-  justify-content: center;
-  flex-wrap: wrap;
+.header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
 }
 
-.card {
-  background: white;
-  padding: 20px;
-  width: 280px;
+.header .location {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-top: 5px;
+}
+
+/* ===============================
+   SECTIONS
+================================ */
+.section {
+  background: #ffffff;
+  margin: 20px auto;
+  padding: 25px;
+  width: 90%;
+  max-width: 900px;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 }
 
-.card h3 {
-  margin-top: 0;
+.section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #0f3cc9;
 }
 
+/* ===============================
+   SERVICES LIST
+================================ */
+.services-list {
+  list-style: none;
+}
+
+.services-list li {
+  font-size: 1.05rem;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.services-list li:last-child {
+  border-bottom: none;
+}
+
+/* ===============================
+   FINANCE HIGHLIGHT
+================================ */
+.highlight {
+  background: #eef3ff;
+  border-left: 6px solid #0f3cc9;
+}
+
+.highlight p {
+  font-size: 1.05rem;
+}
+
+.small-text {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* ===============================
+   CONTACT
+================================ */
 .contact {
   text-align: center;
-  padding: 40px;
 }
 
-.btn {
-  background: #25d366;
-  color: white;
-  padding: 15px 30px;
+.contact-number {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #0f3cc9;
   text-decoration: none;
-  border-radius: 30px;
-  font-size: 16px;
+}
+
+.contact-number:hover {
+  text-decoration: underline;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+.footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* ===============================
+   MOBILE RESPONSIVE
+================================ */
+@media (max-width: 600px) {
+  .header h1 {
+    font-size: 1.8rem;
+  }
+
+  .section {
+    padding: 20px;
+  }
 }
