@@ -1,70 +1,61 @@
-// Firebase SDKs
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  query,
-  orderBy
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
 // Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyByQBpGmHivJhXDqgB-JLpIHUYRr1ZGM7Q",
   authDomain: "jiomart-digital.firebaseapp.com",
   projectId: "jiomart-digital",
-  storageBucket: "jiomart-digital.appspot.com",
+  storageBucket: "jiomart-digital.firebasestorage.app",
   messagingSenderId: "703694544124",
   appId: "1:703694544124:web:3d51ddb7fe3182c51e4b79"
 };
 
-// Init
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// Init Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-console.log("🔥 JioMart Digital – Firebase Connected");
+console.log("🔥 JioMart Digital - Firebase Connected");
 
-// Load products
-async function loadProducts() {
-  const grid = document.getElementById("productsGrid");
-  grid.innerHTML = "";
+// DOM
+const productsGrid = document.getElementById("productsGrid");
 
-  try {
-    const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
-    const snapshot = await getDocs(q);
+// Safety check
+if (!productsGrid) {
+  console.error("❌ productsGrid element not found");
+} else {
 
-    if (snapshot.empty) {
-      grid.innerHTML = "<p>No products found</p>";
-      return;
-    }
+  db.collection("products")
+    .orderBy("createdAt", "desc")
+    .onSnapshot(snapshot => {
 
-    snapshot.forEach(doc => {
-      const p = doc.data();
+      productsGrid.innerHTML = "";
 
-      const card = document.createElement("div");
-      card.className = "product-card";
+      if (snapshot.empty) {
+        productsGrid.innerHTML = "<p>No products added yet.</p>";
+        return;
+      }
 
-      const img = document.createElement("img");
-      img.src = (p.images && p.images[0]) || "https://dummyimage.com/400x400/cccccc/000000&text=No+Image";
+      snapshot.forEach(doc => {
+        const p = doc.data();
 
-      const title = document.createElement("h3");
-      title.innerText = p.name_en || "Unnamed Product";
+        const card = document.createElement("div");
+        card.className = "product-card";
 
-      const price = document.createElement("p");
-      price.innerText = "₹" + (p.price || "--");
+        card.innerHTML = `
+          <img src="${p.images?.[0] || 'https://via.placeholder.com/300'}" alt="${p.name_en}">
+          <h3>${p.name_en}</h3>
+          <p>₹ ${p.price}</p>
 
-      card.appendChild(img);
-      card.appendChild(title);
-      card.appendChild(price);
+          <a class="btn whatsapp"
+             href="https://wa.me/91XXXXXXXXXX?text=I am interested in ${encodeURIComponent(p.name_en)}"
+             target="_blank">
+             Enquire on WhatsApp
+          </a>
+        `;
 
-      grid.appendChild(card);
+        productsGrid.appendChild(card);
+      });
+    },
+    error => {
+      console.error("🔥 Firestore error:", error);
+      productsGrid.innerHTML = "<p>Error loading products</p>";
     });
-
-  } catch (err) {
-    console.error("❌ Error loading products:", err);
-    grid.innerHTML = "<p>Error loading products</p>";
-  }
 }
-
-// Run
-loadProducts();
