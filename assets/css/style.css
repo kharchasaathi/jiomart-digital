@@ -3,81 +3,77 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "Segoe UI", Arial, sans-serif;
 }
 
-/* BASE */
+/* BODY */
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  background: #f4f6fb;
+  background: #f4f8ff;
   color: #222;
   line-height: 1.6;
+  padding-bottom: 40px;
 }
 
 /* HEADER */
 .header {
-  background: linear-gradient(135deg, #0f3cc9, #1b5cff);
+  background: #0a58ca;
   color: #fff;
-  padding: 45px 20px;
   text-align: center;
+  padding: 28px 16px;
 }
 
 .header h1 {
-  font-size: 2.3rem;
+  font-size: 28px;
   font-weight: 700;
 }
 
-.location {
-  font-size: 1.1rem;
+.header .location {
+  font-size: 16px;
   opacity: 0.9;
-  margin-top: 6px;
 }
 
-/* SECTION */
-.section {
+/* CARD */
+.card {
   background: #fff;
-  width: 92%;
-  max-width: 900px;
-  margin: 22px auto;
-  padding: 26px;
+  margin: 16px;
+  padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
 }
 
-.section h2 {
-  color: #0f3cc9;
-  margin-bottom: 16px;
-  font-size: 1.55rem;
+.card h2 {
+  color: #0a58ca;
+  margin-bottom: 12px;
+  font-size: 20px;
 }
 
 /* SERVICES */
-.services-list {
+.services {
   list-style: none;
 }
 
-.services-list li {
-  font-size: 1.05rem;
-  padding: 12px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.services-list li:last-child {
-  border-bottom: none;
+.services li {
+  padding: 8px 0;
+  font-size: 16px;
 }
 
 /* FINANCE */
 .highlight {
-  background: #eef3ff;
-  border-left: 6px solid #0f3cc9;
+  border-left: 5px solid #0a58ca;
 }
 
-.highlight p {
-  font-size: 1.05rem;
+.ticks {
+  margin-top: 12px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-.small-text {
-  margin-top: 10px;
-  color: #444;
-  font-size: 0.95rem;
+.ticks span {
+  font-size: 14px;
+  background: #e7f0ff;
+  padding: 6px 10px;
+  border-radius: 6px;
 }
 
 /* CONTACT */
@@ -85,34 +81,31 @@ body {
   text-align: center;
 }
 
-.contact-number {
-  display: inline-block;
-  margin-top: 12px;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #0f3cc9;
+.btn {
+  display: block;
   text-decoration: none;
+  margin: 10px auto;
+  padding: 12px;
+  width: 90%;
+  max-width: 320px;
+  border-radius: 30px;
+  font-weight: 600;
 }
 
-.contact-number:hover {
-  text-decoration: underline;
+.call {
+  background: #0a58ca;
+  color: #fff;
+}
+
+.whatsapp {
+  background: #25d366;
+  color: #fff;
 }
 
 /* FOOTER */
-.footer {
+footer {
   text-align: center;
-  padding: 18px;
-  font-size: 0.9rem;
+  font-size: 13px;
   color: #666;
-}
-
-/* MOBILE */
-@media (max-width: 600px) {
-  .header h1 {
-    font-size: 1.9rem;
-  }
-
-  .section {
-    padding: 22px;
-  }
+  margin-top: 20px;
 }
