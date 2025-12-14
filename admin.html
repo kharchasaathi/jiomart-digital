@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin – JioMart Digital</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<h2>Admin Login</h2>
+
+<div id="loginBox">
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
+
+<hr>
+
+<h2>Add Product</h2>
+
+<input id="pname" placeholder="Product Name">
+<input id="pprice" placeholder="Price">
+<select id="pcategory">
+  <option>Mobiles</option>
+  <option>TV</option>
+  <option>AC</option>
+  <option>Fridge</option>
+  <option>Washing Machine</option>
+</select>
+<button onclick="addProduct()">Add</button>
+
+<script src="assets/js/firebase.js"></script>
+<script src="assets/js/admin.js"></script>
+</body>
+</html>
