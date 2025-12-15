@@ -88,7 +88,9 @@
 
 .section.active {
   display: block;
-  }
+}
+
+/* SITE DESIGN */
 #site label {
   display: block;
   margin-top: 12px;
@@ -110,4 +112,46 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
+}
+
+/* ============================== */
+/* PRODUCTS MANAGER (ADDED) */
+/* ============================== */
+
+#productForm label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+#productForm input,
+#productForm select,
+#productForm button {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+}
+
+#productForm button {
+  background: #1877f2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  margin-top: 12px;
+}
+
+.admin-product {
+  background: #fff;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 6px;
+}
+
+.admin-product button {
+  margin-top: 6px;
+  background: #d9534f;
+  color: #fff;
+  border: none;
+  padding: 5px 8px;
+  border-radius: 4px;
 }
