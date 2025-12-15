@@ -115,7 +115,7 @@
 }
 
 /* ============================== */
-/* PRODUCTS MANAGER (ADDED) */
+/* PRODUCTS MANAGER */
 /* ============================== */
 
 #productForm label {
@@ -154,4 +154,16 @@
   border: none;
   padding: 5px 8px;
   border-radius: 4px;
+}
+
+/* ============================== */
+/* PAGE BUILDER (ADDED) */
+/* ============================== */
+
+#site h3 {
+  margin-top: 20px;
+}
+
+#site hr {
+  margin: 20px 0;
 }
