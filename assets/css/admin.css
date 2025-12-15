@@ -1,0 +1,91 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* UTIL */
+.hidden {
+  display: none;
+}
+
+/* LOGIN SCREEN */
+.login-screen {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #f0f2f5;
+}
+
+.login-screen h2 {
+  margin-bottom: 8px;
+}
+
+.login-screen button {
+  margin-top: 12px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #1877f2;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* ADMIN PANEL */
+.admin-panel {
+  display: flex;
+  height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 220px;
+  background: #1c1e21;
+  color: #fff;
+  padding: 20px;
+}
+
+.sidebar h3 {
+  margin-bottom: 20px;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar li {
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.sidebar li.active,
+.sidebar li:hover {
+  background: #1877f2;
+}
+
+.sidebar .logout {
+  background: #d9534f;
+  margin-top: 20px;
+}
+
+/* CONTENT */
+.content {
+  flex: 1;
+  padding: 20px;
+  background: #f0f2f5;
+}
+
+.section {
+  display: none;
+}
+
+.section.active {
+  display: block;
+  }
