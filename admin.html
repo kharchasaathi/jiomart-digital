@@ -41,7 +41,7 @@
         <p>This is your secure control panel.</p>
       </section>
 
-      <!-- SITE DESIGN (UPDATED SECTION) -->
+      <!-- SITE DESIGN -->
       <section id="site" class="section">
         <h2>Site Design</h2>
 
@@ -67,13 +67,40 @@
         <button id="saveTheme">Save Theme</button>
       </section>
 
-      <!-- PRODUCTS (placeholder) -->
+      <!-- PRODUCTS MANAGER -->
       <section id="products" class="section">
-        <h2>Products</h2>
-        <p>Product manager will appear here.</p>
+        <h2>Products Manager</h2>
+
+        <form id="productForm">
+          <label>Product Name (English)</label>
+          <input type="text" name="name_en" required>
+
+          <label>Product Name (Telugu)</label>
+          <input type="text" name="name_te" required>
+
+          <label>Category</label>
+          <select name="category">
+            <option>Mobiles</option>
+            <option>TVs</option>
+            <option>Accessories</option>
+            <option>DC Products</option>
+          </select>
+
+          <label>Price</label>
+          <input type="number" name="price" required>
+
+          <label>Product Images (Multiple)</label>
+          <input type="file" id="productImages" multiple accept="image/*">
+
+          <button type="submit">Add Product</button>
+        </form>
+
+        <hr>
+
+        <div id="productsList"></div>
       </section>
 
-      <!-- MEDIA (placeholder) -->
+      <!-- MEDIA -->
       <section id="media" class="section">
         <h2>Media Library</h2>
         <p>Image uploads & management will appear here.</p>
@@ -82,11 +109,14 @@
     </main>
   </div>
 
-  <!-- ADMIN AUTH SCRIPT -->
+  <!-- ADMIN AUTH -->
   <script type="module" src="assets/js/admin-auth.js"></script>
 
-  <!-- THEME EDITOR SCRIPT (PART–3) -->
+  <!-- THEME EDITOR -->
   <script type="module" src="assets/js/admin-theme.js"></script>
+
+  <!-- PRODUCTS MANAGER -->
+  <script type="module" src="assets/js/admin-products.js"></script>
 
 </body>
 </html>
