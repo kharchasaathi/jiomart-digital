@@ -2,57 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>JioMart Digital – Mandapeta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <!-- SEO -->
-  <meta name="description" content="JioMart Digital Mandapeta – Mobile sales, accessories, repair services & easy EMI with Bajaj Finance and HDB.">
-  <meta name="theme-color" content="#0a58ca">
+  <meta name="description" content="JioMart Digital Mandapeta – Mobiles, Accessories & Repair with Easy EMI">
 
   <!-- CSS -->
   <link rel="stylesheet" href="assets/css/style.css">
 
-  <!-- Favicon (404 ignore cheyochu for now) -->
-  <link rel="icon" href="assets/icons/favicon.png">
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
   <!-- HEADER -->
   <header class="header">
-    <h1>JioMart Digital</h1>
-    <p class="location">Mandapeta</p>
+    <h1 class="en-text">JioMart Digital</h1>
+    <p class="te-text">మండపేట</p>
   </header>
-
-  <!-- SERVICES -->
-  <section class="card">
-    <h2>Our Services</h2>
-    <ul class="services">
-      <li>📱 Mobile Sales</li>
-      <li>🎧 Mobile Accessories</li>
-      <li>🛠️ Mobile Repair Services</li>
-    </ul>
-  </section>
-
-  <!-- FINANCE -->
-  <section class="card highlight">
-    <h2>Easy Finance Options</h2>
-    <p>
-      EMI available through  
-      <strong>Bajaj Finance</strong> &  
-      <strong>HDB Financial Services</strong>
-    </p>
-
-    <div class="ticks">
-      <span>✔ Quick Approval</span>
-      <span>✔ Minimal Documentation</span>
-    </div>
-  </section>
 
   <!-- PRODUCTS -->
   <section class="card">
-    <h2>Products</h2>
-
-    <!-- JS will inject products here -->
+    <h2 class="en-text">Available Products</h2>
     <div id="productsGrid" class="products-grid">
       <p>Loading products...</p>
     </div>
@@ -60,24 +32,19 @@
 
   <!-- CONTACT -->
   <section class="card contact">
-    <h2>Contact Us</h2>
-
-    <a class="btn call" href="tel:XXXXXXXXXX">
-      📞 Call Now
-    </a>
-
-    <a class="btn whatsapp" href="https://wa.me/91XXXXXXXXXX" target="_blank">
-      💬 WhatsApp
+    <h2>Contact</h2>
+    <a class="btn whatsapp" href="https://wa.me/919705379219" target="_blank">
+      💬 WhatsApp Enquiry
     </a>
   </section>
 
-  <!-- FOOTER -->
   <footer>
     © 2025 JioMart Digital – Mandapeta
   </footer>
 
-  <!-- ✅ MAIN JS (MODULE REQUIRED FOR import) -->
-  <script type="module" src="assets/js/main.js"></script>
+  <!-- SITE SCRIPTS -->
+  <script type="module" src="assets/js/site-theme.js"></script>
+  <script type="module" src="assets/js/site-products.js"></script>
 
 </body>
 </html>
