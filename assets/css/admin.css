@@ -89,3 +89,25 @@
 .section.active {
   display: block;
   }
+#site label {
+  display: block;
+  margin-top: 12px;
+  font-weight: bold;
+}
+
+#site input,
+#site select,
+#site button {
+  margin-top: 6px;
+  padding: 8px;
+  width: 260px;
+}
+
+#site button {
+  margin-top: 16px;
+  background: #1877f2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
