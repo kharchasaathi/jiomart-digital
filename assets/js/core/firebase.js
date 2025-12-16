@@ -1,15 +1,14 @@
 /***************************************************
  * JIOMART DIGITAL – CMS FOUNDATION (PART–1)
- * File: assets/js/firebase.js
+ * File: assets/js/core/firebase.js
  * Purpose:
- *  - Firebase safe initialization (NO duplicate app)
- *  - Auth (Google Login)
- *  - Admin email lock
+ *  - Safe Firebase initialization
+ *  - Google Auth (Admin only)
  *  - Firestore & Storage
  ***************************************************/
 
 /* ================================
-   FIREBASE SDK IMPORTS (MODULE)
+   FIREBASE SDK IMPORTS
 ================================ */
 import { initializeApp, getApps, getApp } from
   "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
@@ -46,8 +45,7 @@ const firebaseConfig = {
 };
 
 /* ================================
-   ✅ SAFE INITIALIZE FIREBASE
-   (NO DUPLICATE APP ERROR)
+   SAFE INITIALIZATION
 ================================ */
 const app = getApps().length
   ? getApp()
@@ -62,20 +60,17 @@ const storage = getStorage(app);
 
 /* ================================
    ADMIN SECURITY
-   👉 ONLY THIS EMAIL IS ADMIN
 ================================ */
 const ADMIN_EMAIL = "abidalimohammad94@gmail.com";
 
 /* ================================
-   GOOGLE AUTH PROVIDER
+   GOOGLE PROVIDER
 ================================ */
 const provider = new GoogleAuthProvider();
-provider.setCustomParameters({
-  prompt: "select_account"
-});
+provider.setCustomParameters({ prompt: "select_account" });
 
 /* ================================
-   ADMIN LOGIN FUNCTION
+   ADMIN LOGIN
 ================================ */
 async function adminLogin() {
   try {
@@ -83,23 +78,23 @@ async function adminLogin() {
     const user = result.user;
 
     if (user.email !== ADMIN_EMAIL) {
-      alert("❌ Access Denied: You are not authorized as Admin.");
+      alert("❌ Access Denied");
       await signOut(auth);
       return null;
     }
 
-    console.log("✅ Admin Logged In:", user.email);
+    console.log("✅ Admin logged in:", user.email);
     return user;
 
-  } catch (error) {
-    console.error("❌ Login Error:", error);
-    alert("Login failed. Please try again.");
+  } catch (err) {
+    console.error("❌ Login failed:", err);
+    alert("Login failed");
     return null;
   }
 }
 
 /* ================================
-   AUTH STATE OBSERVER
+   AUTH OBSERVER
 ================================ */
 function observeAuth(callback) {
   onAuthStateChanged(auth, (user) => {
