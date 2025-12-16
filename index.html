@@ -5,67 +5,43 @@
   <title>JioMart Digital – Mandapeta</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <meta name="description" content="JioMart Digital Mandapeta – Mobiles, Accessories & Repair with Easy EMI">
+  <!-- Base Styles -->
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/blocks.css">
+  <link rel="stylesheet" href="assets/css/product.css">
+  <link rel="stylesheet" href="assets/css/admin.css">
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
-  <!-- HEADER -->
-  <header class="header">
-    <div class="header-top">
-      <h1 class="en-text">JioMart Digital</h1>
-      <p class="te-text">మండపేట</p>
-    </div>
-
-    <!-- LANGUAGE TOGGLE -->
-    <div class="lang-toggle">
-      <button data-lang="en" class="active">EN</button>
-      <button data-lang="te">TE</button>
-    </div>
-
-    <!-- CATEGORY FILTER -->
-    <div class="category-filter">
-      <button data-cat="all" class="active">All</button>
-      <button data-cat="Mobiles">Mobiles</button>
-      <button data-cat="TVs">TVs</button>
-      <button data-cat="Accessories">Accessories</button>
-      <button data-cat="DC Products">DC</button>
-    </div>
-  </header>
-
-  <!-- PRODUCTS -->
-  <section class="card products-section">
-    <h2 class="en-text">Available Products</h2>
-    <div id="productsGrid" class="products-grid">
-      <p>Loading products...</p>
-    </div>
-  </section>
-
-  <!-- IMAGE MODAL -->
-  <div id="imageModal" class="modal hidden">
-    <span id="closeModal">×</span>
-    <img id="modalImg">
+  <!-- ADMIN BAR (hidden for public) -->
+  <div id="adminBar" class="admin-bar hidden">
+    <span>Admin Mode</span>
+    <button id="addBlock">+ Add Block</button>
+    <button id="saveChanges">Save</button>
+    <button id="logout">Logout</button>
   </div>
 
-  <!-- CONTACT -->
-  <section class="card contact">
-    <a class="btn whatsapp" href="https://wa.me/919705379219" target="_blank">
-      💬 WhatsApp Enquiry
-    </a>
-  </section>
+  <!-- PAGE ROOT -->
+  <main id="pageRoot">
+    <!-- Blocks will render here dynamically -->
+  </main>
 
-  <!-- FOOTER -->
-  <footer>
-    © 2025 JioMart Digital – Mandapeta
-  </footer>
+  <!-- CORE -->
+  <script type="module" src="assets/js/core/firebase.js"></script>
+  <script type="module" src="assets/js/core/auth.js"></script>
+  <script type="module" src="assets/js/core/cloudinary.js"></script>
 
-  <!-- ✅ FIXED SCRIPTS (MATCHING REPO FILE NAMES) -->
-  <script type="module" src="assets/js/theme.js"></script>
-  <script type="module" src="assets/js/products.js"></script>
-  <script type="module" src="assets/js/site-ui.js"></script>
-  <script type="module" src="assets/js/site-pagebuilder.js"></script>
+  <!-- CMS -->
+  <script type="module" src="assets/js/cms/admin-mode.js"></script>
+  <script type="module" src="assets/js/cms/blocks.js"></script>
+  <script type="module" src="assets/js/cms/richtext.js"></script>
+  <script type="module" src="assets/js/cms/products-admin.js"></script>
+
+  <!-- SITE -->
+  <script type="module" src="assets/js/site/render.js"></script>
+  <script type="module" src="assets/js/site/products-view.js"></script>
+  <script type="module" src="assets/js/site/live-sync.js"></script>
 
 </body>
 </html>
