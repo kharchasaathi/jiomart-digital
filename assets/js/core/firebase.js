@@ -1,10 +1,11 @@
 /***************************************************
- * JIOMART DIGITAL – CMS FOUNDATION (PART–1)
+ * JIOMART DIGITAL – CMS FOUNDATION (CLEAN)
  * File: assets/js/core/firebase.js
+ *
  * Purpose:
  *  - Safe Firebase initialization
- *  - Google Auth (Admin only)
- *  - Firestore & Storage
+ *  - Google Auth login helper (NO state observer)
+ *  - Firestore & Storage access
  ***************************************************/
 
 /* ================================
@@ -17,19 +18,14 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
-  onAuthStateChanged,
   signOut
 } from
   "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-import {
-  getFirestore
-} from
+import { getFirestore } from
   "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-import {
-  getStorage
-} from
+import { getStorage } from
   "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 
 /* ================================
@@ -59,18 +55,18 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 
 /* ================================
-   ADMIN SECURITY
+   ADMIN CONFIG
 ================================ */
 const ADMIN_EMAIL = "abidalimohammad94@gmail.com";
 
 /* ================================
-   GOOGLE PROVIDER
+   GOOGLE AUTH PROVIDER
 ================================ */
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });
 
 /* ================================
-   ADMIN LOGIN
+   ADMIN LOGIN (NO STATE LOGIC)
 ================================ */
 async function adminLogin() {
   try {
@@ -94,30 +90,16 @@ async function adminLogin() {
 }
 
 /* ================================
-   AUTH OBSERVER
-================================ */
-function observeAuth(callback) {
-  onAuthStateChanged(auth, (user) => {
-    if (user && user.email === ADMIN_EMAIL) {
-      callback(user);
-    } else {
-      callback(null);
-    }
-  });
-}
-
-/* ================================
    EXPORTS
 ================================ */
 export {
   auth,
   db,
   storage,
-  adminLogin,
-  observeAuth
+  adminLogin
 };
 
 /* ================================
    DEBUG
 ================================ */
-console.log("🔥 Firebase CMS Foundation Loaded (PART–1)");
+console.log("🔥 Firebase CMS Foundation Loaded (CLEAN)");
