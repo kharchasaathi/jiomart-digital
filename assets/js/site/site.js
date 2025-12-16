@@ -1,5 +1,5 @@
 /***************************************************
- * SITE JS – PUBLIC + CMS RENDER (PART–1 + PART–2)
+ * SITE JS – PUBLIC + CMS RENDER (FINAL CLEAN)
  ***************************************************/
 
 /* ===============================
@@ -12,14 +12,10 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 /* ===============================
-   CMS CORE
+   CMS CORE (NO AUTH HERE)
 ================================ */
 import { loadPage } from "../cms/page-store.js";
 import { renderPage } from "../cms/render.js";
-import { setAdminMode } from "../cms/state.js";
-import { auth } from "../core/firebase.js";
-import { onAuthStateChanged } from
-  "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 /* ===============================
    CMS INIT (SINGLE ENTRY)
@@ -32,14 +28,9 @@ async function initCMS() {
 
 initCMS();
 
-/* Detect admin login */
-onAuthStateChanged(auth, (user) => {
-  setAdminMode(!!user);
-});
-
 /* ===============================
    PRODUCTS GRID (PUBLIC)
-   (temporary – will become block later)
+   (temporary – will become CMS block later)
 ================================ */
 
 const grid = document.getElementById("productsGrid");
