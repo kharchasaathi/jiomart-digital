@@ -1,69 +1,78 @@
-import { db } from "../core/firebase.js";
-import {
-  doc,
-  getDoc,
-  setDoc
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+/***************************************************
+ * BLOCK ENGINE – PART 2
+ * Converts block data → DOM
+ ***************************************************/
 
-const pageRoot = document.getElementById("pageRoot");
-const pageRef = doc(db, "pages", "home");
+import { CMS_STATE } from "./state.js";
 
-/* ===============================
-   DEFAULT BLOCKS (FIRST TIME)
-================================ */
-const defaultBlocks = [
-  { id: "hero", type: "text", content: "<h2>Welcome to JioMart Digital</h2>" },
-  { id: "info", type: "text", content: "<p>Edit this text from admin mode.</p>" }
-];
+/* Main block renderer */
+export function renderBlock(block) {
+  let el;
 
-/* ===============================
-   LOAD BLOCKS
-================================ */
-export async function loadBlocks() {
-  const snap = await getDoc(pageRef);
+  switch (block.type) {
+    case "text":
+      el = renderTextBlock(block);
+      break;
 
-  let blocks = [];
+    case "image":
+      el = renderImageBlock(block);
+      break;
 
-  if (snap.exists()) {
-    blocks = snap.data().blocks || [];
-  } else {
-    await setDoc(pageRef, { blocks: defaultBlocks });
-    blocks = defaultBlocks;
+    case "product":
+      el = renderProductBlock(block);
+      break;
+
+    default:
+      console.warn("Unknown block:", block.type);
+      return null;
   }
 
-  renderBlocks(blocks);
+  el.dataset.blockId = block.id;
+  el.classList.add("cms-block");
+
+  if (CMS_STATE.isAdmin) {
+    el.classList.add("editable");
+  }
+
+  return el;
 }
 
 /* ===============================
-   RENDER BLOCKS
+   TEXT BLOCK
 ================================ */
-function renderBlocks(blocks) {
-  pageRoot.innerHTML = "";
+function renderTextBlock(block) {
+  const div = document.createElement("div");
+  div.className = "block-text";
+  div.innerHTML = block.data.html || "<p>Edit this text</p>";
 
-  blocks.forEach((block) => {
-    const div = document.createElement("div");
-    div.className = "block";
+  if (CMS_STATE.isAdmin) {
+    div.contentEditable = true;
+  }
 
-    if (block.type === "text") {
-      div.classList.add("block-text");
-      div.innerHTML = block.content;
-    }
-
-    /* Admin controls */
-    if (document.body.classList.contains("admin-mode")) {
-      const controls = document.createElement("div");
-      controls.className = "block-controls";
-
-      controls.innerHTML = `
-        <button data-action="edit">✏️</button>
-      `;
-
-      div.appendChild(controls);
-    }
-
-    pageRoot.appendChild(div);
-  });
+  return div;
 }
 
-/* INIT */
-loadBlocks();
+/* ===============================
+   IMAGE BLOCK (placeholder)
+================================ */
+function renderImageBlock(block) {
+  const div = document.createElement("div");
+  div.className = "block-image";
+
+  const img = document.createElement("img");
+  img.src = block.data.url || "";
+  img.alt = block.data.caption || "";
+
+  div.appendChild(img);
+  return div;
+}
+
+/* ===============================
+   PRODUCT BLOCK (placeholder)
+================================ */
+function renderProductBlock(block) {
+  const div = document.createElement("div");
+  div.className = "block-product";
+  div.innerHTML = "<p>Product block</p>";
+  return div;
+}
