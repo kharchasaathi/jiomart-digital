@@ -1,37 +1,35 @@
-
 /***************************************************
- * CMS STATE – PART 4
+ * CMS STATE – SINGLE SOURCE OF TRUTH
  ***************************************************/
 
-let state = {
-  page: null,
-  admin: false
+const state = {
+  adminMode: false,
+  page: null
 };
 
-const listeners = [];
-
-export function setPage(page) {
-  state.page = page;
-  notify();
-}
-
-export function setAdminMode(val) {
-  state.admin = val;
-  notify();
-}
-
-export function isAdmin() {
-  return state.admin;
-}
-
+/* Get full state */
 export function getState() {
   return state;
 }
 
-export function subscribe(fn) {
-  listeners.push(fn);
+/* Set partial state safely */
+export function setState(partial) {
+  if (!partial || typeof partial !== "object") return;
+
+  Object.assign(state, partial);
 }
 
-function notify() {
-  listeners.forEach(fn => fn(state));
+/* Admin mode helpers */
+export function setAdminMode(value) {
+  state.adminMode = !!value;
+
+  if (state.adminMode) {
+    document.body.classList.add("admin-mode");
+  } else {
+    document.body.classList.remove("admin-mode");
+  }
+}
+
+export function isAdmin() {
+  return state.adminMode === true;
 }
