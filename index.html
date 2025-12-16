@@ -2,48 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>JioMart Digital – Mandapeta</title>
+  <title>JioMart Digital</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <!-- GOOGLE FONTS -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Poppins&family=Roboto&family=Inter&family=Lato&family=Noto+Sans+Telugu&family=Mandali&display=swap"
-    rel="stylesheet"
-  />
-
-  <!-- STYLES -->
+  <!-- Shared styles -->
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/blocks.css">
   <link rel="stylesheet" href="assets/css/site.css">
-  <link rel="stylesheet" href="assets/css/editor.css">
 </head>
 
 <body>
 
-  <!-- ADMIN BAR (only visible after login) -->
-  <div id="adminBar" class="admin-bar hidden">
-    <span>Admin Mode</span>
-    <button id="addBlock">+ Add Block</button>
-    <button id="saveChanges">Save</button>
-    <button id="logout">Logout</button>
-  </div>
+  <div id="pageRoot"></div>
 
-  <!-- EDITOR TOOLBAR -->
-  <div id="editorToolbar" class="editor-toolbar hidden"></div>
-
-  <!-- PAGE ROOT -->
-  <main id="pageRoot">
-    <h1 class="block editable">Welcome to JioMart Digital</h1>
-    <p class="block editable">Edit this text from admin mode.</p>
-  </main>
-
-  <!-- CORE -->
-  <script type="module" src="assets/js/core/firebase.js"></script>
-
-  <!-- CMS (safe on public page) -->
-  <script type="module" src="assets/js/cms/admin-mode.js"></script>
-  <script type="module" src="assets/js/cms/editor-toolbar.js"></script>
-  <script type="module" src="assets/js/cms/live-edit.js"></script>
+  <!-- ✅ PUBLIC ENTRY ONLY -->
+  <script type="module" src="assets/js/public.js"></script>
 
 </body>
 </html>
