@@ -27,22 +27,30 @@
   cursor: pointer;
 }
 
-/* Push content down when admin bar visible */
+.admin-bar button:hover {
+  opacity: 0.9;
+}
+
+/* Push page content down when admin bar is visible */
 body.admin-mode {
   padding-top: 46px;
+  background: #fff !important; /* 🔥 BLACK AREA FIX */
 }
 
 /* ===============================
    ADMIN OVERLAY SAFETY FIX
 ================================ */
 
+/* Prevent admin UI from covering page */
 .admin-mode #pageRoot {
   background: transparent;
   position: relative;
   z-index: 1;
+  max-width: none;     /* 🔥 FIX layout shrink */
+  width: 100%;
 }
 
-/* Kill accidental fullscreen overlays */
+/* Kill any accidental fullscreen overlays */
 .admin-mode .overlay,
 .admin-mode .editor-overlay {
   display: none !important;
@@ -78,4 +86,20 @@ body.admin-mode {
 
 .admin-add-zone button:hover {
   opacity: 0.9;
+}
+
+/* ===============================
+   BLOCK VISIBILITY FIX (ADMIN)
+================================ */
+
+body.admin-mode .block {
+  background: #fff;
+}
+
+/* ===============================
+   SAFETY: NO SCROLL LOCK
+================================ */
+
+body.admin-mode {
+  overflow-x: hidden;
 }
