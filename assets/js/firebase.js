@@ -1,22 +1,37 @@
-
 /***************************************************
  * JIOMART DIGITAL – CMS FOUNDATION (PART–1)
  * File: assets/js/firebase.js
  * Purpose:
- *  - Firebase initialization
+ *  - Firebase safe initialization (NO duplicate app)
  *  - Auth (Google Login)
- *  - Admin email lock (ONLY YOU)
- *  - Firestore & Storage ready
+ *  - Admin email lock
+ *  - Firestore & Storage
  ***************************************************/
 
 /* ================================
    FIREBASE SDK IMPORTS (MODULE)
 ================================ */
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } 
-  from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+import { initializeApp, getApps, getApp } from
+  "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged,
+  signOut
+} from
+  "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+import {
+  getFirestore
+} from
+  "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+import {
+  getStorage
+} from
+  "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 
 /* ================================
    FIREBASE CONFIG
@@ -31,19 +46,25 @@ const firebaseConfig = {
 };
 
 /* ================================
-   INITIALIZE FIREBASE
+   ✅ SAFE INITIALIZE FIREBASE
+   (NO DUPLICATE APP ERROR)
 ================================ */
-const app = initializeApp(firebaseConfig);
+const app = getApps().length
+  ? getApp()
+  : initializeApp(firebaseConfig);
+
+/* ================================
+   SERVICES
+================================ */
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
 /* ================================
-   ADMIN SECURITY (VERY IMPORTANT)
-   👉 ONLY THIS EMAIL CAN OPERATE
+   ADMIN SECURITY
+   👉 ONLY THIS EMAIL IS ADMIN
 ================================ */
-const ADMIN_EMAIL = "yourgmail@gmail.com"; 
-// ⚠️ PART–2 లో నీ actual Gmail తో replace చేస్తాం
+const ADMIN_EMAIL = "abidalimohammad94@gmail.com";
 
 /* ================================
    GOOGLE AUTH PROVIDER
@@ -54,7 +75,7 @@ provider.setCustomParameters({
 });
 
 /* ================================
-   LOGIN FUNCTION (ADMIN ONLY)
+   ADMIN LOGIN FUNCTION
 ================================ */
 async function adminLogin() {
   try {
@@ -62,8 +83,8 @@ async function adminLogin() {
     const user = result.user;
 
     if (user.email !== ADMIN_EMAIL) {
-      alert("Access Denied: You are not authorized as Admin.");
-      await auth.signOut();
+      alert("❌ Access Denied: You are not authorized as Admin.");
+      await signOut(auth);
       return null;
     }
 
@@ -78,7 +99,7 @@ async function adminLogin() {
 }
 
 /* ================================
-   AUTH STATE LISTENER
+   AUTH STATE OBSERVER
 ================================ */
 function observeAuth(callback) {
   onAuthStateChanged(auth, (user) => {
@@ -91,7 +112,7 @@ function observeAuth(callback) {
 }
 
 /* ================================
-   EXPORTS (FOR NEXT PARTS)
+   EXPORTS
 ================================ */
 export {
   auth,
@@ -102,6 +123,6 @@ export {
 };
 
 /* ================================
-   DEBUG (SAFE)
+   DEBUG
 ================================ */
 console.log("🔥 Firebase CMS Foundation Loaded (PART–1)");
