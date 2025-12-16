@@ -1,0 +1,57 @@
+/* ===============================
+   PAGE BLOCKS
+================================ */
+
+#pageRoot {
+  max-width: 1200px;
+  margin: auto;
+  padding: 16px;
+}
+
+/* Generic block */
+.block {
+  background: #fff;
+  margin-bottom: 18px;
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+}
+
+/* Admin outline */
+body.admin-mode .block {
+  outline: 2px dashed rgba(24,119,242,0.4);
+}
+
+/* Block controls (admin only) */
+.block-controls {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 6px;
+  z-index: 10;
+}
+
+.block-controls button {
+  background: #1877f2;
+  color: #fff;
+  border: none;
+  padding: 4px 6px;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+/* Text block */
+.block-text {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Placeholder */
+.block-placeholder {
+  padding: 40px;
+  text-align: center;
+  color: #888;
+  border: 2px dashed #ccc;
+  border-radius: 12px;
+}
