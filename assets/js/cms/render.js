@@ -1,59 +1,23 @@
 /***************************************************
- * CMS RENDER – CLEAN SEPARATION
+ * CMS RENDER – SAFE (ADMIN + PUBLIC)
  ***************************************************/
-
 import { renderBlocks } from "./blocks.js";
 import { getState } from "./state.js";
 
 export function renderPage() {
   const root = document.getElementById("pageRoot");
-  if (!root) return;
-
-  const { page, adminMode } = getState();
-  if (!page) return;
-
-  // 🔥 Always reset root (VERY IMPORTANT)
-  root.innerHTML = "";
-  root.style.background = "transparent";
-  root.style.minHeight = "auto";
-
-  if (adminMode) {
-    renderAdminPage(root);
-  } else {
-    renderPublicPage(root);
+  if (!root) {
+    console.warn("❌ #pageRoot not found");
+    return;
   }
-}
 
-/* ===============================
-   PUBLIC RENDER (SAFE)
-================================ */
-function renderPublicPage(root) {
-  root.className = "page-root public-root";
+  const state = getState();
 
-  // no editor wrappers
-  renderBlocks(root, {
-    editable: false,
-    showControls: false
-  });
-}
+  if (!state || !state.page) {
+    console.warn("⚠️ No page in state, rendering empty");
+    root.innerHTML = "";
+    return;
+  }
 
-/* ===============================
-   ADMIN RENDER (ISOLATED)
-================================ */
-function renderAdminPage(root) {
-  root.className = "page-root admin-root";
-
-  const adminWrapper = document.createElement("div");
-  adminWrapper.className = "admin-wrapper";
-
-  // ⚠️ NEVER dark background
-  adminWrapper.style.background = "transparent";
-  adminWrapper.style.position = "relative";
-
-  renderBlocks(adminWrapper, {
-    editable: true,
-    showControls: true
-  });
-
-  root.appendChild(adminWrapper);
+  renderBlocks(root);
 }
