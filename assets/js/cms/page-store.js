@@ -1,5 +1,5 @@
 /***************************************************
- * PAGE STORE – PART 1
+ * PAGE STORE – PART 1 (UPDATED FOR PART–2)
  * Firestore page load / save
  ***************************************************/
 
@@ -15,24 +15,39 @@ import { setPage } from "./state.js";
 
 const COLLECTION = "pages";
 
-/* Load page from Firestore */
+/* ===============================
+   LOAD PAGE
+================================ */
 export async function loadPage(pageId = "home") {
   const ref = doc(db, COLLECTION, pageId);
   const snap = await getDoc(ref);
 
+  /* If page already exists */
   if (snap.exists()) {
-    setPage(snap.data());
-    return snap.data();
+    const page = snap.data();
+    setPage(page);
+    return page;
   }
 
-  // First time page
+  /* 🔥 First-time page creation with default block */
   const page = createPage(pageId);
+
+  page.blocks.push({
+    id: "blk_welcome",
+    type: "text",
+    data: {
+      html: "<h1>Welcome to JioMart Digital</h1><p>Click here to edit</p>"
+    }
+  });
+
   await setDoc(ref, page);
   setPage(page);
   return page;
 }
 
-/* Save page */
+/* ===============================
+   SAVE PAGE
+================================ */
 export async function savePage(page) {
   const ref = doc(db, COLLECTION, page.id);
   page.updatedAt = Date.now();
