@@ -1,19 +1,37 @@
+
 /***************************************************
- * CMS STATE – PART 1
- * In-memory CMS state
+ * CMS STATE – PART 4
  ***************************************************/
 
-export const CMS_STATE = {
+let state = {
   page: null,
-  isAdmin: false
+  admin: false
 };
 
-export function setAdminMode(value) {
-  CMS_STATE.isAdmin = value;
-  console.log("🔐 Admin mode:", value);
-}
+const listeners = [];
 
 export function setPage(page) {
-  CMS_STATE.page = page;
-  console.log("📄 Page loaded:", page.id);
+  state.page = page;
+  notify();
+}
+
+export function setAdminMode(val) {
+  state.admin = val;
+  notify();
+}
+
+export function isAdmin() {
+  return state.admin;
+}
+
+export function getState() {
+  return state;
+}
+
+export function subscribe(fn) {
+  listeners.push(fn);
+}
+
+function notify() {
+  listeners.forEach(fn => fn(state));
 }
