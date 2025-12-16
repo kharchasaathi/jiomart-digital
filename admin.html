@@ -5,19 +5,36 @@
   <title>Admin – JioMart Digital</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <!-- Admin CSS -->
+  <!-- ===============================
+       GOOGLE FONTS
+  ================================ -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins&family=Roboto&family=Inter&family=Lato&family=Noto+Sans+Telugu&family=Mandali&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- ===============================
+       ADMIN STYLES (ONLY EXISTING)
+  ================================ -->
+  <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/admin.css">
+  <link rel="stylesheet" href="assets/css/editor.css">
 </head>
+
 <body>
 
-  <!-- LOGIN SCREEN -->
+  <!-- ===============================
+       LOGIN SCREEN
+  ================================ -->
   <div id="loginScreen" class="login-screen">
     <h2>Admin Login</h2>
     <p>Authorized access only</p>
     <button id="loginBtn">Login with Google</button>
   </div>
 
-  <!-- ADMIN DASHBOARD -->
+  <!-- ===============================
+       ADMIN DASHBOARD
+  ================================ -->
   <div id="adminPanel" class="admin-panel hidden">
 
     <!-- SIDEBAR -->
@@ -28,7 +45,7 @@
         <li data-section="site">Site Design</li>
         <li data-section="products">Products</li>
         <li data-section="media">Media</li>
-        <li data-section="logout" class="logout">Logout</li>
+        <li id="logoutBtn" class="logout">Logout</li>
       </ul>
     </aside>
 
@@ -41,11 +58,12 @@
         <p>This is your secure control panel.</p>
       </section>
 
-      <!-- SITE DESIGN + PAGE BUILDER -->
+      <!-- ===============================
+           SITE DESIGN (THEME)
+      ================================ -->
       <section id="site" class="section">
         <h2>Site Design</h2>
 
-        <!-- THEME CONTROLS -->
         <label>Primary Color</label>
         <input type="color" id="primaryColor">
 
@@ -61,19 +79,16 @@
         <select id="fontTelugu">
           <option value="Noto Sans Telugu">Noto Sans Telugu</option>
           <option value="Mandali">Mandali</option>
-          <option value="Pothana2000">Pothana2000</option>
-          <option value="Gautami">Gautami</option>
         </select>
 
         <button id="saveTheme">Save Theme</button>
 
-        <!-- PAGE BUILDER -->
         <hr>
 
+        <!-- ===============================
+             PAGE BUILDER (BASIC)
+        ================================ -->
         <h3>Page Builder</h3>
-
-        <label>Banner Image</label>
-        <input type="file" id="bannerImage" accept="image/*">
 
         <label>Site Title (English)</label>
         <input type="text" id="siteTitleEn">
@@ -94,7 +109,9 @@
         <button id="savePage">Save Page Settings</button>
       </section>
 
-      <!-- PRODUCTS MANAGER -->
+      <!-- ===============================
+           PRODUCTS MANAGER
+      ================================ -->
       <section id="products" class="section">
         <h2>Products Manager</h2>
 
@@ -127,26 +144,32 @@
         <div id="productsList"></div>
       </section>
 
-      <!-- MEDIA -->
+      <!-- ===============================
+           MEDIA
+      ================================ -->
       <section id="media" class="section">
         <h2>Media Library</h2>
-        <p>Image uploads & management will appear here.</p>
+        <p>Uploaded images will appear here.</p>
       </section>
 
     </main>
   </div>
 
-  <!-- ADMIN AUTH -->
-  <script type="module" src="assets/js/admin-auth.js"></script>
+  <!-- ===============================
+       CORE (FIREBASE)
+  ================================ -->
+  <script type="module" src="assets/js/core/firebase.js"></script>
 
-  <!-- THEME EDITOR -->
-  <script type="module" src="assets/js/admin-theme.js"></script>
-
-  <!-- PAGE BUILDER -->
-  <script type="module" src="assets/js/admin-pagebuilder.js"></script>
-
-  <!-- PRODUCTS MANAGER -->
-  <script type="module" src="assets/js/admin-products.js"></script>
+  <!-- ===============================
+       CMS (ADMIN LOGIC)
+       ✔ ONLY EXISTING FILES
+  ================================ -->
+  <script type="module" src="assets/js/cms/admin-auth.js"></script>
+  <script type="module" src="assets/js/cms/admin-mode.js"></script>
+  <script type="module" src="assets/js/cms/blocks.js"></script>
+  <script type="module" src="assets/js/cms/editor-toolbar.js"></script>
+  <script type="module" src="assets/js/cms/products.js"></script>
+  <script type="module" src="assets/js/cms/site-pagebuilder.js"></script>
 
 </body>
 </html>
