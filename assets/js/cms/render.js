@@ -1,29 +1,17 @@
-
 /***************************************************
- * PAGE RENDERER – PART 3
+ * CMS RENDER – PART 4
+ * Render page blocks into DOM
  ***************************************************/
 
-import { CMS_STATE } from "./state.js";
-import { renderBlock } from "./blocks.js";
-import { enableTextEditing } from "./text-edit.js";
-import { initToolbar } from "./toolbar.js";
-import { initSaveHandler } from "./save.js";
-
-const root = document.getElementById("pageRoot");
+import { renderBlocks } from "./blocks.js";
+import { getState } from "./state.js";
 
 export function renderPage() {
-  if (!root || !CMS_STATE.page) return;
+  const root = document.getElementById("pageRoot");
+  if (!root) return;
 
-  root.innerHTML = "";
+  const { page } = getState();
+  if (!page) return;
 
-  CMS_STATE.page.blocks.forEach(block => {
-    const el = renderBlock(block);
-    if (el) root.appendChild(el);
-  });
-
-  if (CMS_STATE.isAdmin) {
-    enableTextEditing(root);
-    initToolbar();
-    initSaveHandler();
-  }
+  renderBlocks(root);
 }
