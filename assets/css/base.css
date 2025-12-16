@@ -66,3 +66,38 @@ img {
 body.admin-mode {
   padding-top: 46px;
 }
+
+/* ===============================
+   EDITOR TOOLBAR (RICH TEXT)
+================================ */
+#editorToolbar {
+  position: fixed;
+  top: 46px; /* below admin bar */
+  left: 0;
+  right: 0;
+  background: #222;
+  color: #fff;
+  padding: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  z-index: 9998;
+}
+
+#editorToolbar button,
+#editorToolbar select,
+#editorToolbar input {
+  padding: 4px 6px;
+  font-size: 13px;
+  border-radius: 4px;
+  border: none;
+}
+
+#editorToolbar button {
+  background: #444;
+  color: #fff;
+}
+
+#editorToolbar button:hover {
+  background: #1877f2;
+}
