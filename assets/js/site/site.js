@@ -1,5 +1,5 @@
 /***************************************************
- * SITE JS – PUBLIC + CMS INIT (PART–1)
+ * SITE JS – PUBLIC + CMS RENDER (PART–1 + PART–2)
  ***************************************************/
 
 /* ===============================
@@ -12,20 +12,25 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 /* ===============================
-   CMS CORE (PART–1)
+   CMS CORE
 ================================ */
 import { loadPage } from "../cms/page-store.js";
+import { renderPage } from "../cms/render.js";
 import { setAdminMode } from "../cms/state.js";
 import { auth } from "../core/firebase.js";
 import { onAuthStateChanged } from
   "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 /* ===============================
-   CMS INIT
+   CMS INIT (SINGLE ENTRY)
 ================================ */
 
-/* Load home page structure from Firestore */
-loadPage("home");
+async function initCMS() {
+  await loadPage("home");
+  renderPage();
+}
+
+initCMS();
 
 /* Detect admin login */
 onAuthStateChanged(auth, (user) => {
@@ -34,6 +39,7 @@ onAuthStateChanged(auth, (user) => {
 
 /* ===============================
    PRODUCTS GRID (PUBLIC)
+   (temporary – will become block later)
 ================================ */
 
 const grid = document.getElementById("productsGrid");
@@ -90,4 +96,4 @@ function openModal(images = []) {
 
 if (closeModal) {
   closeModal.onclick = () => modal.classList.add("hidden");
-    }
+}
