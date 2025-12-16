@@ -1,10 +1,13 @@
+
 /***************************************************
- * PAGE RENDERER – PART 2
- * Renders all blocks into pageRoot
+ * PAGE RENDERER – PART 3
  ***************************************************/
 
 import { CMS_STATE } from "./state.js";
 import { renderBlock } from "./blocks.js";
+import { enableTextEditing } from "./text-edit.js";
+import { initToolbar } from "./toolbar.js";
+import { initSaveHandler } from "./save.js";
 
 const root = document.getElementById("pageRoot");
 
@@ -17,4 +20,10 @@ export function renderPage() {
     const el = renderBlock(block);
     if (el) root.appendChild(el);
   });
+
+  if (CMS_STATE.isAdmin) {
+    enableTextEditing(root);
+    initToolbar();
+    initSaveHandler();
+  }
 }
