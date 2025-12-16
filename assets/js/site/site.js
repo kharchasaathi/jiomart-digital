@@ -1,26 +1,19 @@
 /***************************************************
- * SITE JS – PUBLIC + CMS RENDER (FINAL CLEAN)
+ * SITE JS – PUBLIC + CMS RENDER (CLEAN)
  ***************************************************/
 
-/* ===============================
-   FIREBASE + PRODUCTS
-================================ */
+/* FIREBASE + PRODUCTS */
 import { db } from "./firebase.js";
 import {
   collection,
   getDocs
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-/* ===============================
-   CMS CORE (NO AUTH HERE)
-================================ */
+/* CMS CORE */
 import { loadPage } from "../cms/page-store.js";
 import { renderPage } from "../cms/render.js";
 
-/* ===============================
-   CMS INIT (SINGLE ENTRY)
-================================ */
-
+/* CMS INIT */
 async function initCMS() {
   await loadPage("home");
   renderPage();
@@ -28,16 +21,11 @@ async function initCMS() {
 
 initCMS();
 
-/* ===============================
-   PRODUCTS GRID (PUBLIC)
-   (temporary – will become CMS block later)
-================================ */
-
+/* PRODUCTS GRID */
 const grid = document.getElementById("productsGrid");
 
 async function loadProducts() {
   if (!grid) return;
-
   grid.innerHTML = "";
 
   const snap = await getDocs(collection(db, "products"));
@@ -52,16 +40,9 @@ async function loadProducts() {
     img.src = p.images?.[0] || "";
     img.loading = "lazy";
 
-    img.onclick = () => openModal(p.images || []);
-
     card.innerHTML = `
-      <h3 class="en-text">${p.name_en || ""}</h3>
-      <h3 class="te-text hidden">${p.name_te || ""}</h3>
+      <h3>${p.name_en || ""}</h3>
       <p class="price">₹${p.price || ""}</p>
-      <a class="enquire" target="_blank"
-        href="https://wa.me/919705379219?text=Interested in ${p.name_en || ""}">
-        Enquire
-      </a>
     `;
 
     card.prepend(img);
@@ -70,21 +51,3 @@ async function loadProducts() {
 }
 
 loadProducts();
-
-/* ===============================
-   IMAGE MODAL
-================================ */
-
-const modal = document.getElementById("imageModal");
-const modalImg = document.getElementById("modalImg");
-const closeModal = document.getElementById("closeModal");
-
-function openModal(images = []) {
-  if (!modal || !modalImg) return;
-  modal.classList.remove("hidden");
-  modalImg.src = images[0] || "";
-}
-
-if (closeModal) {
-  closeModal.onclick = () => modal.classList.add("hidden");
-}
