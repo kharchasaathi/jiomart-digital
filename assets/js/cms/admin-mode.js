@@ -1,22 +1,17 @@
-import { auth } from "../core/firebase.js";
-import {
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+/***************************************************
+ * ADMIN MODE – SINGLE AUTH CONTROLLER
+ ***************************************************/
 
-let lastState = null;
+import { auth } from "../core/firebase.js";
+import { onAuthStateChanged } from
+  "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const adminBar = document.getElementById("adminBar");
   const toolbar = document.getElementById("editorToolbar");
 
   onAuthStateChanged(auth, (user) => {
-    const isAdmin = !!user;
-
-    // 🔒 prevent loop
-    if (lastState === isAdmin) return;
-    lastState = isAdmin;
-
-    if (isAdmin) {
+    if (user) {
       document.body.classList.add("admin-mode");
       adminBar?.classList.remove("hidden");
       toolbar?.classList.remove("hidden");
@@ -25,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.body.classList.remove("admin-mode");
       adminBar?.classList.add("hidden");
       toolbar?.classList.add("hidden");
-      console.log("👀 Public mode");
+      console.log("👁 Public mode");
     }
   });
 });
