@@ -1,12 +1,65 @@
+/* ===============================
+   ADMIN BAR
+================================ */
+
+.admin-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 46px;
+  background: #111;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  z-index: 9999;
+}
+
+.admin-bar button {
+  background: #1877f2;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* Push content down when admin bar visible */
+body.admin-mode {
+  padding-top: 46px;
+}
 
 /* ===============================
-   ADMIN OVERLAYS
+   ADMIN OVERLAY SAFETY FIX
+================================ */
+
+.admin-mode #pageRoot {
+  background: transparent;
+  position: relative;
+  z-index: 1;
+}
+
+/* Kill accidental fullscreen overlays */
+.admin-mode .overlay,
+.admin-mode .editor-overlay {
+  display: none !important;
+}
+
+/* ===============================
+   ADMIN EDITABLE HIGHLIGHTS
 ================================ */
 
 .admin-editable:hover {
   outline: 2px solid #1877f2;
   cursor: text;
 }
+
+/* ===============================
+   ADMIN ADD BLOCK ZONE
+================================ */
 
 .admin-add-zone {
   text-align: center;
@@ -20,4 +73,9 @@
   padding: 8px 14px;
   border-radius: 20px;
   font-size: 14px;
+  cursor: pointer;
+}
+
+.admin-add-zone button:hover {
+  opacity: 0.9;
 }
