@@ -1,49 +1,46 @@
 /***************************************************
- * PUBLIC SITE – PRODUCTS RENDER
+ * PRODUCTS – PUBLIC SITE
  ***************************************************/
+import { db } from "./firebase.js";
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot } 
-  from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
-/* Firebase config */
-const firebaseConfig = {
-  apiKey: "AIzaSyByQBpGmHivJhXDqgB-JLpIHUYRr1ZGM7Q",
-  authDomain: "jiomart-digital.firebaseapp.com",
-  projectId: "jiomart-digital",
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const grid = document.getElementById("productsGrid");
 
-onSnapshot(collection(db, "products"), (snap) => {
-  grid.innerHTML = "";
+async function loadProducts() {
+  try {
+    const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+    const snap = await getDocs(q);
 
-  if (snap.empty) {
-    grid.innerHTML = "<p>No products available</p>";
-    return;
+    grid.innerHTML = "";
+
+    if (snap.empty) {
+      grid.innerHTML = "<p>No products available</p>";
+      return;
+    }
+
+    snap.forEach(doc => {
+      const p = doc.data();
+
+      const card = document.createElement("div");
+      card.className = "product-card";
+      card.innerHTML = `
+        <img src="${p.image || ''}" alt="">
+        <h3>${p.name || ''}</h3>
+        <p>₹${p.price || ''}</p>
+      `;
+      grid.appendChild(card);
+    });
+
+  } catch (err) {
+    console.error("Products Load Error:", err);
+    grid.innerHTML = "<p>Error loading products</p>";
   }
+}
 
-  snap.forEach(doc => {
-    const p = doc.data();
-
-    const card = document.createElement("div");
-    card.className = "product-card";
-
-    const img = p.images?.[0] || "";
-
-    card.innerHTML = `
-      <img src="${img}" alt="${p.name_en}">
-      <h3 class="en-text">${p.name_en}</h3>
-      <p class="te-text">${p.name_te}</p>
-      <p class="price">₹${p.price}</p>
-      <a class="enquire" href="https://wa.me/919705379219?text=Interested in ${p.name_en}" target="_blank">
-        Enquire
-      </a>
-    `;
-
-    grid.appendChild(card);
-  });
-});
+loadProducts();
