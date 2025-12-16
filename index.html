@@ -5,29 +5,22 @@
   <title>JioMart Digital – Mandapeta</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <!-- ===============================
-       GOOGLE FONTS
-  ================================ -->
+  <!-- GOOGLE FONTS -->
   <link
     href="https://fonts.googleapis.com/css2?family=Poppins&family=Roboto&family=Inter&family=Lato&family=Noto+Sans+Telugu&family=Mandali&display=swap"
     rel="stylesheet"
   />
 
-  <!-- ===============================
-       STYLES (ONLY EXISTING FILES)
-  ================================ -->
+  <!-- STYLES -->
   <link rel="stylesheet" href="assets/css/base.css">
-  <link rel="stylesheet" href="assets/css/site.css">
   <link rel="stylesheet" href="assets/css/blocks.css">
+  <link rel="stylesheet" href="assets/css/site.css">
   <link rel="stylesheet" href="assets/css/editor.css">
-  <link rel="stylesheet" href="assets/css/admin.css">
 </head>
 
 <body>
 
-  <!-- ===============================
-       ADMIN BAR (HIDDEN FOR PUBLIC)
-  ================================ -->
+  <!-- ADMIN BAR (only visible after login) -->
   <div id="adminBar" class="admin-bar hidden">
     <span>Admin Mode</span>
     <button id="addBlock">+ Add Block</button>
@@ -35,34 +28,22 @@
     <button id="logout">Logout</button>
   </div>
 
-  <!-- ===============================
-       PAGE ROOT
-  ================================ -->
+  <!-- EDITOR TOOLBAR -->
+  <div id="editorToolbar" class="editor-toolbar hidden"></div>
+
+  <!-- PAGE ROOT -->
   <main id="pageRoot">
-    <!-- CMS blocks will render here -->
+    <h1 class="block editable">Welcome to JioMart Digital</h1>
+    <p class="block editable">Edit this text from admin mode.</p>
   </main>
 
-  <!-- ===============================
-       CORE (FIREBASE)
-       ✔ only existing file
-  ================================ -->
+  <!-- CORE -->
   <script type="module" src="assets/js/core/firebase.js"></script>
 
-  <!-- ===============================
-       CMS (LIVE ADMIN + EDITOR)
-       ✔ only existing cms files
-  ================================ -->
+  <!-- CMS (safe on public page) -->
   <script type="module" src="assets/js/cms/admin-mode.js"></script>
-  <script type="module" src="assets/js/cms/blocks.js"></script>
-  <script type="module" src="assets/js/cms/live-edit.js"></script>
   <script type="module" src="assets/js/cms/editor-toolbar.js"></script>
-
-  <!-- ===============================
-       SITE (PUBLIC VIEW)
-       ✔ existing site files only
-  ================================ -->
-  <script type="module" src="assets/js/site/site.js"></script>
-  <script type="module" src="assets/js/site/site-ui.js"></script>
+  <script type="module" src="assets/js/cms/live-edit.js"></script>
 
 </body>
 </html>
