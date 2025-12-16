@@ -8,7 +8,41 @@
   padding: 16px;
 }
 
-/* Generic block */
+/* ===============================
+   GENERIC CMS BLOCK
+================================ */
+.cms-block {
+  background: #fff;
+  border: 1px dashed #ccc;
+  padding: 16px;
+  margin-bottom: 16px;
+  min-height: 40px;
+  position: relative;
+  border-radius: 12px;
+}
+
+/* Admin hover (CMS block) */
+body.admin-mode .cms-block:hover {
+  outline: 2px solid #1877f2;
+  outline-offset: 2px;
+}
+
+/* Empty block placeholder */
+.cms-block:empty::before {
+  content: "Click to edit content";
+  color: #999;
+  font-size: 13px;
+}
+
+/* Editable content */
+.cms-block [contenteditable="true"] {
+  outline: none;
+  cursor: text;
+}
+
+/* ===============================
+   LEGACY / GENERIC BLOCK
+================================ */
 .block {
   background: #fff;
   margin-bottom: 18px;
@@ -17,12 +51,15 @@
   position: relative;
 }
 
-/* Admin outline */
+/* Admin outline for old blocks */
 body.admin-mode .block {
   outline: 2px dashed rgba(24,119,242,0.4);
+  outline-offset: 2px;
 }
 
-/* Block controls (admin only) */
+/* ===============================
+   BLOCK CONTROLS (ADMIN ONLY)
+================================ */
 .block-controls {
   position: absolute;
   top: 8px;
@@ -41,13 +78,21 @@ body.admin-mode .block {
   border-radius: 4px;
 }
 
-/* Text block */
+.block-controls button:hover {
+  background: #0f5bd7;
+}
+
+/* ===============================
+   TEXT BLOCK
+================================ */
 .block-text {
   font-size: 16px;
   line-height: 1.6;
 }
 
-/* Placeholder */
+/* ===============================
+   PLACEHOLDER BLOCK
+================================ */
 .block-placeholder {
   padding: 40px;
   text-align: center;
