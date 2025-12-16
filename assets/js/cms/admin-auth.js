@@ -6,48 +6,83 @@
  *  - Admin-only access
  ***************************************************/
 
-import { adminLogin, observeAuth, auth } from "./firebase.js";
-import { signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { adminLogin, observeAuth, auth } from "./core/firebase.js";
+import { signOut } from
+  "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-/* DOM Elements */
-const loginScreen = document.getElementById("loginScreen");
-const adminPanel = document.getElementById("adminPanel");
-const loginBtn = document.getElementById("loginBtn");
+/* ================================
+   WAIT FOR DOM
+================================ */
+document.addEventListener("DOMContentLoaded", () => {
 
-/* Login button */
-loginBtn.addEventListener("click", async () => {
-  await adminLogin();
-});
+  /* DOM Elements */
+  const loginScreen = document.getElementById("loginScreen");
+  const adminPanel = document.getElementById("adminPanel");
+  const loginBtn = document.getElementById("loginBtn");
 
-/* Observe auth state */
-observeAuth((user) => {
-  if (user) {
-    loginScreen.classList.add("hidden");
-    adminPanel.classList.remove("hidden");
-  } else {
-    loginScreen.classList.remove("hidden");
-    adminPanel.classList.add("hidden");
+  if (!loginScreen || !adminPanel || !loginBtn) {
+    console.error("❌ Admin Auth DOM elements missing");
+    return;
   }
-});
 
-/* Sidebar navigation */
-document.addEventListener("click", (e) => {
-  if (e.target.matches(".sidebar li")) {
+  /* ================================
+     LOGIN BUTTON
+  ================================ */
+  loginBtn.addEventListener("click", async () => {
+    await adminLogin();
+  });
 
-    const section = e.target.dataset.section;
+  /* ================================
+     AUTH STATE OBSERVER
+  ================================ */
+  observeAuth((user) => {
+    if (user) {
+      loginScreen.classList.add("hidden");
+      adminPanel.classList.remove("hidden");
+    } else {
+      loginScreen.classList.remove("hidden");
+      adminPanel.classList.add("hidden");
+    }
+  });
 
+  /* ================================
+     SIDEBAR NAVIGATION
+  ================================ */
+  document.addEventListener("click", (e) => {
+
+    const item = e.target.closest(".sidebar li");
+    if (!item) return;
+
+    const section = item.dataset.section;
+    if (!section) return;
+
+    /* LOGOUT */
     if (section === "logout") {
-      signOut(auth);
+      signOut(auth).then(() => {
+        loginScreen.classList.remove("hidden");
+        adminPanel.classList.add("hidden");
+      });
       return;
     }
 
+    /* ACTIVE MENU */
     document.querySelectorAll(".sidebar li")
       .forEach(li => li.classList.remove("active"));
-    e.target.classList.add("active");
+    item.classList.add("active");
 
+    /* ACTIVE SECTION */
     document.querySelectorAll(".section")
       .forEach(sec => sec.classList.remove("active"));
 
-    document.getElementById(section).classList.add("active");
-  }
+    const targetSection = document.getElementById(section);
+    if (targetSection) {
+      targetSection.classList.add("active");
+    }
+  });
+
 });
+
+/* ================================
+   DEBUG
+================================ */
+console.log("🔐 Admin Auth Handler Loaded");
