@@ -254,3 +254,31 @@ body {
     font-size: 13px;
   }
 }
+
+/* =================================================
+   ADMIN LOGOUT BUTTON (🔥 FINAL ADD)
+================================================= */
+.admin-logout {
+  margin-left: 16px;
+  padding: 6px 12px;
+  border: 1px solid #e11d48;
+  background: #fff;
+  color: #e11d48;
+  font-size: 13px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.admin-logout:hover {
+  background: #fee2e2;
+}
+
+/* Visible only in admin mode */
+.admin-mode .admin-logout {
+  display: inline-block;
+}
+
+/* Utility */
+.hidden {
+  display: none !important;
+}
