@@ -2,8 +2,7 @@
  * PAGE STORE – SAFE + AUTO INIT
  ***************************************************/
 import { db } from "../core/firebase.js";
-import { getState, setState } from "./state.js";
-
+import { getState, setState } from "../core/state.js";
 import {
   doc,
   getDoc,
