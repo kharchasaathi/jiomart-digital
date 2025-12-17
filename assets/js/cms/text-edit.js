@@ -2,9 +2,9 @@
  * TEXT EDIT – PART 3
  * Handles inline editing of text blocks
  ***************************************************/
-
-import { CMS_STATE } from "./state.js";
+import { getState } from "../core/state.js";
 import { savePage } from "./page-store.js";
+if (!getState().adminMode) return;
 
 export function enableTextEditing(root) {
   if (!CMS_STATE.isAdmin) return;
