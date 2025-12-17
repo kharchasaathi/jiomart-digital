@@ -1,48 +1,27 @@
 /***************************************************
- * CMS RENDER – SAFE (ADMIN + PUBLIC)
+ * CMS RENDER – DEBUG SAFE
  ***************************************************/
 import { renderBlocks } from "./blocks.js";
 import { getState } from "./state.js";
 
-/* ---------------------------------
-   Render page safely
----------------------------------- */
 export function renderPage() {
-  const root = document.getElementById("pageRoot");
+  console.log("🧩 renderPage() called");
 
-  // ❌ Root missing = fatal layout issue
+  const root = document.getElementById("pageRoot");
   if (!root) {
-    console.error("❌ CMS Render failed: #pageRoot not found");
+    console.error("❌ #pageRoot not found");
     return;
   }
 
   const state = getState();
+  console.log("📦 State in render:", state);
 
-  // ⏳ State not ready yet
-  if (!state) {
-    console.warn("⏳ CMS Render skipped: state not ready");
+  if (!state?.page?.blocks?.length) {
+    console.warn("⚠️ No blocks to render");
     root.innerHTML = "";
     return;
   }
 
-  // 📄 Page missing
-  if (!state.page) {
-    console.warn("⚠️ CMS Render: no page in state");
-    root.innerHTML = "";
-    return;
-  }
-
-  // 🧱 Blocks missing or invalid
-  if (!Array.isArray(state.page.blocks)) {
-    console.warn("⚠️ CMS Render: invalid blocks, resetting");
-    state.page.blocks = [];
-  }
-
-  // ✅ Render
-  try {
-    renderBlocks(root);
-  } catch (err) {
-    console.error("🔥 CMS Render crashed:", err);
-    root.innerHTML = "<p style='color:red'>Render error</p>";
-  }
+  renderBlocks(root);
+  console.log("✅ Blocks rendered");
 }
