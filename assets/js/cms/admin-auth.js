@@ -1,55 +1,44 @@
 /***************************************************
- * ADMIN AUTH HANDLER – FINAL (REDIRECT SAFE)
+ * ADMIN AUTH HANDLER – FINAL (STABLE & SAFE)
  * File: assets/js/cms/admin-auth.js
  ***************************************************/
 
-import {
-  adminLogin,
-  handleAdminRedirect
-} from "../core/firebase.js";
-
+import { adminLogin, handleAdminRedirect } from "../core/firebase.js";
 import { setAdminMode } from "../core/state.js";
 
 /* ================================
    DOM
 ================================ */
-const loginScreen = document.getElementById("loginScreen");
-const adminPanel = document.getElementById("adminPanel");
 const loginBtn = document.getElementById("loginBtn");
 
 /* ================================
-   LOGIN BUTTON (START REDIRECT)
+   LOGIN BUTTON → START GOOGLE REDIRECT
 ================================ */
 if (loginBtn) {
   loginBtn.addEventListener("click", () => {
     console.log("🔐 Admin login button clicked");
-    adminLogin(); // 🔥 Google redirect starts
+    adminLogin(); // 🔥 Google redirect starts here
   });
 }
 
 /* ================================
-   HANDLE REDIRECT RESULT
-   (Runs after Google login redirect)
+   HANDLE GOOGLE REDIRECT RESULT
+   (Runs AFTER Google login)
 ================================ */
-(async function checkRedirectLogin() {
+(async function handleRedirectResult() {
   const user = await handleAdminRedirect();
 
   if (user) {
     console.log("✅ Admin login success:", user.email);
 
-    // 🔥 Enable admin mode
+    // 🔥 Enable admin mode (runtime)
     setAdminMode(true);
 
-    // 🔐 Persist admin session
+    // 🔐 Persist admin session (for public site)
     sessionStorage.setItem("ADMIN_MODE", "true");
 
-    // ✅ CORRECT REDIRECT (ADMIN → PUBLIC INDEX)
+    // 🔁 Redirect ADMIN → PUBLIC SITE
+    // admin.html → index.html
     window.location.href = "../index.html";
   }
 })();
-
-/* ================================
-   INITIAL UI STATE
-================================ */
-loginScreen?.classList.remove("hidden");
-adminPanel?.classList.add("hidden");
