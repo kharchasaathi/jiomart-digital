@@ -1,9 +1,10 @@
 /***************************************************
- * ADMIN AUTH HANDLER
+ * ADMIN AUTH HANDLER – FINAL
  * File: assets/js/cms/admin-auth.js
  ***************************************************/
 
 import { adminLogin } from "../core/firebase.js";
+import { setAdminMode } from "../core/state.js";
 
 /* DOM */
 const loginScreen = document.getElementById("loginScreen");
@@ -13,14 +14,24 @@ const loginBtn = document.getElementById("loginBtn");
 /* Login button */
 if (loginBtn) {
   loginBtn.addEventListener("click", async () => {
-    const user = await adminLogin();
-    if (user) {
-      // redirect to site editor
-      window.location.href = "index.html";
+    try {
+      const user = await adminLogin();
+
+      if (user) {
+        console.log("✅ Admin logged in");
+
+        // 🔥 THIS IS THE KEY LINE
+        setAdminMode(true);
+
+        // Redirect to site (editor + public same page)
+        window.location.href = "index.html";
+      }
+    } catch (err) {
+      console.error("❌ Admin login failed:", err);
     }
   });
 }
 
 /* Initial UI */
-loginScreen?.classList.remove("hidden");
-adminPanel?.classList.add("hidden");
+if (loginScreen) loginScreen.classList.remove("hidden");
+if (adminPanel) adminPanel.classList.add("hidden");
