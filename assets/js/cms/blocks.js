@@ -2,7 +2,7 @@
  * BLOCKS – FINAL SAFE VERSION
  ***************************************************/
 
-import { getState, isAdmin } from "./state.js";
+import { getState, isAdmin } from "../core/state.js";
 import { savePage } from "./page-store.js";
 
 let activeBlockId = null;
