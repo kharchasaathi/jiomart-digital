@@ -1,64 +1,35 @@
+
 /***************************************************
- * PUBLIC SITE UI CONTROLS – PART 5B
- * Language toggle
- * Category filter
- * Image modal
+ * SITE UI – PUBLIC & ADMIN SHARED LAYOUT
  ***************************************************/
 
-let currentLang = "en";
-let currentCategory = "all";
+export function initSiteUI() {
+  const root = document.getElementById("pageRoot");
+  if (!root) return;
 
-/* Language toggle */
-document.querySelectorAll(".lang-toggle button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".lang-toggle button").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    currentLang = btn.dataset.lang;
-    applyLanguage();
-  });
-});
+  root.innerHTML = `
+    <header class="site-header">
+      <div class="logo">JioMart Digital</div>
+      <nav class="site-nav">
+        <a href="#">Home</a>
+        <a href="#">Products</a>
+        <a href="#">Offers</a>
+        <a href="#">Contact</a>
+      </nav>
+    </header>
 
-/* Category filter */
-document.querySelectorAll(".category-filter button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".category-filter button").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    currentCategory = btn.dataset.cat;
-    filterProducts();
-  });
-});
+    <section class="hero">
+      <h1 class="hero-title">Welcome to JioMart Digital</h1>
+      <p class="hero-sub">
+        Best deals. Trusted products. Local business power.
+      </p>
+      <button class="hero-btn">Shop Now</button>
+    </section>
 
-/* Apply language */
-function applyLanguage() {
-  document.querySelectorAll(".en-text").forEach(el => {
-    el.style.display = currentLang === "en" ? "block" : "none";
-  });
-  document.querySelectorAll(".te-text").forEach(el => {
-    el.style.display = currentLang === "te" ? "block" : "none";
-  });
+    <main id="cmsContent"></main>
+
+    <footer class="site-footer">
+      © ${new Date().getFullYear()} JioMart Digital
+    </footer>
+  `;
 }
-
-/* Filter products */
-function filterProducts() {
-  document.querySelectorAll(".product-card").forEach(card => {
-    const cat = card.dataset.category;
-    card.style.display =
-      currentCategory === "all" || cat === currentCategory
-        ? "block"
-        : "none";
-  });
-}
-
-/* Image modal */
-const modal = document.getElementById("imageModal");
-const modalImg = document.getElementById("modalImg");
-const closeModal = document.getElementById("closeModal");
-
-document.addEventListener("click", (e) => {
-  if (e.target.classList.contains("product-image")) {
-    modalImg.src = e.target.src;
-    modal.classList.remove("hidden");
-  }
-});
-
-closeModal.onclick = () => modal.classList.add("hidden");
