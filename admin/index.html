@@ -3,44 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <title>Admin – JioMart Digital</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- ===============================
-       SHARED / PUBLIC STYLES
-  ================================ -->
-  <link rel="stylesheet" href="../assets/css/base.css">
-  <link rel="stylesheet" href="../assets/css/blocks.css">
-
-  <!-- ===============================
-       ADMIN ONLY STYLES
-  ================================ -->
-  <link rel="stylesheet" href="../assets/css/admin.css">
-  <link rel="stylesheet" href="../assets/css/editor.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 
-<body class="admin-mode">
+<body>
 
-  <!-- ===============================
-       ADMIN BAR
-  ================================ -->
-  <div class="admin-bar">
-    <strong>Admin Mode</strong>
-    <button id="addBlock">+ Add Block</button>
-    <button id="save">Save</button>
-    <button id="logout">Logout</button>
+  <h1>Admin Login</h1>
+
+  <button id="loginBtn">Login with Google</button>
+
+  <div id="adminPanel" class="hidden">
+    <h2>Welcome, Admin</h2>
+    <p>You are logged in.</p>
   </div>
 
-  <!-- ===============================
-       PAGE RENDER ROOT
-       (Same structure as public)
-  ================================ -->
-  <main id="pageRoot"></main>
-
-  <!-- ===============================
-       ADMIN ENTRY (ISOLATED)
-       ❌ NO public.js here
-  ================================ -->
-  <script type="module" src="../assets/js/admin.js"></script>
+  <!-- 🔐 ADMIN AUTH ONLY -->
+  <script type="module" src="../assets/js/cms/admin-auth.js"></script>
 
 </body>
 </html>
