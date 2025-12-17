@@ -23,13 +23,13 @@ const loginBtn = document.getElementById("loginBtn");
 if (loginBtn) {
   loginBtn.addEventListener("click", () => {
     console.log("🔐 Admin login button clicked");
-    adminLogin(); // 🔥 starts Google redirect
+    adminLogin(); // 🔥 Google redirect starts
   });
 }
 
 /* ================================
    HANDLE REDIRECT RESULT
-   (Runs on page load after Google login)
+   (Runs after Google login redirect)
 ================================ */
 (async function checkRedirectLogin() {
   const user = await handleAdminRedirect();
@@ -37,14 +37,14 @@ if (loginBtn) {
   if (user) {
     console.log("✅ Admin login success:", user.email);
 
-    // 🔥 ENABLE ADMIN MODE
+    // 🔥 Enable admin mode
     setAdminMode(true);
 
-    // 🔐 Persist session (page reload safe)
+    // 🔐 Persist admin session
     sessionStorage.setItem("ADMIN_MODE", "true");
 
-    // 🔁 Redirect to editor (same site index)
-    window.location.href = "index.html";
+    // ✅ CORRECT REDIRECT (ADMIN → PUBLIC INDEX)
+    window.location.href = "../index.html";
   }
 })();
 
