@@ -1,5 +1,6 @@
 /***************************************************
  * BLOCKS – FINAL SAFE + STABLE VERSION
+ * File: assets/js/cms/blocks.js
  ***************************************************/
 
 import { getState, isAdmin } from "../core/state.js";
@@ -7,9 +8,9 @@ import { savePage } from "./page-store.js";
 
 let activeBlockId = null;
 
-/**
- * Render all blocks safely
- */
+/* =================================================
+   RENDER ALL BLOCKS
+================================================= */
 export function renderBlocks(container) {
   if (!container) {
     console.warn("❌ renderBlocks: container missing");
@@ -25,7 +26,7 @@ export function renderBlocks(container) {
     return;
   }
 
-  // 🧠 First-time page → auto create blocks
+  /* First-time page → auto create blocks */
   if (!Array.isArray(page.blocks) || page.blocks.length === 0) {
     page.blocks = createDefaultBlocks();
   }
@@ -33,24 +34,28 @@ export function renderBlocks(container) {
   container.innerHTML = "";
 
   page.blocks.forEach(block => {
-    if (block.type === "text") {
-      const el = renderTextBlock(block);
-      container.appendChild(el);
+    switch (block.type) {
+      case "text":
+        container.appendChild(renderTextBlock(block));
+        break;
+      default:
+        console.warn("⚠️ Unknown block type:", block.type);
     }
   });
 
   console.log("✅ Blocks rendered");
 }
 
-/**
- * Render a text block
- */
+/* =================================================
+   TEXT BLOCK
+================================================= */
 function renderTextBlock(block) {
   const div = document.createElement("div");
+
   div.className = "cms-text-block";
   div.dataset.blockId = block.id;
 
-  // 🔐 HARD SAFETY
+  /* HARD SAFETY */
   if (!block.data) block.data = {};
   if (!block.data.html || block.data.html.trim() === "") {
     block.data.html = getDefaultHTML();
@@ -58,10 +63,16 @@ function renderTextBlock(block) {
 
   div.innerHTML = block.data.html;
 
-  // ✏️ Admin live editing
+  /* ===== ADMIN LIVE EDITING ===== */
   if (isAdmin()) {
-    div.contentEditable = "true";
+    div.setAttribute("contenteditable", "true");
+    div.setAttribute("spellcheck", "true");
     div.classList.add("editable");
+
+    /* 🔥 CRITICAL FIXES (cursor + typing + selection) */
+    div.style.pointerEvents = "auto";
+    div.style.userSelect = "text";
+    div.style.caretColor = "#000";
 
     div.addEventListener("focus", () => {
       activeBlockId = block.id;
@@ -70,14 +81,18 @@ function renderTextBlock(block) {
     div.addEventListener("input", () => {
       updateBlock(block.id, div.innerHTML);
     });
+
+    div.addEventListener("blur", () => {
+      activeBlockId = null;
+    });
   }
 
   return div;
 }
 
-/**
- * Update block content in state
- */
+/* =================================================
+   UPDATE BLOCK DATA IN STATE
+================================================= */
 function updateBlock(blockId, html) {
   const state = getState();
   if (!state.page || !Array.isArray(state.page.blocks)) return;
@@ -88,9 +103,9 @@ function updateBlock(blockId, html) {
   block.data.html = html;
 }
 
-/**
- * Default blocks for new page
- */
+/* =================================================
+   DEFAULT BLOCKS (FIRST PAGE)
+================================================= */
 function createDefaultBlocks() {
   return [
     {
@@ -120,16 +135,16 @@ function createDefaultBlocks() {
   ];
 }
 
-/**
- * Default fallback HTML
- */
+/* =================================================
+   FALLBACK HTML
+================================================= */
 function getDefaultHTML() {
   return `<p>Edit this text</p>`;
 }
 
-/**
- * Save handler (toolbar / shortcut)
- */
+/* =================================================
+   SAVE HANDLER (GLOBAL)
+================================================= */
 document.addEventListener("cms-save", async () => {
   const state = getState();
   if (!state.page) return;
