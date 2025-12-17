@@ -1,21 +1,25 @@
 /***************************************************
- * PUBLIC ENTRY – SINGLE RENDER SOURCE
+ * PUBLIC ENTRY – SINGLE RENDER SOURCE (ADMIN SAFE)
  ***************************************************/
 import { loadPage } from "../cms/page-store.js";
 import { renderPage } from "../cms/render.js";
-import { setAdminMode } from "../core/state.js";
 
 console.log("🚀 Public entry loaded");
 
-// Always public mode
-setAdminMode(false);
-
 (async function initPublic() {
-  console.log("📥 Loading page: home");
-  await loadPage("home");
+  try {
+    console.log("📥 Loading page: home");
 
-  console.log("🎨 Rendering page");
-  renderPage();
+    // Load page data from Firestore
+    await loadPage("home");
 
-  console.log("✅ Public page ready");
+    console.log("🎨 Rendering page");
+
+    // Render page (adminMode depends on state, NOT forced here)
+    renderPage();
+
+    console.log("✅ Public page ready");
+  } catch (err) {
+    console.error("❌ Public init failed:", err);
+  }
 })();
