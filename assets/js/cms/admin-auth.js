@@ -14,24 +14,23 @@ const loginBtn = document.getElementById("loginBtn");
 /* Login button */
 if (loginBtn) {
   loginBtn.addEventListener("click", async () => {
-    try {
-      const user = await adminLogin();
+    const user = await adminLogin();
 
-      if (user) {
-        console.log("✅ Admin logged in");
+    if (user) {
+      console.log("✅ Admin login success");
 
-        // 🔥 THIS IS THE KEY LINE
-        setAdminMode(true);
+      // 🔥 SET ADMIN MODE
+      setAdminMode(true);
 
-        // Redirect to site (editor + public same page)
-        window.location.href = "index.html";
-      }
-    } catch (err) {
-      console.error("❌ Admin login failed:", err);
+      // persist admin session
+      sessionStorage.setItem("ADMIN_MODE", "true");
+
+      // redirect to editor (same index page)
+      window.location.href = "index.html";
     }
   });
 }
 
 /* Initial UI */
-if (loginScreen) loginScreen.classList.remove("hidden");
-if (adminPanel) adminPanel.classList.add("hidden");
+loginScreen?.classList.remove("hidden");
+adminPanel?.classList.add("hidden");
