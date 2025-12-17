@@ -1,10 +1,10 @@
 /***************************************************
- * CMS RENDER – SINGLE RENDER FUNCTION (FINAL)
+ * CMS RENDER – SINGLE RENDER FUNCTION (SAFE FINAL)
  ***************************************************/
 
 import { renderBlocks } from "./blocks.js";
-import { getState } from "../core/state.js"; // ✅ FIXED PATH
-import { initEditorToolbar } from "./editor-toolbar.js"; // ✅ ADD THIS
+import { getState } from "../core/state.js";
+import { initEditorToolbar } from "./editor-toolbar.js";
 
 export function renderPage() {
   console.log("🧩 renderPage() called");
@@ -29,9 +29,11 @@ export function renderPage() {
   // 🧱 Render CMS blocks
   renderBlocks(root);
 
-  // ✏️ ADMIN TOOLBAR INIT (AFTER BLOCKS EXIST)
+  // ✏️ ADMIN TOOLBAR INIT (ONLY ONCE)
   if (state.adminMode === true) {
-    initEditorToolbar();
-    console.log("🛠️ Admin editor toolbar initialized");
+    if (!document.getElementById("cms-toolbar")) {
+      initEditorToolbar();
+      console.log("🛠️ Admin editor toolbar initialized");
+    }
   }
 }
