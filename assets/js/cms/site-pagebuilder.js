@@ -4,7 +4,7 @@
  * - JS execution break కాదు
  ***************************************************/
 
-import { getState } from "../cms/state.js";
+import { getState } from "../core/state.js";
 import { db } from "./firebase.js";
 
 import {
