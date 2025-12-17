@@ -26,7 +26,10 @@ onAuthStateChanged(auth, async (user) => {
 
   await loadPage("home");
 
+ (async () => {
+  await loadPage("home");
   renderPage();
+})();
 
   console.log("✅ Admin page rendered");
 });
