@@ -1,20 +1,22 @@
-/***************************************************
- * ADMIN SESSION SYNC
- * File: assets/js/cms/admin-session.js
- ***************************************************/
-
 import { onAuthChange } from "../core/firebase.js";
 import { setAdminMode } from "../core/state.js";
 
-const ADMIN_EMAIL = "abidalimohammad94@gmail.com";
+console.log("🛡 admin-session.js loaded");
 
 onAuthChange((user) => {
-  if (user && user.email === ADMIN_EMAIL) {
-    console.log("🛡 Admin session detected");
+  if (user) {
+    console.log("✅ Admin session detected:", user.email);
+
     setAdminMode(true);
     document.body.classList.add("admin-mode");
+
+    sessionStorage.setItem("ADMIN_MODE", "true");
   } else {
+    console.log("ℹ️ No admin session");
+
     setAdminMode(false);
     document.body.classList.remove("admin-mode");
+
+    sessionStorage.removeItem("ADMIN_MODE");
   }
 });
