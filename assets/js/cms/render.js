@@ -1,27 +1,18 @@
-/***************************************************
- * CMS RENDER – DEBUG SAFE
- ***************************************************/
-import { renderBlocks } from "./blocks.js";
-import { getState } from "../core/state.js";
 
 export function renderPage() {
   console.log("🧩 renderPage() called");
 
   const root = document.getElementById("pageRoot");
-  if (!root) {
-    console.error("❌ #pageRoot not found");
-    return;
-  }
+  if (!root) return;
 
   const state = getState();
-  console.log("📦 State in render:", state);
+  if (!state.page) return;
 
-  if (!state?.page?.blocks?.length) {
-    console.warn("⚠️ No blocks to render");
+  // clear ONLY first time
+  if (!root.dataset.rendered) {
     root.innerHTML = "";
-    return;
+    root.dataset.rendered = "true";
   }
 
   renderBlocks(root);
-  console.log("✅ Blocks rendered");
 }
