@@ -5,7 +5,9 @@
   <title>JioMart Digital</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <!-- Shared styles -->
+  <!-- ===============================
+       SHARED STYLES
+  ================================ -->
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/blocks.css">
   <link rel="stylesheet" href="assets/css/site.css">
@@ -39,13 +41,19 @@
   <div id="pageRoot"></div>
 
   <!-- ===============================
-       PUBLIC ENTRY (CMS RENDER)
+       PUBLIC ENTRY (PAGE LOAD + RENDER)
   ================================ -->
   <script type="module" src="assets/js/site/public.js"></script>
 
   <!-- ===============================
+       ADMIN SESSION SYNC (🔥 IMPORTANT)
+       → Detects Firebase login
+       → Sets adminMode = true
+  ================================ -->
+  <script type="module" src="assets/js/cms/admin-session.js"></script>
+
+  <!-- ===============================
        ADMIN LOGOUT HANDLER
-       (runs only if adminMode = true)
   ================================ -->
   <script type="module" src="assets/js/cms/admin-logout.js"></script>
 
