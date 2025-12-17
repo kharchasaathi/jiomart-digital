@@ -25,7 +25,7 @@
       <a href="#">Home</a>
       <a href="#">Products</a>
 
-      <!-- ADMIN ONLY -->
+      <!-- ADMIN ONLY (shown via admin-session.js) -->
       <button
         id="adminLogoutBtn"
         class="admin-logout hidden"
@@ -41,23 +41,25 @@
   <div id="pageRoot"></div>
 
   <!-- ===============================
-       PUBLIC ENTRY (PAGE LOAD + RENDER)
+       🌍 PUBLIC ENTRY
        → Loads page data
        → Calls renderPage()
   ================================ -->
   <script type="module" src="assets/js/site/public.js"></script>
 
   <!-- ===============================
-       ADMIN SESSION SYNC (🔥 CRITICAL)
-       → Detects Firebase login
+       🔐 ADMIN SESSION SYNC (CRITICAL)
+       → Reads sessionStorage
+       → Listens Firebase auth
        → Sets adminMode = true
        → Adds .admin-mode to <body>
   ================================ -->
   <script type="module" src="assets/js/cms/admin-session.js"></script>
 
   <!-- ===============================
-       ADMIN LOGOUT HANDLER
-       → Handles Logout button click
+       🚪 ADMIN LOGOUT HANDLER
+       → Handles Logout button
+       → Clears session
   ================================ -->
   <script type="module" src="assets/js/cms/admin-logout.js"></script>
 
