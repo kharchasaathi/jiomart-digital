@@ -2,7 +2,7 @@
  * CMS RENDER – DEBUG SAFE
  ***************************************************/
 import { renderBlocks } from "./blocks.js";
-import { getState } from "./state.js";
+import { getState } from "../core/state.js";
 
 export function renderPage() {
   console.log("🧩 renderPage() called");
