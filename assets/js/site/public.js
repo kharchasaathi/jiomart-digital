@@ -1,19 +1,44 @@
 /***************************************************
- * PUBLIC ENTRY – FIXED PATHS
+ * PUBLIC ENTRY – SINGLE, CLEAN, STABLE
+ * This is the ONLY entry for public site
  ***************************************************/
+
+/* CMS */
 import { loadPage } from "../cms/page-store.js";
 import { renderPage } from "../cms/render.js";
+
+/* CORE STATE */
 import { setAdminMode } from "../core/state.js";
+
+/* SITE UI (Header, Footer, Layout) */
+import { initSiteUI } from "./site-ui.js";
 
 console.log("🚀 Public entry loaded");
 
-// Force public mode
+/* -------------------------------------------------
+ * FORCE PUBLIC MODE
+ * ------------------------------------------------- */
 setAdminMode(false);
 
-(async function initPublic() {
-  console.log("📥 Loading page: home");
-  await loadPage("home");
+/* -------------------------------------------------
+ * INIT STATIC SITE UI
+ * (Header / Footer / Containers)
+ * ------------------------------------------------- */
+initSiteUI();
 
-  console.log("🎨 Rendering page");
-  renderPage();
+/* -------------------------------------------------
+ * LOAD + RENDER PAGE
+ * ------------------------------------------------- */
+(async function initPublic() {
+  try {
+    console.log("📥 Loading page: home");
+    await loadPage("home");
+
+    console.log("🎨 Rendering page");
+    renderPage();
+
+    console.log("✅ Public page ready");
+  } catch (err) {
+    console.error("❌ Public init failed", err);
+  }
 })();
