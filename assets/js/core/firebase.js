@@ -1,11 +1,13 @@
 /***************************************************
- * JIOMART DIGITAL – CMS FOUNDATION (CLEAN)
+ * JIOMART DIGITAL – CMS FOUNDATION (FINAL)
  * File: assets/js/core/firebase.js
  *
- * Purpose:
+ * Features:
  *  - Safe Firebase initialization
- *  - Google Auth login helper (NO state observer)
+ *  - Google Auth (REDIRECT – popup free)
+ *  - Admin email restriction
  *  - Firestore & Storage access
+ *  - Logout support
  ***************************************************/
 
 /* ================================
@@ -17,8 +19,10 @@ import { initializeApp, getApps, getApp } from
 import {
   getAuth,
   GoogleAuthProvider,
-  signInWithPopup,
-  signOut
+  signInWithRedirect,
+  getRedirectResult,
+  signOut,
+  onAuthStateChanged
 } from
   "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
@@ -63,18 +67,32 @@ const ADMIN_EMAIL = "abidalimohammad94@gmail.com";
    GOOGLE AUTH PROVIDER
 ================================ */
 const provider = new GoogleAuthProvider();
-provider.setCustomParameters({ prompt: "select_account" });
+provider.setCustomParameters({
+  prompt: "select_account"
+});
 
 /* ================================
-   ADMIN LOGIN (NO STATE LOGIC)
+   ADMIN LOGIN (REDIRECT SAFE)
 ================================ */
-async function adminLogin() {
+function adminLogin() {
+  console.log("🔐 Redirecting to Google login...");
+  return signInWithRedirect(auth, provider);
+}
+
+/* ================================
+   HANDLE LOGIN REDIRECT RESULT
+================================ */
+async function handleAdminRedirect() {
   try {
-    const result = await signInWithPopup(auth, provider);
+    const result = await getRedirectResult(auth);
+
+    if (!result || !result.user) return null;
+
     const user = result.user;
 
+    // 🔒 Admin email check
     if (user.email !== ADMIN_EMAIL) {
-      alert("❌ Access Denied");
+      alert("❌ Access denied");
       await signOut(auth);
       return null;
     }
@@ -83,10 +101,24 @@ async function adminLogin() {
     return user;
 
   } catch (err) {
-    console.error("❌ Login failed:", err);
-    alert("Login failed");
+    console.error("❌ Redirect login failed:", err);
     return null;
   }
+}
+
+/* ================================
+   LOGOUT
+================================ */
+function adminLogout() {
+  console.log("🚪 Admin logout");
+  return signOut(auth);
+}
+
+/* ================================
+   AUTH STATE LISTENER
+================================ */
+function onAuthChange(callback) {
+  return onAuthStateChanged(auth, callback);
 }
 
 /* ================================
@@ -96,10 +128,13 @@ export {
   auth,
   db,
   storage,
-  adminLogin
+  adminLogin,
+  handleAdminRedirect,
+  adminLogout,
+  onAuthChange
 };
 
 /* ================================
    DEBUG
 ================================ */
-console.log("🔥 Firebase CMS Foundation Loaded (CLEAN)");
+console.log("🔥 Firebase CMS Foundation Loaded (FINAL)");
