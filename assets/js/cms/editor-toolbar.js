@@ -3,7 +3,7 @@
  * Inline rich text editor
  ***************************************************/
 
-import { isAdmin } from "./state.js";
+import { isAdmin } from "../core/state.js";
 
 let toolbarCreated = false;
 
