@@ -1,26 +1,20 @@
-/***************************************************
- * ADMIN LOGOUT HANDLER
- ***************************************************/
-import { signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { auth } from "../core/firebase.js";
+import { adminLogout } from "../core/firebase.js";
 import { setAdminMode } from "../core/state.js";
 
-document.addEventListener("DOMContentLoaded", () => {
-  const btn = document.getElementById("adminLogoutBtn");
-  if (!btn) return;
+const logoutBtn = document.getElementById("adminLogoutBtn");
 
-  btn.addEventListener("click", async () => {
-    const confirmLogout = confirm("Logout from admin?");
-    if (!confirmLogout) return;
+if (!logoutBtn) {
+  console.log("ℹ️ No logout button found");
+  return;
+}
 
-    await signOut(auth);
+logoutBtn.addEventListener("click", async () => {
+  console.log("🚪 Admin logout clicked");
 
-    // 🔐 Reset CMS state
-    setAdminMode(false);
+  await adminLogout();
 
-    console.log("🚪 Admin logged out");
+  sessionStorage.removeItem("ADMIN_MODE");
+  setAdminMode(false);
 
-    // 🔄 Reload public site
-    window.location.reload();
-  });
+  window.location.reload(); // back to public mode
 });
