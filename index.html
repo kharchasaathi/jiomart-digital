@@ -13,10 +13,41 @@
 
 <body>
 
+  <!-- ===============================
+       SITE HEADER (PUBLIC + ADMIN)
+  ================================ -->
+  <header class="site-header">
+    <div class="logo">JioMart Digital</div>
+
+    <nav class="site-nav">
+      <a href="#">Home</a>
+      <a href="#">Products</a>
+
+      <!-- ADMIN ONLY -->
+      <button
+        id="adminLogoutBtn"
+        class="admin-logout hidden"
+        type="button">
+        Logout
+      </button>
+    </nav>
+  </header>
+
+  <!-- ===============================
+       CMS PAGE ROOT
+  ================================ -->
   <div id="pageRoot"></div>
 
-  <!-- ✅ PUBLIC ENTRY ONLY (FIXED PATH) -->
+  <!-- ===============================
+       PUBLIC ENTRY (CMS RENDER)
+  ================================ -->
   <script type="module" src="assets/js/site/public.js"></script>
+
+  <!-- ===============================
+       ADMIN LOGOUT HANDLER
+       (runs only if adminMode = true)
+  ================================ -->
+  <script type="module" src="assets/js/cms/admin-logout.js"></script>
 
 </body>
 </html>
