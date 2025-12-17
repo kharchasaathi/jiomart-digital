@@ -1,13 +1,13 @@
 /***************************************************
- * PUBLIC ENTRY – GUARANTEED RENDER
+ * PUBLIC ENTRY – FIXED PATHS
  ***************************************************/
-import { loadPage } from "./cms/page-store.js";
-import { renderPage } from "./cms/render.js";
-import { setAdminMode } from "./cms/state.js";
+import { loadPage } from "../cms/page-store.js";
+import { renderPage } from "../cms/render.js";
+import { setAdminMode } from "../cms/state.js";
 
 console.log("🚀 Public entry loaded");
 
-// 🔒 Force public mode
+// Force public mode
 setAdminMode(false);
 
 (async function initPublic() {
