@@ -1,54 +1,82 @@
 /***************************************************
- * EDITOR TOOLBAR – PART 4
- * Inline rich text editor
+ * FLOATING TEXT EDITOR TOOLBAR – PHASE 2A
  ***************************************************/
-
 import { isAdmin } from "../core/state.js";
 
-let toolbarCreated = false;
+let toolbar;
 
-export function initToolbar() {
-  if (toolbarCreated || !isAdmin()) return;
-  toolbarCreated = true;
+/* Create toolbar once */
+function createToolbar() {
+  toolbar = document.createElement("div");
+  toolbar.id = "cms-toolbar";
 
-  const bar = document.createElement("div");
-  bar.id = "editorToolbar";
-
-  bar.innerHTML = `
+  toolbar.innerHTML = `
     <button data-cmd="bold"><b>B</b></button>
+    <button data-cmd="italic"><i>I</i></button>
     <button data-cmd="underline"><u>U</u></button>
 
-    <input type="color" data-cmd="foreColor" title="Text Color">
+    <input type="color" id="textColor" title="Text Color" />
 
-    <select data-cmd="fontName">
-      <option value="Poppins">Poppins</option>
-      <option value="Roboto">Roboto</option>
-      <option value="Inter">Inter</option>
-      <option value="Lato">Lato</option>
-      <option value="Noto Sans Telugu">Noto Sans Telugu</option>
-      <option value="Mandali">Mandali</option>
+    <select id="fontSize">
+      <option value="14px">14</option>
+      <option value="16px" selected>16</option>
+      <option value="18px">18</option>
+      <option value="22px">22</option>
+      <option value="28px">28</option>
     </select>
-
-    <button id="saveText">💾 Save</button>
   `;
 
-  document.body.appendChild(bar);
+  document.body.appendChild(toolbar);
 
-  bar.addEventListener("change", handleCommand);
-  bar.addEventListener("click", handleCommand);
+  /* Commands */
+  toolbar.addEventListener("click", e => {
+    const cmd = e.target.closest("button")?.dataset.cmd;
+    if (cmd) document.execCommand(cmd, false, null);
+  });
 
-  bar.querySelector("#saveText").onclick = () => {
-    document.dispatchEvent(new Event("cms-save"));
-  };
+  /* Color */
+  toolbar.querySelector("#textColor").addEventListener("input", e => {
+    document.execCommand("foreColor", false, e.target.value);
+  });
+
+  /* Font size */
+  toolbar.querySelector("#fontSize").addEventListener("change", e => {
+    document.execCommand("fontSize", false, "7");
+
+    const fonts = document.getElementsByTagName("font");
+    for (let font of fonts) {
+      if (font.size === "7") {
+        font.removeAttribute("size");
+        font.style.fontSize = e.target.value;
+      }
+    }
+  });
 }
 
-function handleCommand(e) {
-  const cmd = e.target.dataset.cmd;
-  if (!cmd) return;
+/* Position toolbar near selection */
+function positionToolbar() {
+  const selection = window.getSelection();
+  if (!selection.rangeCount) return;
 
-  if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") {
-    document.execCommand(cmd, false, e.target.value);
-  } else {
-    document.execCommand(cmd, false, null);
-  }
+  const rect = selection.getRangeAt(0).getBoundingClientRect();
+  toolbar.style.top = `${rect.top - 48 + window.scrollY}px`;
+  toolbar.style.left = `${rect.left}px`;
+}
+
+/* Init */
+export function initEditorToolbar() {
+  if (!isAdmin()) return;
+
+  if (!toolbar) createToolbar();
+
+  document.addEventListener("selectionchange", () => {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed) {
+      toolbar.style.display = "none";
+      return;
+    }
+
+    toolbar.style.display = "flex";
+    positionToolbar();
+  });
 }
