@@ -1,18 +1,28 @@
+/***************************************************
+ * CMS RENDER – SINGLE RENDER FUNCTION
+ ***************************************************/
+import { renderBlocks } from "./blocks.js";
+import { getState } from "../core/state.js"; // ✅ FIXED PATH
 
 export function renderPage() {
   console.log("🧩 renderPage() called");
 
   const root = document.getElementById("pageRoot");
-  if (!root) return;
+  if (!root) {
+    console.warn("❌ #pageRoot not found");
+    return;
+  }
 
   const state = getState();
-  if (!state.page) return;
+  console.log("📦 State in render:", state);
 
-  // clear ONLY first time
-  if (!root.dataset.rendered) {
-    root.innerHTML = "";
-    root.dataset.rendered = "true";
+  if (!state.page || !Array.isArray(state.page.blocks)) {
+    console.warn("⚠️ No page data");
+    return;
   }
+
+  // clear only first render
+  root.innerHTML = "";
 
   renderBlocks(root);
 }
