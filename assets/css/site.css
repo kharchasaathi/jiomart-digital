@@ -1,6 +1,7 @@
 /***************************************************
  * SITE UI – PROFESSIONAL E-COMMERCE BASE
  * JioMart / Flipkart inspired
+ * CMS EDIT SAFE – FINAL
  ***************************************************/
 
 /* ========== ROOT THEME (EDITABLE LATER) ========== */
@@ -105,15 +106,27 @@ body {
   margin: auto;
 }
 
-/* ========== CMS TEXT BLOCKS ========== */
+/* =================================================
+   CMS TEXT BLOCK – EDIT FIX (🔥 CRITICAL)
+================================================= */
+
 .cms-text-block {
   background: var(--surface);
+  border-radius: var(--radius);
   padding: 20px 22px;
   margin-bottom: 18px;
-  border-radius: var(--radius);
+  font-size: 15px;
+  line-height: 1.6;
   border: 1px solid var(--border);
+  cursor: text;
+
+  /* 🔥 REQUIRED FOR EDITING */
+  pointer-events: auto;
+  user-select: text;
+  caret-color: #000;
 }
 
+/* HEADINGS */
 .cms-text-block h1 {
   font-size: 28px;
   margin-bottom: 10px;
@@ -124,19 +137,36 @@ body {
   margin-bottom: 8px;
 }
 
-.cms-text-block p {
+.cms-text-block p,
+.cms-text-block li {
   font-size: 15px;
   color: #333;
 }
 
-/* ========== ADMIN MODE ========== */
-.admin-mode .cms-text-block {
+/* ===============================
+   ADMIN MODE VISUALS
+================================ */
+
+.admin-mode .cms-text-block.editable {
   outline: 2px dashed var(--primary);
-  cursor: text;
+  outline-offset: 2px;
 }
 
-.admin-mode .cms-text-block:focus {
+.admin-mode .cms-text-block.editable:focus {
   outline: 2px solid var(--primary);
+  background: #ffffff;
+}
+
+/* CARET + FOCUS FIX */
+.cms-text-block:focus {
+  outline: none;
+  caret-color: #000;
+}
+
+/* 🔥 PREVENT PARENT LOCKING EDIT */
+#pageRoot,
+#pageRoot * {
+  pointer-events: auto;
 }
 
 /* ========== PRODUCT GRID (FUTURE READY) ========== */
