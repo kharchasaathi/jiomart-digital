@@ -42,18 +42,22 @@
 
   <!-- ===============================
        PUBLIC ENTRY (PAGE LOAD + RENDER)
+       → Loads page data
+       → Calls renderPage()
   ================================ -->
   <script type="module" src="assets/js/site/public.js"></script>
 
   <!-- ===============================
-       ADMIN SESSION SYNC (🔥 IMPORTANT)
+       ADMIN SESSION SYNC (🔥 CRITICAL)
        → Detects Firebase login
        → Sets adminMode = true
+       → Adds .admin-mode to <body>
   ================================ -->
   <script type="module" src="assets/js/cms/admin-session.js"></script>
 
   <!-- ===============================
        ADMIN LOGOUT HANDLER
+       → Handles Logout button click
   ================================ -->
   <script type="module" src="assets/js/cms/admin-logout.js"></script>
 
