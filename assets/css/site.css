@@ -109,7 +109,6 @@ body {
 /* =================================================
    CMS TEXT BLOCK – EDIT FIX (🔥 CRITICAL)
 ================================================= */
-
 .cms-text-block {
   background: var(--surface);
   border-radius: var(--radius);
@@ -146,7 +145,6 @@ body {
 /* ===============================
    ADMIN MODE VISUALS
 ================================ */
-
 .admin-mode .cms-text-block.editable {
   outline: 2px dashed var(--primary);
   outline-offset: 2px;
@@ -167,6 +165,39 @@ body {
 #pageRoot,
 #pageRoot * {
   pointer-events: auto;
+}
+
+/* =================================================
+   CMS FLOATING TOOLBAR – PHASE 2A
+================================================= */
+#cms-toolbar {
+  position: absolute;
+  display: none;
+  gap: 6px;
+  padding: 6px;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  z-index: 9999;
+}
+
+#cms-toolbar button {
+  padding: 4px 6px;
+  border: none;
+  background: #f3f4f6;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#cms-toolbar button:hover {
+  background: #e5e7eb;
+}
+
+#cms-toolbar select,
+#cms-toolbar input[type="color"] {
+  height: 28px;
+  border: 1px solid #ccc;
 }
 
 /* ========== PRODUCT GRID (FUTURE READY) ========== */
