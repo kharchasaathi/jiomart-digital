@@ -6,6 +6,7 @@
  * ✔ Admin = MODE (not URL)
  * ✔ Google Auth (Redirect – popup free)
  * ✔ Admin email restriction
+ * ✔ Auth state based (NO race condition)
  * ✔ Firestore + Storage ready
  ***************************************************/
 
@@ -19,7 +20,6 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithRedirect,
-  getRedirectResult,
   signOut,
   onAuthStateChanged
 } from
@@ -79,43 +79,14 @@ function adminLogin() {
 }
 
 /* ================================
-   HANDLE REDIRECT RESULT
-================================ */
-async function handleAdminRedirect() {
-  try {
-    const result = await getRedirectResult(auth);
-
-    if (!result || !result.user) return null;
-
-    const user = result.user;
-
-    // 🔒 Email restriction
-    if (user.email !== ADMIN_EMAIL) {
-      alert("❌ Access denied");
-      await signOut(auth);
-      return null;
-    }
-
-    console.log("✅ Admin authenticated:", user.email);
-
-    // ✅ Admin MODE only (NO redirect)
-    localStorage.setItem("ADMIN_MODE", "true");
-
-    return user;
-
-  } catch (err) {
-    console.error("❌ Redirect login error:", err);
-    return null;
-  }
-}
-
-/* ================================
-   AUTH STATE LISTENER
+   AUTH STATE LISTENER (🔥 CORE)
+   ✔ ONLY SOURCE OF TRUTH
 ================================ */
 function onAuthChange(callback) {
   return onAuthStateChanged(auth, (user) => {
+
     if (user && user.email === ADMIN_EMAIL) {
-      console.log("🔐 Admin session active");
+      console.log("✅ Admin session active:", user.email);
       localStorage.setItem("ADMIN_MODE", "true");
     } else {
       console.log("👁 Public session");
@@ -145,7 +116,6 @@ export {
   db,
   storage,
   adminLogin,
-  handleAdminRedirect,
   adminLogout,
   onAuthChange
 };
@@ -153,4 +123,4 @@ export {
 /* ================================
    DEBUG
 ================================ */
-console.log("🔥 Firebase CMS Foundation Loaded (FINAL)");
+console.log("🔥 Firebase CMS Foundation Loaded (FINAL & CLEAN)");
