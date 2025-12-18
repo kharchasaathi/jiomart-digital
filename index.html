@@ -49,34 +49,28 @@
   <div id="pageRoot"></div>
 
   <!-- =================================================
-       1️⃣ PUBLIC ENTRY
-       → Loads page data
-       → Calls initial renderPage()
+       ✅ SCRIPT LOAD ORDER (VERY IMPORTANT)
+       → Firebase first
+       → Auth
+       → Session sync
+       → Logout
+       → Public render LAST
   ================================================== -->
-  <script type="module" src="assets/js/site/public.js"></script>
 
-  <!-- =================================================
-       2️⃣ ADMIN SESSION SYNC (🔥 CORE LOGIC)
-       → Restores admin session
-       → Syncs Firebase auth
-       → Toggles Login / Logout buttons
-       → Sets adminMode
-  ================================================== -->
+  <!-- 1️⃣ Firebase core + auth -->
+  <script type="module" src="assets/js/core/firebase.js"></script>
+
+  <!-- 2️⃣ Admin login (button click + redirect result) -->
+  <script type="module" src="assets/js/cms/admin-auth.js"></script>
+
+  <!-- 3️⃣ Admin session sync (🔥 sets adminMode + dispatch event) -->
   <script type="module" src="assets/js/cms/admin-session.js"></script>
 
-  <!-- =================================================
-       3️⃣ ADMIN LOGOUT HANDLER
-       → Clears session
-       → Returns to public mode
-  ================================================== -->
+  <!-- 4️⃣ Admin logout handler -->
   <script type="module" src="assets/js/cms/admin-logout.js"></script>
 
-  <!-- =================================================
-       4️⃣ ADMIN LOGIN HANDLER
-       → Attaches click to Admin Login button
-       → Calls Firebase Google Redirect login
-  ================================================== -->
-  <script type="module" src="assets/js/cms/admin-auth.js"></script>
+  <!-- 5️⃣ Public entry (🔥 renderPage runs here, LAST) -->
+  <script type="module" src="assets/js/site/public.js"></script>
 
 </body>
 </html>
