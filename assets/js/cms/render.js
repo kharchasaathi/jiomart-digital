@@ -1,5 +1,5 @@
 /***************************************************
- * CMS RENDER – SINGLE RENDER FUNCTION (FINAL FIXED)
+ * CMS RENDER – SINGLE RENDER FUNCTION (FINAL)
  ***************************************************/
 
 import { renderBlocks } from "./blocks.js";
@@ -18,7 +18,9 @@ export function renderPage() {
   const state = getState();
   console.log("📦 State in render:", state);
 
-  // 🔄 Clear root ALWAYS
+  /* ===============================
+     RESET ROOT
+  ================================ */
   root.innerHTML = "";
 
   /* ===============================
@@ -32,12 +34,20 @@ export function renderPage() {
   }
 
   /* ===============================
-     ADMIN TOOLBAR (SEPARATE LOGIC)
+     ADMIN TOOLBAR
   ================================ */
+  const toolbar = document.getElementById("cms-toolbar");
+
   if (state.adminMode === true) {
-    if (!document.getElementById("cms-toolbar")) {
+    if (!toolbar) {
       initEditorToolbar();
       console.log("🛠️ Admin editor toolbar initialized");
+    }
+  } else {
+    // 🔥 CLEANUP ON LOGOUT
+    if (toolbar) {
+      toolbar.remove();
+      console.log("🧹 Admin toolbar removed");
     }
   }
 }
