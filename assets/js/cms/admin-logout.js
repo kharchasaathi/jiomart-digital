@@ -1,17 +1,36 @@
+/***************************************************
+ * ADMIN LOGOUT HANDLER – FINAL (LOCALSTORAGE)
+ * File: assets/js/cms/admin-logout.js
+ ***************************************************/
+
 import { adminLogout } from "../core/firebase.js";
 import { setAdminMode } from "../core/state.js";
 
 const logoutBtn = document.getElementById("adminLogoutBtn");
 
-if (logoutBtn) {
+if (!logoutBtn) {
+  console.log("ℹ️ adminLogoutBtn not found");
+} else {
   logoutBtn.addEventListener("click", async () => {
     console.log("🚪 Admin logout clicked");
 
-    await adminLogout();
+    try {
+      // 🔐 Firebase logout
+      await adminLogout();
+    } catch (err) {
+      console.warn("⚠️ Firebase logout failed / already logged out", err);
+    }
 
-    sessionStorage.removeItem("ADMIN_MODE");
+    // 🧹 CLEAR ADMIN SESSION (SOURCE OF TRUTH)
+    localStorage.removeItem("ADMIN_MODE");
+
+    // 🔻 UPDATE STATE
     setAdminMode(false);
+    document.body.classList.remove("admin-mode");
 
-    window.location.href = "../index.html";
+    console.log("✅ Admin session cleared");
+
+    // 🔁 Reload SAME public page (clean state)
+    window.location.reload();
   });
 }
