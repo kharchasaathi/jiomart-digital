@@ -1,3 +1,6 @@
+/***************************************************
+ * FIREBASE – EMAIL/PASSWORD ONLY (FINAL & STABLE)
+ ***************************************************/
 import { initializeApp, getApps, getApp } from
   "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 
@@ -15,7 +18,7 @@ import { getFirestore } from
 import { getStorage } from
   "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 
-/* Firebase config */
+/* CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyByQBpGmHivJhXDqgB-JLpIHUYRr1ZGM7Q",
   authDomain: "jiomart-digital.firebaseapp.com",
@@ -25,20 +28,23 @@ const firebaseConfig = {
   appId: "1:703694544124:web:3d51ddb7fe3182c51e4b79"
 };
 
+/* INIT */
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
+/* SERVICES */
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
+/* ADMIN */
 const ADMIN_EMAIL = "abidalimohammad94@gmail.com";
 
-/* 🔐 EMAIL LOGIN */
+/* LOGIN */
 function adminLogin(email, password) {
   return signInWithEmailAndPassword(auth, email, password);
 }
 
-/* 🔁 AUTH STATE */
+/* AUTH STATE */
 function onAuthChange(callback) {
   return onAuthStateChanged(auth, (user) => {
     if (user && user.email === ADMIN_EMAIL) {
@@ -50,10 +56,10 @@ function onAuthChange(callback) {
   });
 }
 
-/* 🚪 LOGOUT */
-async function adminLogout() {
+/* LOGOUT */
+function adminLogout() {
   localStorage.removeItem("ADMIN_MODE");
-  await signOut(auth);
+  return signOut(auth);
 }
 
 export {
@@ -65,4 +71,4 @@ export {
   onAuthChange
 };
 
-console.log("🔥 Firebase Email Auth Loaded (FINAL)");
+console.log("🔥 Firebase Email/Password Auth Loaded");
