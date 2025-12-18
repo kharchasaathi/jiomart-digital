@@ -1,48 +1,31 @@
 /***************************************************
- * ADMIN AUTH HANDLER – FINAL (LOCALSTORAGE BRIDGE)
- * File: assets/js/cms/admin-auth.js
+ * ADMIN AUTH HANDLER – FINAL (PATH FIXED)
  ***************************************************/
 
-import {
-  adminLogin,
-  handleAdminRedirect
-} from "../assets/js/core/firebase.js";
+import { adminLogin, handleAdminRedirect } from "../core/firebase.js";
+import { setAdminMode } from "../core/state.js";
 
-import { setAdminMode } from "../assets/js/core/state.js";
+console.log("🧩 admin-auth.js loaded");
 
-/* ================================
-   DOM
-================================ */
 const loginBtn = document.getElementById("loginBtn");
 
-/* ================================
-   LOGIN BUTTON → START GOOGLE LOGIN
-================================ */
-if (loginBtn) {
-  loginBtn.addEventListener("click", () => {
-    console.log("🔐 Admin login clicked");
-    adminLogin(); // Google redirect
-  });
-}
+loginBtn?.addEventListener("click", () => {
+  console.log("🔐 Admin login clicked");
+  adminLogin();
+});
 
-/* ================================
-   HANDLE GOOGLE REDIRECT RESULT
-================================ */
-(async function handleLoginRedirect() {
+(async () => {
   const user = await handleAdminRedirect();
 
   if (user) {
     console.log("✅ Admin login success:", user.email);
 
-    // 🔥 CRITICAL BRIDGE (FIX)
+    // 🔥 BRIDGE
     localStorage.setItem("ADMIN_MODE", "true");
-
-    // Update runtime state
     setAdminMode(true);
 
-    // ⏱️ Small delay to ensure storage write
-    setTimeout(() => {
-      window.location.href = "../index.html"; // back to public site
-    }, 100);
+    console.log("🛡 ADMIN_MODE stored");
+
+    window.location.href = "index.html";
   }
 })();
