@@ -1,22 +1,32 @@
 /***************************************************
- * TEXT EDIT – PART 3
- * Handles inline editing of text blocks
+ * TEXT EDIT – INLINE BLOCK EDITING (FINAL SAFE)
+ * Handles live editing of text blocks (ADMIN ONLY)
  ***************************************************/
+
 import { getState } from "../core/state.js";
-import { savePage } from "./page-store.js";
-if (!getState().adminMode) return;
 
 export function enableTextEditing(root) {
-  if (!CMS_STATE.isAdmin) return;
+  const state = getState();
 
-  root.addEventListener("input", async (e) => {
-    const blockEl = e.target.closest(".cms-block");
+  // 🔒 Admin guard
+  if (!state.adminMode) {
+    console.log("🚫 Text editing disabled (public mode)");
+    return;
+  }
+
+  if (!root) return;
+
+  root.addEventListener("input", (e) => {
+    const blockEl = e.target.closest(".cms-text-block");
     if (!blockEl) return;
 
     const blockId = blockEl.dataset.blockId;
-    const block = CMS_STATE.page.blocks.find(b => b.id === blockId);
+    if (!blockId) return;
+
+    const block = state.page?.blocks?.find(b => b.id === blockId);
     if (!block) return;
 
+    // 🔄 Update state only (save happens elsewhere)
     block.data.html = blockEl.innerHTML;
   });
 }
