@@ -1,22 +1,32 @@
-/***************************************************
- * JIOMART DIGITAL – ADMIN AUTH (FINAL & CLEAN)
- * File: assets/js/admin/admin-auth.js
- *
- * ✔ Only triggers Google login
- * ✔ No redirect handling here
- * ✔ No adminMode / UI logic
- ***************************************************/
-
-import { adminLogin } from "../core/firebase.js";
+import { adminLogin, handleAdminRedirect } from "../core/firebase.js";
 
 console.log("🧩 admin-auth.js loaded");
 
 /* ===============================
-   LOGIN BUTTON HANDLER
+   SAFE DOM READY
 ================================ */
-const loginBtn = document.getElementById("adminLoginBtn");
+window.addEventListener("DOMContentLoaded", () => {
+  const loginBtn = document.getElementById("adminLoginBtn");
 
-loginBtn?.addEventListener("click", () => {
-  console.log("🔐 Admin login clicked");
-  adminLogin();
+  if (!loginBtn) {
+    console.warn("❌ adminLoginBtn not found in DOM");
+    return;
+  }
+
+  console.log("✅ adminLoginBtn found");
+
+  loginBtn.addEventListener("click", () => {
+    console.log("🔐 Admin login clicked");
+    adminLogin();
+  });
 });
+
+/* ===============================
+   HANDLE REDIRECT RESULT
+================================ */
+(async () => {
+  const user = await handleAdminRedirect();
+  if (!user) return;
+
+  console.log("🔁 Redirect login success:", user.email);
+})();
