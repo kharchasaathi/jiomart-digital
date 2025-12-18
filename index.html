@@ -29,8 +29,7 @@
       <button
         id="adminLoginBtn"
         class="admin-login"
-        type="button"
-        onclick="window.location.href='admin/'">
+        type="button">
         Admin Login
       </button>
 
@@ -58,7 +57,7 @@
 
   <!-- =================================================
        2️⃣ ADMIN SESSION SYNC (🔥 CORE LOGIC)
-       → Restores admin session from localStorage
+       → Restores admin session
        → Syncs Firebase auth
        → Toggles Login / Logout buttons
        → Sets adminMode
@@ -68,9 +67,16 @@
   <!-- =================================================
        3️⃣ ADMIN LOGOUT HANDLER
        → Clears session
-       → Redirects back to public mode
+       → Returns to public mode
   ================================================== -->
   <script type="module" src="assets/js/cms/admin-logout.js"></script>
+
+  <!-- =================================================
+       4️⃣ ADMIN LOGIN HANDLER
+       → Attaches click to Admin Login button
+       → Calls Firebase Google Redirect login
+  ================================================== -->
+  <script type="module" src="assets/js/cms/admin-auth.js"></script>
 
 </body>
 </html>
