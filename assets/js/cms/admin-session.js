@@ -1,13 +1,27 @@
 /***************************************************
- * ADMIN SESSION SYNC – FINAL (AUTHORITATIVE)
+ * ADMIN SESSION SYNC – FINAL FIXED
  ***************************************************/
 
 import { onAuthChange } from "../core/firebase.js";
 import { setAdminMode } from "../core/state.js";
-import { renderPage } from "./render.js";
 
 console.log("🧩 admin-session.js loaded");
 
+/* ================================
+   1️⃣ SESSION STORAGE (SOURCE OF TRUTH)
+================================ */
+const storedAdmin = sessionStorage.getItem("ADMIN_MODE");
+
+if (storedAdmin === "true") {
+  console.log("🛡 Admin session restored from sessionStorage");
+  setAdminMode(true);
+  document.body.classList.add("admin-mode");
+}
+
+/* ================================
+   2️⃣ FIREBASE AUTH (ONLY UPGRADE)
+   ❌ NEVER FORCE LOGOUT HERE
+================================ */
 onAuthChange((user) => {
   if (user) {
     console.log("🔐 Firebase auth active:", user.email);
@@ -15,15 +29,9 @@ onAuthChange((user) => {
     setAdminMode(true);
     sessionStorage.setItem("ADMIN_MODE", "true");
     document.body.classList.add("admin-mode");
-
   } else {
-    console.log("🚪 Firebase auth logged out");
-
-    setAdminMode(false);
-    sessionStorage.removeItem("ADMIN_MODE");
-    document.body.classList.remove("admin-mode");
+    console.log("ℹ️ Firebase auth not ready / logged out");
+    // ❌ DO NOTHING HERE
+    // ❌ DO NOT clear adminMode
   }
-
-  // 🔥 RE-RENDER AFTER AUTH STATE CONFIRMED
-  renderPage();
 });
