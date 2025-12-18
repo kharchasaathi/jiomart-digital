@@ -1,13 +1,12 @@
 /***************************************************
- * JIOMART DIGITAL – CMS FOUNDATION (FINAL)
+ * JIOMART DIGITAL – CMS FOUNDATION (FINAL & SAFE)
  * File: assets/js/core/firebase.js
  *
- * Features:
- *  - Safe Firebase initialization
- *  - Google Auth (REDIRECT – popup free)
- *  - Admin email restriction
- *  - Firestore & Storage access
- *  - Logout support
+ * ✔ No admin page redirect
+ * ✔ Admin = MODE (not URL)
+ * ✔ Google Auth (Redirect – popup free)
+ * ✔ Admin email restriction
+ * ✔ Firestore + Storage ready
  ***************************************************/
 
 /* ================================
@@ -72,15 +71,15 @@ provider.setCustomParameters({
 });
 
 /* ================================
-   ADMIN LOGIN (REDIRECT SAFE)
+   ADMIN LOGIN (REDIRECT ONLY)
 ================================ */
 function adminLogin() {
-  console.log("🔐 Redirecting to Google login...");
+  console.log("🔐 Admin login started (redirect)");
   return signInWithRedirect(auth, provider);
 }
 
 /* ================================
-   HANDLE LOGIN REDIRECT RESULT
+   HANDLE REDIRECT RESULT
 ================================ */
 async function handleAdminRedirect() {
   try {
@@ -90,35 +89,52 @@ async function handleAdminRedirect() {
 
     const user = result.user;
 
-    // 🔒 Admin email check
+    // 🔒 Email restriction
     if (user.email !== ADMIN_EMAIL) {
       alert("❌ Access denied");
       await signOut(auth);
       return null;
     }
 
-    console.log("✅ Admin logged in:", user.email);
+    console.log("✅ Admin authenticated:", user.email);
+
+    // ✅ Admin MODE only (NO redirect)
+    localStorage.setItem("ADMIN_MODE", "true");
+
     return user;
 
   } catch (err) {
-    console.error("❌ Redirect login failed:", err);
+    console.error("❌ Redirect login error:", err);
     return null;
   }
-}
-
-/* ================================
-   LOGOUT
-================================ */
-function adminLogout() {
-  console.log("🚪 Admin logout");
-  return signOut(auth);
 }
 
 /* ================================
    AUTH STATE LISTENER
 ================================ */
 function onAuthChange(callback) {
-  return onAuthStateChanged(auth, callback);
+  return onAuthStateChanged(auth, (user) => {
+    if (user && user.email === ADMIN_EMAIL) {
+      console.log("🔐 Admin session active");
+      localStorage.setItem("ADMIN_MODE", "true");
+    } else {
+      console.log("👁 Public session");
+      localStorage.removeItem("ADMIN_MODE");
+    }
+
+    if (typeof callback === "function") {
+      callback(user);
+    }
+  });
+}
+
+/* ================================
+   LOGOUT
+================================ */
+async function adminLogout() {
+  console.log("🚪 Admin logout");
+  localStorage.removeItem("ADMIN_MODE");
+  await signOut(auth);
 }
 
 /* ================================
