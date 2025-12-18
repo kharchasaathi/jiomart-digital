@@ -1,20 +1,28 @@
 import { adminLogout } from "../core/firebase.js";
 import { setAdminMode } from "../core/state.js";
 
+console.log("🚪 admin-logout.js loaded");
+
 const logoutBtn = document.getElementById("adminLogoutBtn");
 
-if (!logoutBtn) {
-  console.log("ℹ️ No logout button found");
-  return;
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    console.log("🚪 Admin logout clicked");
+
+    try {
+      await adminLogout();
+    } catch (err) {
+      console.warn("⚠️ Logout error:", err);
+    }
+
+    sessionStorage.removeItem("ADMIN_MODE");
+    setAdminMode(false);
+
+    document.body.classList.remove("admin-mode");
+
+    // 🔄 Reload as public user
+    window.location.reload();
+  });
+} else {
+  console.log("ℹ️ Logout button not present (public user)");
 }
-
-logoutBtn.addEventListener("click", async () => {
-  console.log("🚪 Admin logout clicked");
-
-  await adminLogout();
-
-  sessionStorage.removeItem("ADMIN_MODE");
-  setAdminMode(false);
-
-  window.location.reload(); // back to public mode
-});
