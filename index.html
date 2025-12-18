@@ -11,6 +11,37 @@
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/blocks.css">
   <link rel="stylesheet" href="assets/css/site.css">
+
+  <style>
+    /* 🔐 Admin Login Box */
+    #adminLoginBox {
+      max-width: 320px;
+      margin: 30px auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      display: none;
+      background: #fff;
+    }
+
+    #adminLoginBox input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    #adminLoginBox button {
+      width: 100%;
+      padding: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    body.admin-mode #adminLoginBox {
+      display: none;
+    }
+  </style>
 </head>
 
 <body>
@@ -25,7 +56,7 @@
       <a href="#">Home</a>
       <a href="#">Products</a>
 
-      <!-- 🔐 ADMIN LOGIN (VISIBLE WHEN LOGGED OUT) -->
+      <!-- 🔐 ADMIN LOGIN BUTTON -->
       <button
         id="adminLoginBtn"
         class="admin-login"
@@ -33,7 +64,7 @@
         Admin Login
       </button>
 
-      <!-- 🚪 ADMIN LOGOUT (VISIBLE WHEN LOGGED IN) -->
+      <!-- 🚪 ADMIN LOGOUT -->
       <button
         id="adminLogoutBtn"
         class="admin-logout hidden"
@@ -44,32 +75,36 @@
   </header>
 
   <!-- ===============================
+       🔐 ADMIN EMAIL/PASSWORD LOGIN
+  ================================ -->
+  <div id="adminLoginBox">
+    <input id="email" type="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
+    <button id="loginBtn">Login</button>
+  </div>
+
+  <!-- ===============================
        CMS PAGE ROOT
   ================================ -->
   <div id="pageRoot"></div>
 
   <!-- =================================================
        ✅ SCRIPT LOAD ORDER (VERY IMPORTANT)
-       → Firebase first
-       → Auth
-       → Session sync
-       → Logout
-       → Public render LAST
   ================================================== -->
 
   <!-- 1️⃣ Firebase core + auth -->
   <script type="module" src="assets/js/core/firebase.js"></script>
 
-  <!-- 2️⃣ Admin login (button click + redirect result) -->
+  <!-- 2️⃣ Admin login handler -->
   <script type="module" src="assets/js/cms/admin-auth.js"></script>
 
-  <!-- 3️⃣ Admin session sync (🔥 sets adminMode + dispatch event) -->
+  <!-- 3️⃣ Admin session sync -->
   <script type="module" src="assets/js/cms/admin-session.js"></script>
 
-  <!-- 4️⃣ Admin logout handler -->
+  <!-- 4️⃣ Admin logout -->
   <script type="module" src="assets/js/cms/admin-logout.js"></script>
 
-  <!-- 5️⃣ Public entry (🔥 renderPage runs here, LAST) -->
+  <!-- 5️⃣ Public render (LAST) -->
   <script type="module" src="assets/js/site/public.js"></script>
 
 </body>
