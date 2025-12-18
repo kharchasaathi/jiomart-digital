@@ -1,5 +1,5 @@
 /***************************************************
- * PUBLIC ENTRY – FINAL SAFE
+ * PUBLIC ENTRY – FINAL SAFE (FIXED)
  ***************************************************/
 import { loadPage } from "../cms/page-store.js";
 import { renderPage } from "../cms/render.js";
@@ -7,8 +7,8 @@ import { setAdminMode } from "../core/state.js";
 
 console.log("🚀 Public entry loaded");
 
-// 🔐 Restore admin mode if logged in
-const isAdminSession = sessionStorage.getItem("ADMIN_MODE") === "true";
+// 🔐 Restore admin mode from localStorage (SINGLE SOURCE)
+const isAdminSession = localStorage.getItem("ADMIN_MODE") === "true";
 setAdminMode(isAdminSession);
 
 (async function initPublic() {
@@ -19,6 +19,8 @@ setAdminMode(isAdminSession);
   renderPage();
 
   console.log(
-    isAdminSession ? "🛠️ Admin editor ready" : "👁️ Public page ready"
+    isAdminSession
+      ? "🛠️ Admin editor ready"
+      : "👁️ Public page ready"
   );
 })();
