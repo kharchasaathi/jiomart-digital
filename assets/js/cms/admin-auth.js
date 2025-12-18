@@ -1,14 +1,49 @@
-import { adminLogin } from "../core/firebase.js";
+/***************************************************
+ * ADMIN AUTH – EMAIL / PASSWORD
+ ***************************************************/
+import { auth } from "../core/firebase.js";
+import {
+  signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-document.getElementById("loginBtn")?.addEventListener("click", async () => {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+const ADMIN_EMAIL = "abidalimohammad94@gmail.com";
+
+console.log("🧩 admin-auth.js loaded (email/password)");
+
+const loginBtn = document.getElementById("loginBtn");
+
+loginBtn?.addEventListener("click", async () => {
+  const email = document.getElementById("email")?.value.trim();
+  const password = document.getElementById("password")?.value;
+
+  if (!email || !password) {
+    alert("Email & Password required");
+    return;
+  }
 
   try {
-    await adminLogin(email, password);
-    console.log("✅ Admin logged in");
+    const result = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    const user = result.user;
+
+    if (user.email !== ADMIN_EMAIL) {
+      alert("❌ Not authorized");
+      return;
+    }
+
+    console.log("✅ Admin logged in:", user.email);
+
+    localStorage.setItem("ADMIN_MODE", "true");
+
+    // Hide login box
+    document.getElementById("adminLoginBox")?.style.setProperty("display", "none");
+
   } catch (err) {
-    alert("Login failed");
-    console.error(err);
+    console.error("❌ Login failed:", err.message);
+    alert(err.message);
   }
 });
