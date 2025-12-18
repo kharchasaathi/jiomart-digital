@@ -25,7 +25,19 @@
       <a href="#">Home</a>
       <a href="#">Products</a>
 
-      <!-- ADMIN ONLY (shown via admin-session.js) -->
+      <!-- ===============================
+           🔐 ADMIN LOGIN (VISIBLE WHEN LOGGED OUT)
+      ================================ -->
+      <button
+        id="adminLoginBtn"
+        class="admin-login"
+        type="button">
+        Admin Login
+      </button>
+
+      <!-- ===============================
+           🚪 ADMIN LOGOUT (VISIBLE WHEN LOGGED IN)
+      ================================ -->
       <button
         id="adminLogoutBtn"
         class="admin-logout hidden"
@@ -48,18 +60,24 @@
   <script type="module" src="assets/js/site/public.js"></script>
 
   <!-- =================================================
-       2️⃣ ADMIN SESSION SYNC (🔥 MOST IMPORTANT)
-       → Listens Firebase auth
-       → Sets adminMode = true / false
-       → Adds or removes .admin-mode on <body>
-       → Calls renderPage() AGAIN after auth resolves
+       2️⃣ ADMIN AUTH (LOGIN + REDIRECT HANDLER)
+       → Handles Google login
+       → Sets ADMIN_MODE
+  ================================================== -->
+  <script type="module" src="assets/js/cms/admin-auth.js"></script>
+
+  <!-- =================================================
+       3️⃣ ADMIN SESSION SYNC (🔥 MOST IMPORTANT)
+       → Restores admin session
+       → Syncs Firebase auth
+       → Adds/removes .admin-mode on <body>
   ================================================== -->
   <script type="module" src="assets/js/cms/admin-session.js"></script>
 
   <!-- =================================================
-       3️⃣ ADMIN LOGOUT HANDLER
-       → Attaches click listener only
-       → No side effects on load
+       4️⃣ ADMIN LOGOUT HANDLER
+       → Clears admin session
+       → Switches UI back to public
   ================================================== -->
   <script type="module" src="assets/js/cms/admin-logout.js"></script>
 
