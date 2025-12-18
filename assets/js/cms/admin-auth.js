@@ -1,32 +1,14 @@
-import { adminLogin, handleAdminRedirect } from "../core/firebase.js";
+/***************************************************
+ * ADMIN AUTH – FINAL (NO REDIRECT HANDLER)
+ ***************************************************/
+import { adminLogin } from "../core/firebase.js";
 
 console.log("🧩 admin-auth.js loaded");
 
 /* ===============================
-   SAFE DOM READY
+   LOGIN BUTTON
 ================================ */
-window.addEventListener("DOMContentLoaded", () => {
-  const loginBtn = document.getElementById("adminLoginBtn");
-
-  if (!loginBtn) {
-    console.warn("❌ adminLoginBtn not found in DOM");
-    return;
-  }
-
-  console.log("✅ adminLoginBtn found");
-
-  loginBtn.addEventListener("click", () => {
-    console.log("🔐 Admin login clicked");
-    adminLogin();
-  });
+document.getElementById("adminLoginBtn")?.addEventListener("click", () => {
+  console.log("🔐 Admin login clicked");
+  adminLogin(); // Google redirect starts
 });
-
-/* ===============================
-   HANDLE REDIRECT RESULT
-================================ */
-(async () => {
-  const user = await handleAdminRedirect();
-  if (!user) return;
-
-  console.log("🔁 Redirect login success:", user.email);
-})();
