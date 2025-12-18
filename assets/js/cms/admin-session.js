@@ -1,5 +1,7 @@
 /***************************************************
- * ADMIN SESSION SYNC – FINAL (SINGLE SOURCE OF TRUTH)
+ * ADMIN SESSION – SINGLE SOURCE OF TRUTH
+ * - Syncs Firebase auth → adminMode
+ * - Handles login & logout UI
  ***************************************************/
 
 import { onAuthChange } from "../core/firebase.js";
@@ -7,51 +9,40 @@ import { setAdminMode } from "../core/state.js";
 
 console.log("🧩 admin-session.js loaded");
 
-/* ================================
-   🔁 UI HELPERS
+/* ===============================
+   RESTORE FROM LOCAL STORAGE
 ================================ */
-function showAdminUI() {
-  document.body.classList.add("admin-mode");
-  document.getElementById("adminLoginBtn")?.classList.add("hidden");
-  document.getElementById("adminLogoutBtn")?.classList.remove("hidden");
-}
+const storedAdmin = localStorage.getItem("ADMIN_MODE") === "true";
 
-function showPublicUI() {
-  document.body.classList.remove("admin-mode");
-  document.getElementById("adminLoginBtn")?.classList.remove("hidden");
-  document.getElementById("adminLogoutBtn")?.classList.add("hidden");
-}
-
-/* ================================
-   1️⃣ RESTORE FROM localStorage
-   (FAST, SYNC, NO FIREBASE WAIT)
-================================ */
-const storedAdmin = localStorage.getItem("ADMIN_MODE");
-
-if (storedAdmin === "true") {
-  console.log("🛡 Admin session restored from localStorage");
+if (storedAdmin) {
   setAdminMode(true);
-  showAdminUI();
-} else {
-  showPublicUI();
+  document.body.classList.add("admin-mode");
 }
 
-/* ================================
-   2️⃣ FIREBASE AUTH SYNC
-   🔥 NEVER FORCE LOGOUT ON LOAD
+/* ===============================
+   FIREBASE AUTH LISTENER
 ================================ */
 onAuthChange((user) => {
   if (user) {
-    console.log("🔐 Firebase auth active:", user.email);
+    console.log("✅ Firebase auth logged in:", user.email);
 
+    // 🔐 ADMIN ENABLE
     localStorage.setItem("ADMIN_MODE", "true");
     setAdminMode(true);
-    showAdminUI();
-  } else {
-    console.log("ℹ️ Firebase auth logged out");
 
+    document.body.classList.add("admin-mode");
+    document.getElementById("adminLoginBtn")?.classList.add("hidden");
+    document.getElementById("adminLogoutBtn")?.classList.remove("hidden");
+
+  } else {
+    console.log("ℹ️ Public session");
+
+    // 🔓 ADMIN DISABLE
     localStorage.removeItem("ADMIN_MODE");
     setAdminMode(false);
-    showPublicUI();
+
+    document.body.classList.remove("admin-mode");
+    document.getElementById("adminLoginBtn")?.classList.remove("hidden");
+    document.getElementById("adminLogoutBtn")?.classList.add("hidden");
   }
 });
