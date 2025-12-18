@@ -1,31 +1,33 @@
-/***************************************************
- * ADMIN AUTH – LOGIN PAGE ONLY (FINAL)
- ***************************************************/
-
 import { adminLogin, handleAdminRedirect } from "../core/firebase.js";
+import { setAdminMode } from "../core/state.js";
 
-console.log("🧩 admin-auth.js loaded (ADMIN PAGE ONLY)");
+console.log("🧩 admin-auth.js loaded");
 
-const loginBtn = document.getElementById("loginBtn");
+const loginBtn = document.getElementById("adminLoginBtn");
 
 loginBtn?.addEventListener("click", () => {
   console.log("🔐 Admin login clicked");
   adminLogin();
 });
 
-// 🔁 HANDLE FIREBASE REDIRECT (ADMIN PAGE ONLY)
+// 🔁 HANDLE REDIRECT (NO PAGE CHANGE)
 (async () => {
   const user = await handleAdminRedirect();
 
-  if (user) {
-    console.log("✅ Admin login success:", user.email);
+  if (!user) return;
 
-    // ✅ SINGLE SOURCE OF TRUTH
-    localStorage.setItem("ADMIN_MODE", "true");
+  console.log("✅ Admin login success:", user.email);
 
-    // ⏱️ Redirect back to public site
-    setTimeout(() => {
-      window.location.href = "../index.html";
-    }, 200);
-  }
+  // 🔐 Enable admin mode
+  localStorage.setItem("ADMIN_MODE", "true");
+  setAdminMode(true);
+
+  document.body.classList.add("admin-mode");
+
+  // UI switch
+  document.getElementById("adminLoginBtn")?.classList.add("hidden");
+  document.getElementById("adminLogoutBtn")?.classList.remove("hidden");
+
+  // ❌ NO window.location.href
+  // ❌ NO admin.html
 })();
