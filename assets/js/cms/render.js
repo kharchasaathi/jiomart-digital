@@ -1,5 +1,5 @@
 /***************************************************
- * CMS RENDER – SINGLE RENDER FUNCTION (SAFE FINAL)
+ * CMS RENDER – SINGLE RENDER FUNCTION (FINAL FIXED)
  ***************************************************/
 
 import { renderBlocks } from "./blocks.js";
@@ -18,18 +18,22 @@ export function renderPage() {
   const state = getState();
   console.log("📦 State in render:", state);
 
-  if (!state.page || !Array.isArray(state.page.blocks)) {
-    console.warn("⚠️ No page data");
-    return;
-  }
-
-  // 🔄 Clear before render
+  // 🔄 Clear root ALWAYS
   root.innerHTML = "";
 
-  // 🧱 Render CMS blocks
-  renderBlocks(root);
+  /* ===============================
+     PAGE BLOCKS
+  ================================ */
+  if (state.page && Array.isArray(state.page.blocks)) {
+    renderBlocks(root);
+    console.log("🧱 Blocks rendered");
+  } else {
+    console.warn("⚠️ Page data not ready yet");
+  }
 
-  // ✏️ ADMIN TOOLBAR INIT (ONLY ONCE)
+  /* ===============================
+     ADMIN TOOLBAR (SEPARATE LOGIC)
+  ================================ */
   if (state.adminMode === true) {
     if (!document.getElementById("cms-toolbar")) {
       initEditorToolbar();
