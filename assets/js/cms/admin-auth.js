@@ -1,14 +1,14 @@
-/***************************************************
- * ADMIN AUTH – FINAL (NO REDIRECT HANDLER)
- ***************************************************/
 import { adminLogin } from "../core/firebase.js";
 
-console.log("🧩 admin-auth.js loaded");
+document.getElementById("loginBtn")?.addEventListener("click", async () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-/* ===============================
-   LOGIN BUTTON
-================================ */
-document.getElementById("adminLoginBtn")?.addEventListener("click", () => {
-  console.log("🔐 Admin login clicked");
-  adminLogin(); // Google redirect starts
+  try {
+    await adminLogin(email, password);
+    console.log("✅ Admin logged in");
+  } catch (err) {
+    alert("Login failed");
+    console.error(err);
+  }
 });
