@@ -1,29 +1,31 @@
+/***************************************************
+ * ADMIN AUTH – LOGIN PAGE ONLY (FINAL)
+ ***************************************************/
+
 import { adminLogin, handleAdminRedirect } from "../core/firebase.js";
-import { setAdminMode } from "../core/state.js";
 
-console.log("🧩 admin-auth.js loaded");
+console.log("🧩 admin-auth.js loaded (ADMIN PAGE ONLY)");
 
-const loginBtn = document.getElementById("adminLoginBtn");
+const loginBtn = document.getElementById("loginBtn");
 
 loginBtn?.addEventListener("click", () => {
   console.log("🔐 Admin login clicked");
   adminLogin();
 });
 
-// 🔁 HANDLE REDIRECT ON SAME PAGE
+// 🔁 HANDLE FIREBASE REDIRECT (ADMIN PAGE ONLY)
 (async () => {
   const user = await handleAdminRedirect();
 
   if (user) {
     console.log("✅ Admin login success:", user.email);
 
+    // ✅ SINGLE SOURCE OF TRUTH
     localStorage.setItem("ADMIN_MODE", "true");
-    setAdminMode(true);
 
-    document.body.classList.add("admin-mode");
-
-    // UI switch
-    document.getElementById("adminLoginBtn")?.classList.add("hidden");
-    document.getElementById("adminLogoutBtn")?.classList.remove("hidden");
+    // ⏱️ Redirect back to public site
+    setTimeout(() => {
+      window.location.href = "../index.html";
+    }, 200);
   }
 })();
