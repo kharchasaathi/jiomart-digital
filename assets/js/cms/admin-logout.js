@@ -1,18 +1,20 @@
+/***************************************************
+ * ADMIN LOGOUT HANDLER – FINAL
+ ***************************************************/
+
 import { adminLogout } from "../core/firebase.js";
-import { setAdminMode } from "../core/state.js";
+
+console.log("🧩 admin-logout.js loaded");
 
 const logoutBtn = document.getElementById("adminLogoutBtn");
 
 logoutBtn?.addEventListener("click", async () => {
-  console.log("🚪 Admin logout");
+  console.log("🚪 Admin logout clicked");
 
-  await adminLogout();
-
-  localStorage.removeItem("ADMIN_MODE");
-  setAdminMode(false);
-
-  document.body.classList.remove("admin-mode");
-
-  document.getElementById("adminLoginBtn")?.classList.remove("hidden");
-  logoutBtn.classList.add("hidden");
+  try {
+    await adminLogout();
+    // ✅ All cleanup handled by admin-session.js via onAuthChange
+  } catch (err) {
+    console.error("❌ Logout failed:", err);
+  }
 });
