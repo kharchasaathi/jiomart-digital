@@ -5,7 +5,7 @@
  ***************************************************/
 
 import { getState } from "../core/state.js";
-import { db } from "./firebase.js";
+import { db } from "../core/firebase.js";
 
 import {
   doc,
@@ -41,7 +41,7 @@ if (!state.adminMode) {
       }
 
     } catch (err) {
-      console.error("Page Builder Error:", err);
+      console.error("❌ Page Builder Error:", err);
     }
   }
 
