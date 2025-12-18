@@ -40,27 +40,27 @@
   ================================ -->
   <div id="pageRoot"></div>
 
-  <!-- ===============================
-       🌍 PUBLIC ENTRY
+  <!-- =================================================
+       1️⃣ PUBLIC ENTRY
        → Loads page data
-       → Calls renderPage()
-  ================================ -->
+       → Calls initial renderPage()
+  ================================================== -->
   <script type="module" src="assets/js/site/public.js"></script>
 
-  <!-- ===============================
-       🔐 ADMIN SESSION SYNC (CRITICAL)
-       → Reads sessionStorage
+  <!-- =================================================
+       2️⃣ ADMIN SESSION SYNC (🔥 MOST IMPORTANT)
        → Listens Firebase auth
-       → Sets adminMode = true
-       → Adds .admin-mode to <body>
-  ================================ -->
+       → Sets adminMode = true / false
+       → Adds or removes .admin-mode on <body>
+       → Calls renderPage() AGAIN after auth resolves
+  ================================================== -->
   <script type="module" src="assets/js/cms/admin-session.js"></script>
 
-  <!-- ===============================
-       🚪 ADMIN LOGOUT HANDLER
-       → Handles Logout button
-       → Clears session
-  ================================ -->
+  <!-- =================================================
+       3️⃣ ADMIN LOGOUT HANDLER
+       → Attaches click listener only
+       → No side effects on load
+  ================================================== -->
   <script type="module" src="assets/js/cms/admin-logout.js"></script>
 
 </body>
