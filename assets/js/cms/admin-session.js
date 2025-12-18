@@ -1,6 +1,5 @@
 import { onAuthChange } from "../core/firebase.js";
 import { setAdminMode } from "../core/state.js";
-import { renderPage } from "./render.js";
 
 const ADMIN_EMAIL = "abidalimohammad94@gmail.com";
 
@@ -11,7 +10,6 @@ onAuthChange((user) => {
 
   if (isAdmin) {
     console.log("✅ Admin session confirmed:", user.email);
-
     localStorage.setItem("ADMIN_MODE", "true");
     setAdminMode(true);
 
@@ -20,7 +18,6 @@ onAuthChange((user) => {
     document.getElementById("adminLogoutBtn")?.classList.remove("hidden");
   } else {
     console.log("👁 Public session active");
-
     localStorage.removeItem("ADMIN_MODE");
     setAdminMode(false);
 
@@ -29,6 +26,5 @@ onAuthChange((user) => {
     document.getElementById("adminLogoutBtn")?.classList.add("hidden");
   }
 
-  // 🔥 THIS IS THE KEY
-  renderPage();
+  // ❌ NO renderPage() here
 });
