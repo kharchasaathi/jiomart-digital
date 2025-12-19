@@ -2,20 +2,34 @@
  * CORE STATE – SINGLE SOURCE OF TRUTH
  ***************************************************/
 
+/* ================================
+   THEME STORAGE CONFIG
+================================ */
 const THEME_STORAGE_KEY = "JIOMART_THEME";
 
+/* ================================
+   DEFAULT THEME
+================================ */
 const defaultTheme = {
   background: "#ffffff",
   primary: "#1a73e8",
   text: "#000000",
-  font: "system-ui"
+  font: "system-ui",
+
+  /* 🅣 TYPOGRAPHY (PHASE 1.5) */
+  baseSize: 16,        // px
+  lineHeight: 1.6,     // unitless
+  headingScale: 1.25   // multiplier
 };
 
+/* ================================
+   CORE STATE
+================================ */
 const state = {
   adminMode: false,
   page: null,
 
-  // 🎨 THEME STATE
+  // 🎨 THEME STATE (loaded from storage)
   theme: loadThemeFromStorage()
 };
 
@@ -43,11 +57,11 @@ export function setAdminMode(value) {
 }
 
 /* =================================================
-   🔥 PHASE 1 — THEME ENGINE
+   🔥 THEME + TYPOGRAPHY ENGINE
 ================================================= */
 
 /**
- * Update one or more theme values safely
+ * Update one or more theme / typography values safely
  * @param {Object} themeUpdates
  */
 export function updateTheme(themeUpdates = {}) {
@@ -63,23 +77,30 @@ export function updateTheme(themeUpdates = {}) {
 }
 
 /**
- * Apply theme state to CSS variables
- * (NO render, NO side effects)
+ * Apply theme + typography to CSS variables
+ * (NO render, NO logic side effects)
  */
 export function applyThemeToDOM() {
   const root = document.documentElement;
-  const theme = state.theme;
+  const t = state.theme;
 
-  root.style.setProperty("--site-bg", theme.background);
-  root.style.setProperty("--site-primary", theme.primary);
-  root.style.setProperty("--site-text", theme.text);
-  root.style.setProperty("--site-font", theme.font);
+  /* 🎨 COLORS */
+  root.style.setProperty("--site-bg", t.background);
+  root.style.setProperty("--site-primary", t.primary);
+  root.style.setProperty("--site-text", t.text);
+
+  /* 🔤 FONT */
+  root.style.setProperty("--site-font", t.font);
+
+  /* 🅣 TYPOGRAPHY */
+  root.style.setProperty("--base-font-size", `${t.baseSize}px`);
+  root.style.setProperty("--line-height", t.lineHeight);
+  root.style.setProperty("--heading-scale", t.headingScale);
 }
 
 /* =================================================
-   🔐 THEME PERSISTENCE (NEW)
+   🔐 THEME PERSISTENCE
 ================================================= */
-
 function saveThemeToStorage() {
   try {
     localStorage.setItem(
@@ -103,7 +124,7 @@ function loadThemeFromStorage() {
 }
 
 /* ================================
-   INIT (AUTO APPLY ON LOAD)
+   INIT – AUTO APPLY THEME
 ================================ */
 if (typeof document !== "undefined") {
   document.addEventListener("DOMContentLoaded", () => {
