@@ -70,3 +70,7 @@ export function applyThemeToDOM() {
   root.style.setProperty("--site-text", theme.text);
   root.style.setProperty("--site-font", theme.font);
 }
+// 🔧 DEV ONLY – manual testing helper
+if (typeof window !== "undefined") {
+  window.__testTheme = updateTheme;
+}
