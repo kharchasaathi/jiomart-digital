@@ -31,6 +31,11 @@ export function isAdmin() {
 ================================ */
 export function setState(partial = {}) {
   Object.assign(state, partial);
+
+  // 🔥 Phase 1.2 — sync theme if updated via setState
+  if (partial.theme) {
+    applyThemeToDOM();
+  }
 }
 
 export function setAdminMode(value) {
@@ -39,7 +44,7 @@ export function setAdminMode(value) {
 }
 
 /* =================================================
-   🔥 PHASE 1.1 — THEME UPDATE LOGIC (NEW)
+   🔥 PHASE 1.1 — THEME UPDATE LOGIC
 ================================================= */
 
 /**
@@ -65,12 +70,24 @@ export function applyThemeToDOM() {
   const root = document.documentElement;
   const theme = state.theme;
 
+  if (!root || !theme) return;
+
   root.style.setProperty("--site-bg", theme.background);
   root.style.setProperty("--site-primary", theme.primary);
   root.style.setProperty("--site-text", theme.text);
   root.style.setProperty("--site-font", theme.font);
 }
-// 🔧 DEV ONLY – manual testing helper
+
+/* =================================================
+   🔧 DEV ONLY — Console Testing Helper
+================================================= */
 if (typeof window !== "undefined") {
   window.__testTheme = updateTheme;
 }
+
+/* =================================================
+   🔥 PHASE 1.2 — INITIAL THEME SYNC ON LOAD
+================================================= */
+document.addEventListener("DOMContentLoaded", () => {
+  applyThemeToDOM();
+});
