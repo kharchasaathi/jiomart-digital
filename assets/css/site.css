@@ -282,3 +282,37 @@ body {
 .hidden {
   display: none !important;
 }
+/* ===============================
+   ADMIN THEME PANEL
+================================ */
+#adminThemePanel {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 220px;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  z-index: 10001;
+  font-family: var(--site-font);
+}
+
+#adminThemePanel label {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+#adminThemePanel input,
+#adminThemePanel select {
+  margin-top: 4px;
+}
+
+.theme-panel-header {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
