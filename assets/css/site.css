@@ -4,33 +4,68 @@
  * CMS EDIT SAFE – FINAL
  ***************************************************/
 
-/* ========== ROOT THEME (EDITABLE LATER) ========== */
+/* =================================================
+   ROOT THEME VARIABLES (DYNAMIC – FROM STATE)
+================================================= */
 :root {
-  --primary: #1a73e8;
+  --site-bg: #ffffff;
+  --site-primary: #1a73e8;
+  --site-text: #000000;
+  --site-font: system-ui;
+
+  /* 🅣 TYPOGRAPHY (PHASE 1.5) */
+  --base-font-size: 16px;
+  --line-height: 1.6;
+  --heading-scale: 1.25;
+
+  /* UI */
   --primary-dark: #0b5ed7;
-  --background: #f5f7fa;
   --surface: #ffffff;
-  --text-main: #111111;
   --text-muted: #6b7280;
   --border: #e5e7eb;
   --radius: 8px;
-  --font-base: system-ui, -apple-system, BlinkMacSystemFont;
 }
 
-/* ========== RESET ========== */
+/* =================================================
+   RESET
+================================================= */
 * {
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-  font-family: var(--font-base);
-  background: var(--background);
-  color: var(--text-main);
-  line-height: 1.6;
+html, body {
+  width: 100%;
+  min-height: 100%;
 }
 
-/* ========== HEADER ========== */
+body {
+  margin: 0;
+  font-family: var(--site-font);
+  background: var(--site-bg);
+  color: var(--site-text);
+  line-height: var(--line-height);
+  font-size: var(--base-font-size);
+}
+
+/* =================================================
+   TYPOGRAPHY SYSTEM (PHASE 1.5)
+================================================= */
+
+/* Headings auto-scale */
+h1 { font-size: calc(var(--base-font-size) * var(--heading-scale) * 2.2); }
+h2 { font-size: calc(var(--base-font-size) * var(--heading-scale) * 1.8); }
+h3 { font-size: calc(var(--base-font-size) * var(--heading-scale) * 1.5); }
+h4 { font-size: calc(var(--base-font-size) * var(--heading-scale) * 1.25); }
+h5 { font-size: calc(var(--base-font-size) * var(--heading-scale) * 1.1); }
+h6 { font-size: calc(var(--base-font-size) * var(--heading-scale)); }
+
+p, li {
+  font-size: var(--base-font-size);
+}
+
+/* =================================================
+   HEADER
+================================================= */
 .site-header {
   position: sticky;
   top: 0;
@@ -46,7 +81,7 @@ body {
 .logo {
   font-size: 22px;
   font-weight: 800;
-  color: var(--primary);
+  color: var(--site-primary);
 }
 
 .site-nav a {
@@ -58,25 +93,29 @@ body {
 }
 
 .site-nav a:hover {
-  color: var(--primary);
+  color: var(--site-primary);
 }
 
-/* ========== HERO SECTION ========== */
+/* =================================================
+   HERO SECTION
+================================================= */
 .hero {
   padding: 64px 24px;
   text-align: center;
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  background: linear-gradient(
+    135deg,
+    var(--site-primary),
+    var(--primary-dark)
+  );
   color: #ffffff;
 }
 
 .hero-title {
-  font-size: 38px;
   font-weight: 800;
   margin-bottom: 12px;
 }
 
 .hero-sub {
-  font-size: 16px;
   max-width: 600px;
   margin: auto;
   opacity: 0.95;
@@ -86,7 +125,7 @@ body {
   margin-top: 24px;
   padding: 12px 26px;
   background: #ffffff;
-  color: var(--primary);
+  color: var(--site-primary);
   border: none;
   border-radius: var(--radius);
   font-size: 15px;
@@ -98,7 +137,9 @@ body {
   background: #f0f4ff;
 }
 
-/* ========== MAIN CONTENT ========== */
+/* =================================================
+   MAIN CONTENT
+================================================= */
 #pageRoot,
 #cmsContent {
   padding: 32px 20px;
@@ -107,61 +148,43 @@ body {
 }
 
 /* =================================================
-   CMS TEXT BLOCK – EDIT FIX (🔥 CRITICAL)
+   CMS TEXT BLOCK – EDIT SAFE
 ================================================= */
 .cms-text-block {
   background: var(--surface);
   border-radius: var(--radius);
   padding: 20px 22px;
   margin-bottom: 18px;
-  font-size: 15px;
-  line-height: 1.6;
   border: 1px solid var(--border);
   cursor: text;
 
-  /* 🔥 REQUIRED FOR EDITING */
   pointer-events: auto;
   user-select: text;
   caret-color: #000;
 }
 
-/* HEADINGS */
-.cms-text-block h1 {
-  font-size: 28px;
-  margin-bottom: 10px;
-}
-
-.cms-text-block h2 {
-  font-size: 22px;
-  margin-bottom: 8px;
-}
-
 .cms-text-block p,
 .cms-text-block li {
-  font-size: 15px;
   color: #333;
 }
 
-/* ===============================
-   ADMIN MODE VISUALS
-================================ */
+/* ADMIN MODE VISUALS */
 .admin-mode .cms-text-block.editable {
-  outline: 2px dashed var(--primary);
+  outline: 2px dashed var(--site-primary);
   outline-offset: 2px;
 }
 
 .admin-mode .cms-text-block.editable:focus {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--site-primary);
   background: #ffffff;
 }
 
-/* CARET + FOCUS FIX */
 .cms-text-block:focus {
   outline: none;
   caret-color: #000;
 }
 
-/* 🔥 PREVENT PARENT LOCKING EDIT */
+/* Prevent edit lock */
 #pageRoot,
 #pageRoot * {
   pointer-events: auto;
@@ -200,7 +223,9 @@ body {
   border: 1px solid #ccc;
 }
 
-/* ========== PRODUCT GRID (FUTURE READY) ========== */
+/* =================================================
+   PRODUCT GRID
+================================================= */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -215,12 +240,6 @@ body {
   text-align: center;
 }
 
-.product-card img {
-  max-width: 100%;
-  height: 140px;
-  object-fit: contain;
-}
-
 .product-title {
   font-size: 14px;
   font-weight: 600;
@@ -228,11 +247,13 @@ body {
 }
 
 .product-price {
-  color: var(--primary);
+  color: var(--site-primary);
   font-weight: 700;
 }
 
-/* ========== FOOTER ========== */
+/* =================================================
+   FOOTER
+================================================= */
 .site-footer {
   margin-top: 40px;
   text-align: center;
@@ -243,20 +264,8 @@ body {
   background: var(--surface);
 }
 
-/* ========== MOBILE ========== */
-@media (max-width: 640px) {
-  .hero-title {
-    font-size: 30px;
-  }
-
-  .site-nav a {
-    margin-left: 12px;
-    font-size: 13px;
-  }
-}
-
 /* =================================================
-   ADMIN LOGOUT BUTTON (🔥 FINAL ADD)
+   ADMIN LOGOUT BUTTON
 ================================================= */
 .admin-logout {
   margin-left: 16px;
@@ -273,7 +282,6 @@ body {
   background: #fee2e2;
 }
 
-/* Visible only in admin mode */
 .admin-mode .admin-logout {
   display: inline-block;
 }
@@ -282,9 +290,10 @@ body {
 .hidden {
   display: none !important;
 }
-/* ===============================
+
+/* =================================================
    ADMIN THEME PANEL
-================================ */
+================================================= */
 #adminThemePanel {
   position: fixed;
   right: 16px;
@@ -304,11 +313,6 @@ body {
   font-size: 12px;
   margin-bottom: 10px;
   color: #333;
-}
-
-#adminThemePanel input,
-#adminThemePanel select {
-  margin-top: 4px;
 }
 
 .theme-panel-header {
