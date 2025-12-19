@@ -320,3 +320,17 @@ p, li {
   font-size: 14px;
   margin-bottom: 10px;
 }
+/* ===============================
+   LANGUAGE AWARE STYLES
+================================ */
+
+/* Telugu tuning */
+body[data-lang="te"] {
+  line-height: 1.8;
+  letter-spacing: 0.2px;
+}
+
+/* English default */
+body[data-lang="en"] {
+  line-height: var(--line-height);
+}
