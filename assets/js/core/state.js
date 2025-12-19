@@ -2,17 +2,21 @@
  * CORE STATE – SINGLE SOURCE OF TRUTH
  ***************************************************/
 
+const THEME_STORAGE_KEY = "JIOMART_THEME";
+
+const defaultTheme = {
+  background: "#ffffff",
+  primary: "#1a73e8",
+  text: "#000000",
+  font: "system-ui"
+};
+
 const state = {
   adminMode: false,
   page: null,
 
   // 🎨 THEME STATE
-  theme: {
-    background: "#ffffff",
-    primary: "#1a73e8",
-    text: "#000000",
-    font: "system-ui"
-  }
+  theme: loadThemeFromStorage()
 };
 
 /* ================================
@@ -31,11 +35,6 @@ export function isAdmin() {
 ================================ */
 export function setState(partial = {}) {
   Object.assign(state, partial);
-
-  // 🔥 Phase 1.2 — sync theme if updated via setState
-  if (partial.theme) {
-    applyThemeToDOM();
-  }
 }
 
 export function setAdminMode(value) {
@@ -44,7 +43,7 @@ export function setAdminMode(value) {
 }
 
 /* =================================================
-   🔥 PHASE 1.1 — THEME UPDATE LOGIC
+   🔥 PHASE 1 — THEME ENGINE
 ================================================= */
 
 /**
@@ -59,18 +58,17 @@ export function updateTheme(themeUpdates = {}) {
     ...themeUpdates
   };
 
+  saveThemeToStorage();
   applyThemeToDOM();
 }
 
 /**
  * Apply theme state to CSS variables
- * (NO re-render, NO logic side effects)
+ * (NO render, NO side effects)
  */
 export function applyThemeToDOM() {
   const root = document.documentElement;
   const theme = state.theme;
-
-  if (!root || !theme) return;
 
   root.style.setProperty("--site-bg", theme.background);
   root.style.setProperty("--site-primary", theme.primary);
@@ -79,15 +77,43 @@ export function applyThemeToDOM() {
 }
 
 /* =================================================
-   🔧 DEV ONLY — Console Testing Helper
+   🔐 THEME PERSISTENCE (NEW)
 ================================================= */
+
+function saveThemeToStorage() {
+  try {
+    localStorage.setItem(
+      THEME_STORAGE_KEY,
+      JSON.stringify(state.theme)
+    );
+  } catch (err) {
+    console.warn("⚠️ Theme save failed", err);
+  }
+}
+
+function loadThemeFromStorage() {
+  try {
+    const saved = localStorage.getItem(THEME_STORAGE_KEY);
+    return saved
+      ? { ...defaultTheme, ...JSON.parse(saved) }
+      : { ...defaultTheme };
+  } catch {
+    return { ...defaultTheme };
+  }
+}
+
+/* ================================
+   INIT (AUTO APPLY ON LOAD)
+================================ */
+if (typeof document !== "undefined") {
+  document.addEventListener("DOMContentLoaded", () => {
+    applyThemeToDOM();
+  });
+}
+
+/* ================================
+   DEV ONLY (SAFE)
+================================ */
 if (typeof window !== "undefined") {
   window.__testTheme = updateTheme;
 }
-
-/* =================================================
-   🔥 PHASE 1.2 — INITIAL THEME SYNC ON LOAD
-================================================= */
-document.addEventListener("DOMContentLoaded", () => {
-  applyThemeToDOM();
-});
