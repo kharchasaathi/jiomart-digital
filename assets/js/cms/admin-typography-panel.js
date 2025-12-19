@@ -1,54 +1,91 @@
 /***************************************************
- * ADMIN TYPOGRAPHY PANEL – PHASE 1.5
+ * ADMIN TYPOGRAPHY PANEL – PHASE 2.2
+ * Admin only • Live preview • Persisted
  ***************************************************/
 
-import { isAdmin, updateTheme, getState } from "../core/state.js";
+import { isAdmin, getState, updateTheme } from "../core/state.js";
 
-function createTypographyPanel() {
+function initTypographyPanel() {
   if (!isAdmin()) return;
-  if (document.getElementById("adminTypographyPanel")) return;
 
-  const panel = document.createElement("div");
-  panel.id = "adminTypographyPanel";
+  const panel = document.getElementById("adminThemePanel");
+  if (!panel) return;
 
-  panel.innerHTML = `
-    <div class="theme-panel-header">🔤 Typography</div>
-
-    <label>
-      Base Font Size
-      <input type="range" min="12" max="22" step="1" id="baseSize">
-    </label>
-
-    <label>
-      Line Height
-      <input type="range" min="1.2" max="2.2" step="0.1" id="lineHeight">
-    </label>
-
-    <label>
-      Heading Scale
-      <input type="range" min="1.1" max="1.6" step="0.05" id="headingScale">
-    </label>
-  `;
-
-  document.body.appendChild(panel);
+  // Prevent duplicate UI
+  if (panel.querySelector(".typography-section")) return;
 
   const { theme } = getState();
 
-  panel.querySelector("#baseSize").value = theme.baseSize;
-  panel.querySelector("#lineHeight").value = theme.lineHeight;
-  panel.querySelector("#headingScale").value = theme.headingScale;
+  const section = document.createElement("div");
+  section.className = "typography-section";
 
-  panel.querySelector("#baseSize").addEventListener("input", e =>
-    updateTheme({ baseSize: Number(e.target.value) })
-  );
+  section.innerHTML = `
+    <hr style="margin:12px 0"/>
 
-  panel.querySelector("#lineHeight").addEventListener("input", e =>
-    updateTheme({ lineHeight: Number(e.target.value) })
-  );
+    <div class="theme-panel-header">🔤 Typography</div>
 
-  panel.querySelector("#headingScale").addEventListener("input", e =>
-    updateTheme({ headingScale: Number(e.target.value) })
-  );
+    <label>
+      Base Font Size (${theme.baseSize}px)
+      <input
+        type="range"
+        id="fontSizeRange"
+        min="12"
+        max="22"
+        step="1"
+        value="${theme.baseSize}"
+      />
+    </label>
+
+    <label>
+      Line Height (${theme.lineHeight})
+      <input
+        type="range"
+        id="lineHeightRange"
+        min="1.2"
+        max="2.0"
+        step="0.05"
+        value="${theme.lineHeight}"
+      />
+    </label>
+
+    <label>
+      Heading Scale (${theme.headingScale})
+      <input
+        type="range"
+        id="headingScaleRange"
+        min="1.1"
+        max="1.6"
+        step="0.05"
+        value="${theme.headingScale}"
+      />
+    </label>
+  `;
+
+  panel.appendChild(section);
+
+  /* ===============================
+     BIND EVENTS
+  ================================ */
+
+  const fontSize = section.querySelector("#fontSizeRange");
+  const lineHeight = section.querySelector("#lineHeightRange");
+  const headingScale = section.querySelector("#headingScaleRange");
+
+  fontSize.addEventListener("input", (e) => {
+    updateTheme({ baseSize: Number(e.target.value) });
+    e.target.previousElementSibling &&
+      (e.target.previousElementSibling.textContent =
+        `Base Font Size (${e.target.value}px)`);
+  });
+
+  lineHeight.addEventListener("input", (e) => {
+    updateTheme({ lineHeight: Number(e.target.value) });
+  });
+
+  headingScale.addEventListener("input", (e) => {
+    updateTheme({ headingScale: Number(e.target.value) });
+  });
 }
 
-document.addEventListener("DOMContentLoaded", createTypographyPanel);
+/* Init after DOM + admin mode */
+document.addEventListener("DOMContentLoaded", initTypographyPanel);
