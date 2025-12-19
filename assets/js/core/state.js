@@ -3,9 +3,10 @@
  ***************************************************/
 
 /* ================================
-   THEME STORAGE CONFIG
+   STORAGE KEYS
 ================================ */
 const THEME_STORAGE_KEY = "JIOMART_THEME";
+const LANGUAGE_STORAGE_KEY = "JIOMART_LANG";
 
 /* ================================
    DEFAULT THEME
@@ -29,8 +30,11 @@ const state = {
   adminMode: false,
   page: null,
 
-  // 🎨 THEME STATE (loaded from storage)
-  theme: loadThemeFromStorage()
+  // 🎨 THEME STATE
+  theme: loadThemeFromStorage(),
+
+  // 🌐 LANGUAGE STATE (PHASE 2.3)
+  language: loadLanguageFromStorage() // "en" | "te"
 };
 
 /* ================================
@@ -42,6 +46,10 @@ export function getState() {
 
 export function isAdmin() {
   return state.adminMode;
+}
+
+export function getLanguage() {
+  return state.language;
 }
 
 /* ================================
@@ -57,7 +65,7 @@ export function setAdminMode(value) {
 }
 
 /* =================================================
-   🔥 THEME + TYPOGRAPHY ENGINE
+   🎨 THEME + TYPOGRAPHY ENGINE
 ================================================= */
 
 /**
@@ -78,7 +86,7 @@ export function updateTheme(themeUpdates = {}) {
 
 /**
  * Apply theme + typography to CSS variables
- * (NO render, NO logic side effects)
+ * (NO render, NO side effects)
  */
 export function applyThemeToDOM() {
   const root = document.documentElement;
@@ -96,6 +104,39 @@ export function applyThemeToDOM() {
   root.style.setProperty("--base-font-size", `${t.baseSize}px`);
   root.style.setProperty("--line-height", t.lineHeight);
   root.style.setProperty("--heading-scale", t.headingScale);
+}
+
+/* =================================================
+   🌐 LANGUAGE SYSTEM (PHASE 2.3)
+================================================= */
+
+export function setLanguage(lang) {
+  if (lang !== "en" && lang !== "te") return;
+
+  state.language = lang;
+
+  document.documentElement.setAttribute("lang", lang);
+  document.body.setAttribute("data-lang", lang);
+
+  try {
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
+  } catch {}
+
+  applyLanguageFont();
+}
+
+function applyLanguageFont() {
+  if (state.language === "te") {
+    document.documentElement.style.setProperty(
+      "--site-font",
+      "'Noto Sans Telugu', system-ui"
+    );
+  } else {
+    document.documentElement.style.setProperty(
+      "--site-font",
+      state.theme.font || "system-ui"
+    );
+  }
 }
 
 /* =================================================
@@ -123,12 +164,24 @@ function loadThemeFromStorage() {
   }
 }
 
+/* =================================================
+   🌐 LANGUAGE PERSISTENCE
+================================================= */
+function loadLanguageFromStorage() {
+  try {
+    return localStorage.getItem(LANGUAGE_STORAGE_KEY) || "en";
+  } catch {
+    return "en";
+  }
+}
+
 /* ================================
-   INIT – AUTO APPLY THEME
+   INIT – AUTO APPLY (THEME + LANG)
 ================================ */
 if (typeof document !== "undefined") {
   document.addEventListener("DOMContentLoaded", () => {
     applyThemeToDOM();
+    setLanguage(state.language);
   });
 }
 
@@ -137,4 +190,5 @@ if (typeof document !== "undefined") {
 ================================ */
 if (typeof window !== "undefined") {
   window.__testTheme = updateTheme;
+  window.__testLang = setLanguage;
 }
