@@ -1,4 +1,14 @@
 /* ===============================
+   🔥 PHASE 1.2 — THEME VARIABLES
+================================ */
+:root {
+  --site-bg: #f4f6fb;
+  --site-primary: #1877f2;
+  --site-text: #222;
+  --site-font: 'Poppins', Arial, sans-serif;
+}
+
+/* ===============================
    BASE RESET
 ================================ */
 * {
@@ -13,9 +23,9 @@ html, body {
 }
 
 body {
-  font-family: 'Poppins', Arial, sans-serif;
-  background: #f4f6fb;
-  color: #222;
+  font-family: var(--site-font);
+  background: var(--site-bg);
+  color: var(--site-text);
   overflow-x: hidden;
 }
 
@@ -29,6 +39,9 @@ body {
 button {
   cursor: pointer;
   font-family: inherit;
+  background: var(--site-primary);
+  color: #fff;
+  border: none;
 }
 
 img {
@@ -41,13 +54,13 @@ img {
 ================================ */
 #pageRoot {
   min-height: 100vh;
-  background: #f4f6fb;
+  background: var(--site-bg);
   padding: 24px;
 }
 
 /* Ensure page visible in admin mode */
 body.admin-mode #pageRoot {
-  background: #f4f6fb;
+  background: var(--site-bg);
 }
 
 /* ===============================
@@ -59,7 +72,7 @@ body.admin-mode #pageRoot {
   left: 0;
   right: 0;
   height: 46px;
-  background: #111;
+  background: var(--site-primary);
   color: #fff;
   display: flex;
   align-items: center;
@@ -74,16 +87,15 @@ body.admin-mode #pageRoot {
 }
 
 .admin-bar button {
-  background: #1877f2;
-  color: #fff;
-  border: none;
+  background: #ffffff;
+  color: #000;
   padding: 6px 10px;
   border-radius: 4px;
   font-size: 13px;
 }
 
 .admin-bar button:hover {
-  background: #0f5bd7;
+  opacity: 0.85;
 }
 
 /* Push page content down in admin mode */
@@ -124,7 +136,7 @@ body.admin-mode {
 }
 
 #editorToolbar button:hover {
-  background: #1877f2;
+  background: var(--site-primary);
 }
 
 #editorToolbar select {
@@ -153,7 +165,7 @@ body.admin-mode {
 
 /* Admin hover outline */
 body.admin-mode .cms-block:hover {
-  outline: 2px solid #1877f2;
+  outline: 2px solid var(--site-primary);
   outline-offset: 2px;
 }
 
