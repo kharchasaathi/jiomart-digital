@@ -84,12 +84,47 @@
   </div>
 
   <!-- ===============================
+       🎨 ADMIN THEME PANEL (PHASE 2.1)
+       (HTML BASED – shown via JS)
+  ================================ -->
+  <div id="adminThemePanel" class="hidden">
+    <div class="theme-panel-header">🎨 Theme Settings</div>
+
+    <label>
+      Background
+      <input type="color" id="themeBg" />
+    </label>
+
+    <label>
+      Primary Color
+      <input type="color" id="themePrimary" />
+    </label>
+
+    <label>
+      Text Color
+      <input type="color" id="themeText" />
+    </label>
+
+    <label>
+      Font Family
+      <select id="themeFont">
+        <option value="system-ui">System</option>
+        <option value="'Poppins', system-ui">Poppins</option>
+        <option value="'Noto Sans Telugu', system-ui">
+          Telugu – Noto Sans
+        </option>
+      </select>
+    </label>
+  </div>
+
+  <!-- ===============================
        CMS PAGE ROOT
   ================================ -->
   <div id="pageRoot"></div>
 
   <!-- =================================================
        ✅ SCRIPT LOAD ORDER (VERY IMPORTANT)
+       DO NOT CHANGE ORDER
   ================================================== -->
 
   <!-- 1️⃣ Firebase core + auth -->
@@ -98,15 +133,17 @@
   <!-- 2️⃣ Admin login handler -->
   <script type="module" src="assets/js/cms/admin-auth.js"></script>
 
-  <!-- 3️⃣ Admin session sync -->
+  <!-- 3️⃣ Admin session sync (sets adminMode) -->
   <script type="module" src="assets/js/cms/admin-session.js"></script>
-  
-<script type="module" src="assets/js/cms/admin-theme-panel.js"></script>
+
+  <!-- 4️⃣ Admin theme + typography panels -->
+  <script type="module" src="assets/js/cms/admin-theme-panel.js"></script>
   <script type="module" src="assets/js/cms/admin-typography-panel.js"></script>
-  <!-- 4️⃣ Admin logout -->
+
+  <!-- 5️⃣ Admin logout -->
   <script type="module" src="assets/js/cms/admin-logout.js"></script>
 
-  <!-- 5️⃣ Public render (LAST) -->
+  <!-- 6️⃣ Public render (LAST) -->
   <script type="module" src="assets/js/site/public.js"></script>
 
 </body>
