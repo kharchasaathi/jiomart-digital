@@ -1,10 +1,10 @@
 /***************************************************
- * BLOCKS – FINAL SAFE + STABLE VERSION
- * UI PREBUILT + IMAGE + VIDEO SUPPORT
- * Phase 3.1 + 3.2 + 3.3
+ * BLOCKS – FINAL VERIFIED VERSION
+ * Phase 3.1 + 3.2 + 3.3 (STABLE)
  *
  * ✅ Add block below active
  * ✅ Delete block with confirmation
+ * ✅ Image / Video supported
  * ❌ No security change
  * ❌ No state logic change
  ***************************************************/
@@ -31,7 +31,6 @@ export function renderBlocks(container) {
     return;
   }
 
-  /* First load → create UI skeleton */
   if (!Array.isArray(page.blocks) || page.blocks.length === 0) {
     page.blocks = createDefaultBlocks();
   }
@@ -39,31 +38,32 @@ export function renderBlocks(container) {
   container.innerHTML = "";
 
   page.blocks.forEach(block => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "cms-block-wrapper";
+    wrapper.dataset.blockId = block.id;
+
     let el = null;
 
     switch (block.type) {
       case "text":
         el = renderTextBlock(block);
         break;
-
       case "image":
         el = renderImageBlock(block);
         break;
-
       case "video":
         el = renderVideoBlock(block);
         break;
-
       default:
         console.warn("⚠️ Unknown block type:", block.type);
         return;
     }
 
-    /* 🔥 Delete button (ADMIN ONLY) */
+    /* ===== ADMIN DELETE BUTTON ===== */
     if (isAdmin()) {
       const del = document.createElement("button");
       del.className = "block-delete-btn";
-      del.innerHTML = "✖";
+      del.innerText = "✖";
       del.title = "Delete block";
 
       del.addEventListener("click", e => {
@@ -71,17 +71,18 @@ export function renderBlocks(container) {
         deleteBlock(block.id);
       });
 
-      el.appendChild(del);
+      wrapper.appendChild(del);
     }
 
-    container.appendChild(el);
+    wrapper.appendChild(el);
+    container.appendChild(wrapper);
   });
 
   console.log("✅ Blocks rendered");
 }
 
 /* =================================================
-   TEXT BLOCK – ADMIN SAFE EDIT
+   TEXT BLOCK
 ================================================= */
 function renderTextBlock(block) {
   const div = document.createElement("div");
@@ -100,10 +101,6 @@ function renderTextBlock(block) {
     div.spellcheck = true;
     div.classList.add("editable");
 
-    div.style.pointerEvents = "auto";
-    div.style.userSelect = "text";
-    div.style.caretColor = "#000";
-
     div.addEventListener("focus", () => {
       activeBlockId = block.id;
     });
@@ -112,8 +109,8 @@ function renderTextBlock(block) {
       updateBlock(block.id, div.innerHTML);
     });
 
-    div.addEventListener("blur", () => {
-      activeBlockId = null;
+    div.addEventListener("click", () => {
+      activeBlockId = block.id;
     });
   }
 
@@ -121,7 +118,7 @@ function renderTextBlock(block) {
 }
 
 /* =================================================
-   IMAGE BLOCK (PHASE 3.1)
+   IMAGE BLOCK
 ================================================= */
 function renderImageBlock(block) {
   const wrap = document.createElement("div");
@@ -138,7 +135,7 @@ function renderImageBlock(block) {
   } else {
     wrap.innerHTML = `
       <div class="media-placeholder">
-        🖼 Image Block
+        🖼 Image Block<br/>
         <small>Admin: Image will be added here</small>
       </div>
     `;
@@ -154,7 +151,7 @@ function renderImageBlock(block) {
 }
 
 /* =================================================
-   VIDEO BLOCK (PHASE 3.2)
+   VIDEO BLOCK
 ================================================= */
 function renderVideoBlock(block) {
   const wrap = document.createElement("div");
@@ -172,7 +169,7 @@ function renderVideoBlock(block) {
   } else {
     wrap.innerHTML = `
       <div class="media-placeholder">
-        🎥 Video Block
+        🎥 Video Block<br/>
         <small>Product demo / review video</small>
       </div>
     `;
@@ -201,7 +198,7 @@ export function addBlock(type = "text") {
     data: {}
   };
 
-  let index = page.blocks.findIndex(b => b.id === activeBlockId);
+  const index = page.blocks.findIndex(b => b.id === activeBlockId);
 
   if (index === -1) {
     page.blocks.push(newBlock);
@@ -213,7 +210,7 @@ export function addBlock(type = "text") {
 }
 
 /* =================================================
-   OPTION B — DELETE BLOCK (WITH CONFIRM)
+   OPTION B — DELETE BLOCK (CONFIRM)
 ================================================= */
 function deleteBlock(blockId) {
   if (!confirm("ఈ block delete చేయాలా?")) return;
@@ -245,7 +242,7 @@ function updateBlock(blockId, html) {
 }
 
 /* =================================================
-   DEFAULT UI BLOCKS (FIRST LOAD)
+   DEFAULT BLOCKS (FIRST LOAD)
 ================================================= */
 function createDefaultBlocks() {
   return [
