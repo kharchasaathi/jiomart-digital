@@ -122,30 +122,51 @@
   ================================ -->
   <div id="pageRoot"></div>
 
-  <!-- =================================================
-       ✅ SCRIPT LOAD ORDER (VERY IMPORTANT)
-       DO NOT CHANGE ORDER
-  ================================================== -->
+<!-- =================================================
+     ✅ SCRIPT LOAD ORDER (FINAL & SAFE)
+     Rule:
+     1. Core (Firebase, State)
+     2. Auth
+     3. Session sync (adminMode)
+     4. Admin-only UI panels
+     5. Admin actions (logout)
+     6. Public render (LAST)
+================================================== -->
 
-  <!-- 1️⃣ Firebase core + auth -->
-  <script type="module" src="assets/js/core/firebase.js"></script>
+<!-- 1️⃣ Firebase core + auth (MUST be first) -->
+<script type="module" src="assets/js/core/firebase.js"></script>
 
-  <!-- 2️⃣ Admin login handler -->
-  <script type="module" src="assets/js/cms/admin-auth.js"></script>
+<!-- 2️⃣ Admin login handler (email/password) -->
+<script type="module" src="assets/js/cms/admin-auth.js"></script>
 
-  <!-- 3️⃣ Admin session sync (sets adminMode) -->
-  <script type="module" src="assets/js/cms/admin-session.js"></script>
+<!-- 3️⃣ Admin session sync
+     🔥 Sets adminMode
+     🔥 Dispatches ADMIN_STATE_CHANGED
+-->
+<script type="module" src="assets/js/cms/admin-session.js"></script>
 
-  <!-- 4️⃣ Admin theme + typography panels -->
-  <script type="module" src="assets/js/cms/admin-theme-panel.js"></script>
-  <script type="module" src="assets/js/cms/admin-language-panel.js"></script>
-  <script type="module" src="assets/js/cms/admin-typography-panel.js"></script>
+<!-- 4️⃣ Admin CMS UI (depends on adminMode) -->
 
-  <!-- 5️⃣ Admin logout -->
-  <script type="module" src="assets/js/cms/admin-logout.js"></script>
+<!-- 🎨 Theme panel -->
+<script type="module" src="assets/js/cms/admin-theme-panel.js"></script>
 
-  <!-- 6️⃣ Public render (LAST) -->
-  <script type="module" src="assets/js/site/public.js"></script>
+<!-- 🔤 Typography panel -->
+<script type="module" src="assets/js/cms/admin-typography-panel.js"></script>
+
+<!-- 📝 Language / Typing mode panel
+     (ONLY editor behaviour, NOT user language switch)
+-->
+<script type="module" src="assets/js/cms/admin-language-panel.js"></script>
+
+<!-- 5️⃣ Admin logout handler -->
+<script type="module" src="assets/js/cms/admin-logout.js"></script>
+
+<!-- 6️⃣ Public entry (🚨 ALWAYS LAST)
+     - loadPage()
+     - renderPage()
+     - renderBlocks()
+-->
+<script type="module" src="assets/js/site/public.js"></script>
 
 </body>
 </html>
