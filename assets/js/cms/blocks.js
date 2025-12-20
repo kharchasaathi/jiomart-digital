@@ -1,11 +1,10 @@
 /***************************************************
- * BLOCKS – FINAL VERIFIED VERSION (FIXED)
+ * BLOCKS – FINAL STABLE + UX FIXED
  * Phase 3.1 + 3.2 + 3.3
  ***************************************************/
 
 import { getState, isAdmin } from "../core/state.js";
 import { savePage } from "./page-store.js";
-import { renderPage } from "./render.js"; // 🔥 ADD THIS
 
 let activeBlockId = null;
 
@@ -17,7 +16,11 @@ export function renderBlocks(container) {
 
   const state = getState();
   const page = state.page;
-  if (!page) return;
+
+  if (!page) {
+    container.innerHTML = "";
+    return;
+  }
 
   if (!Array.isArray(page.blocks) || page.blocks.length === 0) {
     page.blocks = createDefaultBlocks();
@@ -29,31 +32,23 @@ export function renderBlocks(container) {
     const wrapper = document.createElement("div");
     wrapper.className = "cms-block-wrapper";
     wrapper.dataset.blockId = block.id;
+    wrapper.style.position = "relative"; // 🔥 FIX FOR X MARK
 
     let el;
-    switch (block.type) {
-      case "text":
-        el = renderTextBlock(block);
-        break;
-      case "image":
-        el = renderImageBlock(block);
-        break;
-      case "video":
-        el = renderVideoBlock(block);
-        break;
-      default:
-        return;
-    }
+    if (block.type === "text") el = renderTextBlock(block);
+    if (block.type === "image") el = renderImageBlock(block);
+    if (block.type === "video") el = renderVideoBlock(block);
 
+    /* ❌ DELETE BUTTON */
     if (isAdmin()) {
       const del = document.createElement("button");
       del.className = "block-delete-btn";
-      del.textContent = "✖";
+      del.innerText = "✖";
 
-      del.addEventListener("click", e => {
+      del.onclick = e => {
         e.stopPropagation();
         deleteBlock(block.id);
-      });
+      };
 
       wrapper.appendChild(del);
     }
@@ -61,33 +56,35 @@ export function renderBlocks(container) {
     wrapper.appendChild(el);
     container.appendChild(wrapper);
   });
+
+  console.log("✅ Blocks rendered");
 }
 
-/* ================= TEXT BLOCK ================= */
+/* =================================================
+   TEXT BLOCK
+================================================= */
 function renderTextBlock(block) {
   const div = document.createElement("div");
   div.className = "cms-text-block editable";
   div.dataset.blockId = block.id;
 
   block.data ||= {};
-  block.data.html ||= `<p>Edit this content</p>`;
+  block.data.html ||= "<p>Edit this content</p>";
   div.innerHTML = block.data.html;
 
   if (isAdmin()) {
     div.contentEditable = "true";
-    div.spellcheck = true;
 
-    div.addEventListener("focus", () => activeBlockId = block.id);
-    div.addEventListener("click", () => activeBlockId = block.id);
-    div.addEventListener("input", () => {
-      updateBlock(block.id, div.innerHTML);
-    });
+    div.onclick = () => (activeBlockId = block.id);
+    div.oninput = () => updateBlock(block.id, div.innerHTML);
   }
 
   return div;
 }
 
-/* ================= IMAGE BLOCK ================= */
+/* =================================================
+   IMAGE BLOCK
+================================================= */
 function renderImageBlock(block) {
   const wrap = document.createElement("div");
   wrap.className = "cms-image-block";
@@ -96,14 +93,19 @@ function renderImageBlock(block) {
   block.data ||= {};
 
   wrap.innerHTML = block.data.src
-    ? `<img src="${block.data.src}" />`
+    ? `<img src="${block.data.src}" alt="Image"/>`
     : `<div class="media-placeholder">🖼 Image Block</div>`;
 
-  if (isAdmin()) wrap.addEventListener("click", () => activeBlockId = block.id);
+  if (isAdmin()) {
+    wrap.onclick = () => (activeBlockId = block.id);
+  }
+
   return wrap;
 }
 
-/* ================= VIDEO BLOCK ================= */
+/* =================================================
+   VIDEO BLOCK
+================================================= */
 function renderVideoBlock(block) {
   const wrap = document.createElement("div");
   wrap.className = "cms-video-block";
@@ -112,30 +114,52 @@ function renderVideoBlock(block) {
   block.data ||= {};
 
   wrap.innerHTML = block.data.src
-    ? `<video controls width="100%"><source src="${block.data.src}"></video>`
+    ? `<video controls width="100%"><source src="${block.data.src}"/></video>`
     : `<div class="media-placeholder">🎥 Video Block</div>`;
 
-  if (isAdmin()) wrap.addEventListener("click", () => activeBlockId = block.id);
+  if (isAdmin()) {
+    wrap.onclick = () => (activeBlockId = block.id);
+  }
+
   return wrap;
 }
 
-/* ================= ADD BLOCK ================= */
+/* =================================================
+   ADD BLOCK (UX FIXED)
+================================================= */
 export function addBlock(type = "text") {
   const state = getState();
   const page = state.page;
   if (!page) return;
 
-  const newBlock = { id: "block-" + Date.now(), type, data: {} };
-  const index = page.blocks.findIndex(b => b.id === activeBlockId);
+  const newBlock = {
+    id: "block-" + Date.now(),
+    type,
+    data: {}
+  };
 
-  index === -1
-    ? page.blocks.push(newBlock)
-    : page.blocks.splice(index + 1, 0, newBlock);
+  let index = page.blocks.findIndex(b => b.id === activeBlockId);
 
-  renderPage(); // 🔥 CRITICAL FIX
+  if (index === -1) {
+    index = page.blocks.length - 1;
+  }
+
+  page.blocks.splice(index + 1, 0, newBlock);
+  activeBlockId = newBlock.id;
+
+  document.dispatchEvent(new Event("cms-rerender"));
+
+  // 🔥 AUTO SCROLL TO NEW BLOCK
+  setTimeout(() => {
+    document
+      .querySelector(`[data-block-id="${newBlock.id}"]`)
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, 50);
 }
 
-/* ================= DELETE BLOCK ================= */
+/* =================================================
+   DELETE BLOCK
+================================================= */
 function deleteBlock(blockId) {
   if (!confirm("ఈ block delete చేయాలా?")) return;
 
@@ -143,28 +167,35 @@ function deleteBlock(blockId) {
   state.page.blocks = state.page.blocks.filter(b => b.id !== blockId);
   activeBlockId = null;
 
-  renderPage(); // 🔥 CRITICAL FIX
+  document.dispatchEvent(new Event("cms-rerender"));
 }
 
-/* ================= UPDATE BLOCK ================= */
+/* =================================================
+   UPDATE TEXT
+================================================= */
 function updateBlock(blockId, html) {
-  const block = getState().page.blocks.find(b => b.id === blockId);
+  const state = getState();
+  const block = state.page.blocks.find(b => b.id === blockId);
   if (block) block.data.html = html;
 }
 
-/* ================= DEFAULT BLOCKS ================= */
+/* =================================================
+   DEFAULT BLOCKS
+================================================= */
 function createDefaultBlocks() {
   return [
-    { id: "hero", type: "text", data: { html: "<h1>Welcome to JioMart Digital</h1>" } },
-    { id: "hero-image", type: "image", data: {} },
-    { id: "features", type: "text", data: { html: "<h2>Why Shop With Us?</h2>" } },
-    { id: "promo-video", type: "video", data: {} },
-    { id: "footer", type: "text", data: { html: "© 2025 JioMart Digital" } }
+    { id: "t1", type: "text", data: { html: "<h2>Edit this content</h2>" } },
+    { id: "t2", type: "text", data: { html: "<p>Edit this content</p>" } },
+    { id: "img1", type: "image", data: {} },
+    { id: "vid1", type: "video", data: {} }
   ];
 }
 
-/* ================= SAVE ================= */
+/* =================================================
+   SAVE
+================================================= */
 document.addEventListener("cms-save", async () => {
-  await savePage(getState().page);
+  const state = getState();
+  await savePage(state.page);
   alert("✅ Content saved successfully");
 });
