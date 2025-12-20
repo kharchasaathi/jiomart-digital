@@ -133,31 +133,33 @@
        CMS PAGE ROOT
   ================================ -->
   <div id="pageRoot"></div>
+<!-- =================================================
+     ✅ SCRIPT LOAD ORDER (FINAL & CLEAN)
+================================================== -->
 
-  <!-- =================================================
-       ✅ SCRIPT LOAD ORDER (FINAL & CLEAN)
-  ================================================== -->
+<!-- 1️⃣ Firebase (core) -->
+<script type="module" src="assets/js/core/firebase.js"></script>
 
-  <!-- 1️⃣ Firebase -->
-  <script type="module" src="assets/js/core/firebase.js"></script>
+<!-- 2️⃣ Admin authentication -->
+<script type="module" src="assets/js/cms/admin-auth.js"></script>
 
-  <!-- 2️⃣ Admin auth -->
-  <script type="module" src="assets/js/cms/admin-auth.js"></script>
+<!-- 3️⃣ Admin session (sets adminMode) -->
+<script type="module" src="assets/js/cms/admin-session.js"></script>
 
-  <!-- 3️⃣ Admin session (sets adminMode) -->
-  <script type="module" src="assets/js/cms/admin-session.js"></script>
+<!-- 4️⃣ Admin panels -->
+<script type="module" src="assets/js/cms/admin-theme-panel.js"></script>
+<script type="module" src="assets/js/cms/admin-typography-panel.js"></script>
 
-  <!-- 4️⃣ Admin panels -->
-  <script type="module" src="assets/js/cms/admin-theme-panel.js"></script>
-  <script type="module" src="assets/js/cms/admin-typography-panel.js"></script>
+<!-- ❌ admin-language-panel.js REMOVED (as decided) -->
 
-  <!-- ❌ admin-language-panel.js REMOVED -->
+<!-- 5️⃣ Admin logout -->
+<script type="module" src="assets/js/cms/admin-logout.js"></script>
 
-  <!-- 5️⃣ Admin logout -->
-  <script type="module" src="assets/js/cms/admin-logout.js"></script>
+<!-- 6️⃣ 🧩 Admin Editor Toolbar (PHASE 3.3 + 3.4 + 3.5) -->
+<script type="module" src="assets/js/cms/admin-editor-toolbar.js"></script>
 
-  <!-- 6️⃣ Public render (ALWAYS LAST) -->
-  <script type="module" src="assets/js/site/public.js"></script>
+<!-- 7️⃣ Public render (🚨 ALWAYS LAST) -->
+<script type="module" src="assets/js/site/public.js"></script>
 
 </body>
 </html>
