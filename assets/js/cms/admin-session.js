@@ -1,10 +1,5 @@
 /***************************************************
  * ADMIN SESSION – SINGLE SOURCE OF TRUTH (FINAL)
- * ✔ Auth listener only
- * ✔ State update only
- * ✔ Event dispatch only
- * ❌ No render
- * ❌ No UI DOM handling
  ***************************************************/
 import { onAuthChange } from "../core/firebase.js";
 import { setAdminMode } from "../core/state.js";
@@ -18,26 +13,24 @@ onAuthChange((user) => {
 
   console.log("🔄 Auth state changed. Admin?", isAdmin);
 
-  // 1️⃣ Update global state
   setAdminMode(isAdmin);
 
-  // 2️⃣ Persist for refresh safety (optional but useful)
   if (isAdmin) {
-    localStorage.setItem("ADMIN_MODE", "true");
     document.body.classList.add("admin-mode");
-    console.log("🛠️ Admin mode ENABLED");
+    document.getElementById("adminLoginBtn")?.classList.add("hidden");
+    document.getElementById("adminLogoutBtn")?.classList.remove("hidden");
   } else {
-    localStorage.removeItem("ADMIN_MODE");
     document.body.classList.remove("admin-mode");
-    console.log("👁️ Public mode");
+    document.getElementById("adminLoginBtn")?.classList.remove("hidden");
+    document.getElementById("adminLogoutBtn")?.classList.add("hidden");
   }
 
-  // 3️⃣ 🔔 Notify rest of the app (CRITICAL)
+  // 🔥 ONLY ONE EVENT – FINAL
   document.dispatchEvent(
-    new CustomEvent("ADMIN_STATE_READY", {
+    new CustomEvent("ADMIN_STATE_CHANGED", {
       detail: { isAdmin }
     })
   );
 
-  console.log("🔔 ADMIN_STATE_READY dispatched:", isAdmin);
+  console.log("📢 ADMIN_STATE_CHANGED dispatched:", isAdmin);
 });
