@@ -1,12 +1,15 @@
 /***************************************************
  * BLOCKS – FINAL STABLE + UX FIXED
  * Phase 3.1 + 3.2 + 3.3
+ * ✔ X per block (correct position)
+ * ✔ One-time delete confirmation
  ***************************************************/
 
 import { getState, isAdmin } from "../core/state.js";
 import { savePage } from "./page-store.js";
 
 let activeBlockId = null;
+let deleteConfirmedOnce = false; // 🔐 one-time verification flag
 
 /* =================================================
    RENDER ALL BLOCKS
@@ -32,18 +35,19 @@ export function renderBlocks(container) {
     const wrapper = document.createElement("div");
     wrapper.className = "cms-block-wrapper";
     wrapper.dataset.blockId = block.id;
-    wrapper.style.position = "relative"; // 🔥 FIX FOR X MARK
+    wrapper.style.position = "relative"; // ✅ FIX: X stays inside block
 
-    let el;
+    let el = null;
     if (block.type === "text") el = renderTextBlock(block);
     if (block.type === "image") el = renderImageBlock(block);
     if (block.type === "video") el = renderVideoBlock(block);
 
-    /* ❌ DELETE BUTTON */
+    /* ❌ DELETE BUTTON (ADMIN ONLY) */
     if (isAdmin()) {
       const del = document.createElement("button");
       del.className = "block-delete-btn";
       del.innerText = "✖";
+      del.title = "Delete block";
 
       del.onclick = e => {
         e.stopPropagation();
@@ -74,9 +78,19 @@ function renderTextBlock(block) {
 
   if (isAdmin()) {
     div.contentEditable = "true";
+    div.spellcheck = true;
 
-    div.onclick = () => (activeBlockId = block.id);
-    div.oninput = () => updateBlock(block.id, div.innerHTML);
+    div.addEventListener("focus", () => {
+      activeBlockId = block.id;
+    });
+
+    div.addEventListener("input", () => {
+      updateBlock(block.id, div.innerHTML);
+    });
+
+    div.addEventListener("click", () => {
+      activeBlockId = block.id;
+    });
   }
 
   return div;
@@ -93,11 +107,13 @@ function renderImageBlock(block) {
   block.data ||= {};
 
   wrap.innerHTML = block.data.src
-    ? `<img src="${block.data.src}" alt="Image"/>`
+    ? `<img src="${block.data.src}" alt="Image" />`
     : `<div class="media-placeholder">🖼 Image Block</div>`;
 
   if (isAdmin()) {
-    wrap.onclick = () => (activeBlockId = block.id);
+    wrap.addEventListener("click", () => {
+      activeBlockId = block.id;
+    });
   }
 
   return wrap;
@@ -114,23 +130,27 @@ function renderVideoBlock(block) {
   block.data ||= {};
 
   wrap.innerHTML = block.data.src
-    ? `<video controls width="100%"><source src="${block.data.src}"/></video>`
+    ? `<video controls width="100%">
+         <source src="${block.data.src}" />
+       </video>`
     : `<div class="media-placeholder">🎥 Video Block</div>`;
 
   if (isAdmin()) {
-    wrap.onclick = () => (activeBlockId = block.id);
+    wrap.addEventListener("click", () => {
+      activeBlockId = block.id;
+    });
   }
 
   return wrap;
 }
 
 /* =================================================
-   ADD BLOCK (UX FIXED)
+   ADD BLOCK (BELOW ACTIVE)
 ================================================= */
 export function addBlock(type = "text") {
   const state = getState();
   const page = state.page;
-  if (!page) return;
+  if (!page || !Array.isArray(page.blocks)) return;
 
   const newBlock = {
     id: "block-" + Date.now(),
@@ -139,17 +159,14 @@ export function addBlock(type = "text") {
   };
 
   let index = page.blocks.findIndex(b => b.id === activeBlockId);
-
-  if (index === -1) {
-    index = page.blocks.length - 1;
-  }
+  if (index === -1) index = page.blocks.length - 1;
 
   page.blocks.splice(index + 1, 0, newBlock);
   activeBlockId = newBlock.id;
 
   document.dispatchEvent(new Event("cms-rerender"));
 
-  // 🔥 AUTO SCROLL TO NEW BLOCK
+  // 🔥 Auto-scroll to new block
   setTimeout(() => {
     document
       .querySelector(`[data-block-id="${newBlock.id}"]`)
@@ -158,12 +175,18 @@ export function addBlock(type = "text") {
 }
 
 /* =================================================
-   DELETE BLOCK
+   DELETE BLOCK (ONE-TIME CONFIRM)
 ================================================= */
 function deleteBlock(blockId) {
-  if (!confirm("ఈ block delete చేయాలా?")) return;
+  if (!deleteConfirmedOnce) {
+    const ok = confirm("ఈ block delete చేయాలా?");
+    if (!ok) return;
+    deleteConfirmedOnce = true; // ✅ only once
+  }
 
   const state = getState();
+  if (!state.page) return;
+
   state.page.blocks = state.page.blocks.filter(b => b.id !== blockId);
   activeBlockId = null;
 
@@ -171,7 +194,7 @@ function deleteBlock(blockId) {
 }
 
 /* =================================================
-   UPDATE TEXT
+   UPDATE TEXT CONTENT
 ================================================= */
 function updateBlock(blockId, html) {
   const state = getState();
@@ -180,22 +203,24 @@ function updateBlock(blockId, html) {
 }
 
 /* =================================================
-   DEFAULT BLOCKS
+   DEFAULT BLOCKS (SAMPLE STRUCTURE)
 ================================================= */
 function createDefaultBlocks() {
   return [
     { id: "t1", type: "text", data: { html: "<h2>Edit this content</h2>" } },
-    { id: "t2", type: "text", data: { html: "<p>Edit this content</p>" } },
+    { id: "t2", type: "text", data: { html: "<p>Type Telugu or English freely</p>" } },
     { id: "img1", type: "image", data: {} },
     { id: "vid1", type: "video", data: {} }
   ];
 }
 
 /* =================================================
-   SAVE
+   SAVE HANDLER
 ================================================= */
 document.addEventListener("cms-save", async () => {
   const state = getState();
+  if (!state.page) return;
+
   await savePage(state.page);
   alert("✅ Content saved successfully");
 });
