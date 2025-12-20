@@ -29,12 +29,10 @@ function createEditorToolbar() {
 
   document.body.appendChild(toolbar);
   toolbarCreated = true;
+  console.log("🧰 Admin editor toolbar READY");
 }
 
-/* 🔥 wait for admin state */
+/* 🔥 correct event */
 document.addEventListener("ADMIN_STATE_CHANGED", () => {
-  setTimeout(createEditorToolbar, 200);
+  setTimeout(createEditorToolbar, 100);
 });
-
-/* fallback */
-setTimeout(createEditorToolbar, 800);
