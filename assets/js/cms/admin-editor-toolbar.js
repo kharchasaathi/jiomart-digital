@@ -1,9 +1,11 @@
 /***************************************************
- * ADMIN EDITOR TOOLBAR – FINAL STABLE
+ * ADMIN EDITOR TOOLBAR – FINAL & STABLE
  *
- * ✅ Appears AFTER admin confirmed
+ * ✅ Appears only after admin confirmed
  * ✅ No timing issues
  * ✅ No duplicate toolbar
+ * ✅ Add Text / Image / Video works
+ * ✅ Save works
  ***************************************************/
 
 import { addBlock } from "./blocks.js";
@@ -17,12 +19,18 @@ let toolbarCreated = false;
 function createEditorToolbar() {
   const state = getState();
 
-  if (!state.adminMode) return;
+  // 🔒 Only admin can see toolbar
+  if (!state.adminMode) {
+    console.log("⛔ Toolbar blocked: adminMode = false");
+    return;
+  }
+
+  // ❌ Already created
   if (toolbarCreated) return;
 
   const toolbar = document.createElement("div");
-  toolbar.className = "editor-toolbar";
   toolbar.id = "cms-toolbar";
+  toolbar.className = "editor-toolbar";
 
   toolbar.innerHTML = `
     <button data-action="text">➕ Text</button>
@@ -39,9 +47,10 @@ function createEditorToolbar() {
 
     if (action === "save") {
       document.dispatchEvent(new Event("cms-save"));
-    } else {
-      addBlock(action);
+      return;
     }
+
+    addBlock(action);
   });
 
   document.body.appendChild(toolbar);
@@ -51,7 +60,7 @@ function createEditorToolbar() {
 }
 
 /* =================================================
-   REMOVE TOOLBAR (LOGOUT)
+   REMOVE TOOLBAR (ON LOGOUT)
 ================================================= */
 function removeEditorToolbar() {
   const toolbar = document.getElementById("cms-toolbar");
@@ -63,7 +72,8 @@ function removeEditorToolbar() {
 }
 
 /* =================================================
-   LISTEN ADMIN STATE (🔥 ONLY SOURCE OF TRUTH)
+   🔥 SINGLE SOURCE OF TRUTH
+   Listen ONLY to admin-session
 ================================================= */
 document.addEventListener("ADMIN_STATE_CHANGED", e => {
   const isAdmin = !!e.detail?.admin;
@@ -71,8 +81,22 @@ document.addEventListener("ADMIN_STATE_CHANGED", e => {
   console.log("🔔 ADMIN_STATE_CHANGED (toolbar):", isAdmin);
 
   if (isAdmin) {
-    setTimeout(createEditorToolbar, 50);
+    // ⏳ slight delay to allow render/state settle
+    setTimeout(createEditorToolbar, 100);
   } else {
     removeEditorToolbar();
   }
+});
+
+/* =================================================
+   SAFETY NET
+   (In case admin already logged in on refresh)
+================================================= */
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    const state = getState();
+    if (state.adminMode) {
+      createEditorToolbar();
+    }
+  }, 300);
 });
