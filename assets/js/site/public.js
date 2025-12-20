@@ -24,3 +24,12 @@ function tryRender() {
   console.log("🎨 Rendering page");
   renderPage();
 }
+import { renderPage } from "../cms/render.js";
+
+/* ===============================
+   CMS RERENDER LISTENER (🔥 FIX)
+================================ */
+document.addEventListener("cms-rerender", () => {
+  console.log("🔁 cms-rerender received → re-rendering");
+  renderPage();
+});
