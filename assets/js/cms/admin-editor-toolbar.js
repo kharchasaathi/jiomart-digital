@@ -1,15 +1,11 @@
 /***************************************************
- * ADMIN EDITOR TOOLBAR – FINAL GUARANTEED FIX
+ * ADMIN EDITOR TOOLBAR – FINAL GUARANTEED
  ***************************************************/
-
 import { addBlock } from "./blocks.js";
 
 let toolbarCreated = false;
 
-/* =================================================
-   CREATE TOOLBAR
-================================================= */
-function createEditorToolbar() {
+function createToolbar() {
   if (toolbarCreated) return;
 
   const toolbar = document.createElement("div");
@@ -39,32 +35,23 @@ function createEditorToolbar() {
   document.body.appendChild(toolbar);
   toolbarCreated = true;
 
-  console.log("🧰 Admin editor toolbar CREATED");
+  console.log("🧰 Toolbar CREATED");
 }
 
-/* =================================================
-   REMOVE TOOLBAR
-================================================= */
-function removeEditorToolbar() {
-  const toolbar = document.getElementById("cms-toolbar");
-  if (toolbar) {
-    toolbar.remove();
-    toolbarCreated = false;
-    console.log("🧹 Admin editor toolbar REMOVED");
-  }
+function removeToolbar() {
+  document.getElementById("cms-toolbar")?.remove();
+  toolbarCreated = false;
+  console.log("🧹 Toolbar REMOVED");
 }
 
-/* =================================================
-   🔥 ONLY TRUST THIS EVENT
-================================================= */
 document.addEventListener("ADMIN_STATE_CHANGED", e => {
-  const isAdmin = !!e.detail?.admin;
+  const isAdmin = !!e.detail?.isAdmin;
 
   console.log("🔔 ADMIN_STATE_CHANGED (toolbar):", isAdmin);
 
   if (isAdmin) {
-    setTimeout(createEditorToolbar, 100);
+    setTimeout(createToolbar, 100);
   } else {
-    removeEditorToolbar();
+    removeToolbar();
   }
 });
