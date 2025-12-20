@@ -1,78 +1,34 @@
 /***************************************************
- * ADMIN EDITOR TOOLBAR – FINAL FIXED
- * Phase 3.3 (STABLE)
- *
- * ✅ Add Text / Image / Video works
- * ✅ Save works
- * ✅ Appears only after admin login
- * ✅ Night-mode readable
- * ❌ No state change
- * ❌ No security change
+ * ADMIN EDITOR TOOLBAR – FINAL
+ * Floating bottom toolbar (admin only)
  ***************************************************/
 
 import { isAdmin } from "../core/state.js";
 import { addBlock } from "./blocks.js";
 
-let toolbarCreated = false;
-
-function createEditorToolbar() {
+function initToolbar() {
   if (!isAdmin()) return;
-  if (toolbarCreated) return;
+  if (document.querySelector(".editor-toolbar")) return;
 
-  const toolbar = document.createElement("div");
-  toolbar.className = "editor-toolbar";
+  const bar = document.createElement("div");
+  bar.className = "editor-toolbar";
 
-  toolbar.innerHTML = `
-    <button data-action="text">➕ Text</button>
-    <button data-action="image">🖼 Image</button>
-    <button data-action="video">🎥 Video</button>
-    <button data-action="save">💾 Save</button>
+  bar.innerHTML = `
+    <button data-type="text">+ Text</button>
+    <button data-type="image">+ Image</button>
+    <button data-type="video">+ Video</button>
+    <button id="savePage">💾 Save</button>
   `;
 
-  document.body.appendChild(toolbar);
-  toolbarCreated = true;
+  bar.onclick = e => {
+    const type = e.target.dataset.type;
+    if (type) addBlock(type);
+    if (e.target.id === "savePage")
+      document.dispatchEvent(new Event("cms-save"));
+  };
 
-  /* ===============================
-     BUTTON HANDLERS
-  ================================ */
-
-  toolbar.addEventListener("click", e => {
-    const btn = e.target.closest("button");
-    if (!btn) return;
-
-    const action = btn.dataset.action;
-
-    switch (action) {
-      case "text":
-        addBlock("text");
-        break;
-
-      case "image":
-        addBlock("image");
-        break;
-
-      case "video":
-        addBlock("video");
-        break;
-
-      case "save":
-        document.dispatchEvent(new Event("cms-save"));
-        break;
-    }
-  });
-
-  console.log("🧰 Admin editor toolbar READY");
+  document.body.appendChild(bar);
 }
 
-/* =================================================
-   INIT LOGIC (🔥 IMPORTANT FIX)
-   Wait until admin session is ready
-================================================= */
-
-/* Case 1: Admin already logged in */
-setTimeout(createEditorToolbar, 500);
-
-/* Case 2: Admin logs in later */
-document.addEventListener("ADMIN_STATE_CHANGED", () => {
-  setTimeout(createEditorToolbar, 100);
-});
+/* Init after admin ready */
+document.addEventListener("ADMIN_STATE_CHANGED", initToolbar);
