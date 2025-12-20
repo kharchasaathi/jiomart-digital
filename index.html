@@ -134,7 +134,7 @@
   ================================ -->
   <div id="pageRoot"></div>
 <!-- =================================================
-     ✅ SCRIPT LOAD ORDER (FINAL & CLEAN)
+     ✅ SCRIPT LOAD ORDER (FINAL & STABLE)
 ================================================== -->
 
 <!-- 1️⃣ Firebase (core) -->
@@ -143,22 +143,35 @@
 <!-- 2️⃣ Admin authentication -->
 <script type="module" src="assets/js/cms/admin-auth.js"></script>
 
-<!-- 3️⃣ Admin session (sets adminMode) -->
+<!-- 3️⃣ Admin session
+     🔥 Sets adminMode
+     🔥 Dispatches ADMIN_STATE_CHANGED
+-->
 <script type="module" src="assets/js/cms/admin-session.js"></script>
 
-<!-- 4️⃣ Admin panels -->
+<!-- 4️⃣ CMS BLOCK ENGINE (🔥 THIS WAS MISSING) -->
+<script type="module" src="assets/js/cms/blocks.js"></script>
+
+<!-- 5️⃣ Admin panels (UI only, depend on adminMode) -->
 <script type="module" src="assets/js/cms/admin-theme-panel.js"></script>
 <script type="module" src="assets/js/cms/admin-typography-panel.js"></script>
 
 <!-- ❌ admin-language-panel.js REMOVED (as decided) -->
 
-<!-- 5️⃣ Admin logout -->
-<script type="module" src="assets/js/cms/admin-logout.js"></script>
-
-<!-- 6️⃣ 🧩 Admin Editor Toolbar (PHASE 3.3 + 3.4 + 3.5) -->
+<!-- 6️⃣ Admin editor toolbar
+     ➕ add text / image / video
+     💾 save page
+-->
 <script type="module" src="assets/js/cms/admin-editor-toolbar.js"></script>
 
-<!-- 7️⃣ Public render (🚨 ALWAYS LAST) -->
+<!-- 7️⃣ Admin logout -->
+<script type="module" src="assets/js/cms/admin-logout.js"></script>
+
+<!-- 8️⃣ Public entry (🚨 ALWAYS LAST)
+     - loadPage()
+     - renderPage()
+     - renderBlocks()
+-->
 <script type="module" src="assets/js/site/public.js"></script>
 
 </body>
