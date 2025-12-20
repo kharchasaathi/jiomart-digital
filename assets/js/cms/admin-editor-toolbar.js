@@ -1,34 +1,28 @@
 /***************************************************
  * ADMIN EDITOR TOOLBAR – FINAL STABLE
  *
- * ✅ Toolbar creates ONLY after admin confirmed
- * ✅ No race condition
- * ✅ Add Text / Image / Video always works
- * ✅ Save works
- * ❌ No duplicate toolbar
+ * ✅ Appears AFTER admin confirmed
+ * ✅ No timing issues
+ * ✅ No duplicate toolbar
  ***************************************************/
 
-import { isAdmin } from "../core/state.js";
 import { addBlock } from "./blocks.js";
+import { getState } from "../core/state.js";
 
 let toolbarCreated = false;
 
 /* =================================================
-   CREATE TOOLBAR (SAFE)
+   CREATE TOOLBAR
 ================================================= */
 function createEditorToolbar() {
-  if (!isAdmin()) {
-    console.log("⛔ Toolbar skipped: not admin");
-    return;
-  }
+  const state = getState();
 
-  if (toolbarCreated) {
-    console.log("ℹ️ Toolbar already created");
-    return;
-  }
+  if (!state.adminMode) return;
+  if (toolbarCreated) return;
 
   const toolbar = document.createElement("div");
   toolbar.className = "editor-toolbar";
+  toolbar.id = "cms-toolbar";
 
   toolbar.innerHTML = `
     <button data-action="text">➕ Text</button>
@@ -37,7 +31,7 @@ function createEditorToolbar() {
     <button data-action="save">💾 Save</button>
   `;
 
-  toolbar.addEventListener("click", (e) => {
+  toolbar.addEventListener("click", e => {
     const btn = e.target.closest("button");
     if (!btn) return;
 
@@ -45,28 +39,40 @@ function createEditorToolbar() {
 
     if (action === "save") {
       document.dispatchEvent(new Event("cms-save"));
-      return;
+    } else {
+      addBlock(action);
     }
-
-    addBlock(action);
   });
 
   document.body.appendChild(toolbar);
   toolbarCreated = true;
 
-  console.log("🧰 Admin editor toolbar READY");
+  console.log("🧰 Admin editor toolbar CREATED");
 }
 
 /* =================================================
-   🔥 ONLY ONE ENTRY POINT
-   Called AFTER admin state is FINAL
+   REMOVE TOOLBAR (LOGOUT)
 ================================================= */
-document.addEventListener("ADMIN_STATE_CHANGED", (e) => {
-  const isAdminNow = !!e.detail?.admin;
+function removeEditorToolbar() {
+  const toolbar = document.getElementById("cms-toolbar");
+  if (toolbar) {
+    toolbar.remove();
+    toolbarCreated = false;
+    console.log("🧹 Admin editor toolbar REMOVED");
+  }
+}
 
-  console.log("🔔 ADMIN_STATE_CHANGED (toolbar):", isAdminNow);
+/* =================================================
+   LISTEN ADMIN STATE (🔥 ONLY SOURCE OF TRUTH)
+================================================= */
+document.addEventListener("ADMIN_STATE_CHANGED", e => {
+  const isAdmin = !!e.detail?.admin;
 
-  if (isAdminNow) {
-    createEditorToolbar();
+  console.log("🔔 ADMIN_STATE_CHANGED (toolbar):", isAdmin);
+
+  if (isAdmin) {
+    setTimeout(createEditorToolbar, 50);
+  } else {
+    removeEditorToolbar();
   }
 });
