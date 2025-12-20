@@ -1,5 +1,10 @@
+/* =================================================
+   ADMIN INLINE TEXT EDITOR + TOOLBAR (FINAL)
+   Phase 3.3 / 3.4 / 3.5 READY
+================================================= */
+
 /* ===============================
-   INLINE TEXT EDITOR (UPDATED)
+   EDITOR TOOLBAR
 ================================ */
 
 .editor-toolbar {
@@ -7,8 +12,8 @@
   bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
-  background: #111;
-  padding: 10px;
+  background: #111111;
+  padding: 10px 12px;
   border-radius: 14px;
   display: flex;
   gap: 8px;
@@ -16,47 +21,78 @@
   box-shadow: 0 6px 20px rgba(0,0,0,0.35);
 }
 
-/* Buttons & inputs */
+/* Buttons, selects, color inputs */
 .editor-toolbar button,
 .editor-toolbar select,
 .editor-toolbar input[type="color"] {
   background: #ffffff;
+  color: #000000;
   border: none;
-  padding: 6px 8px;
+  padding: 6px 10px;
   border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
+  min-height: 32px;
 }
 
-.editor-toolbar button:hover {
+/* Hover */
+.editor-toolbar button:hover,
+.editor-toolbar select:hover,
+.editor-toolbar input[type="color"]:hover {
   background: #f0f0f0;
 }
 
+/* Active state (bold / italic / etc) */
 .editor-toolbar button.active {
   background: #1877f2;
   color: #ffffff;
 }
 
-/* Editable block highlight */
+/* Save button (special highlight) */
+.editor-toolbar button.save {
+  background: #28a745;
+  color: #ffffff;
+}
+
+.editor-toolbar button.save:hover {
+  background: #218838;
+}
+
+/* ===============================
+   EDITABLE TEXT BLOCK
+================================ */
+
 .cms-text-block.editable {
   outline: 2px dashed #1877f2;
   outline-offset: 6px;
+  cursor: text;
   position: relative;
 }
 
-/* Delete button on block */
+/* Improve caret visibility */
+.cms-text-block.editable {
+  caret-color: #000;
+}
+
+/* ===============================
+   BLOCK DELETE BUTTON
+================================ */
+
 .block-delete-btn {
   position: absolute;
   top: -10px;
   right: -10px;
   background: #ff4d4f;
-  color: #fff;
+  color: #ffffff;
   border: none;
   border-radius: 50%;
   width: 22px;
   height: 22px;
   cursor: pointer;
   font-size: 12px;
+  font-weight: bold;
+  line-height: 22px;
+  text-align: center;
   z-index: 10;
 }
 
@@ -64,11 +100,43 @@
   background: #d9363e;
 }
 
-/* Media placeholders */
+/* ===============================
+   MEDIA PLACEHOLDERS
+================================ */
+
 .media-placeholder {
   padding: 30px;
-  border: 2px dashed #ccc;
+  border: 2px dashed #cccccc;
   text-align: center;
-  color: #777;
+  color: #777777;
   border-radius: 8px;
+  background: #fafafa;
+}
+
+/* ===============================
+   IMAGE & VIDEO BLOCKS
+================================ */
+
+.cms-image-block img,
+.cms-video-block video {
+  max-width: 100%;
+  border-radius: 8px;
+  display: block;
+}
+
+/* ===============================
+   MOBILE SAFETY
+================================ */
+
+@media (max-width: 600px) {
+  .editor-toolbar {
+    bottom: 10px;
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .editor-toolbar button {
+    font-size: 13px;
+    padding: 6px 8px;
+  }
 }
