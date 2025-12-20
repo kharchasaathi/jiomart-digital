@@ -26,14 +26,13 @@
   <!-- 4️⃣ ADMIN EDITOR VISUALS -->
   <link rel="stylesheet" href="assets/css/editor.css">
 
-  <!-- 5️⃣ ACTUAL SITE UI (🔥 THIS ENABLES REAL UI) -->
+  <!-- 5️⃣ ACTUAL SITE UI -->
   <link rel="stylesheet" href="assets/css/site-ui.css">
 
   <!-- =================================================
        INLINE ADMIN LOGIN FIXES (SAFE)
   ================================================== -->
   <style>
-    /* 🔐 Admin Login Box */
     #adminLoginBox {
       max-width: 320px;
       margin: 30px auto;
@@ -77,18 +76,12 @@
       <a href="#">Products</a>
 
       <!-- 🔐 ADMIN LOGIN -->
-      <button
-        id="adminLoginBtn"
-        class="admin-login"
-        type="button">
+      <button id="adminLoginBtn" class="admin-login" type="button">
         Admin Login
       </button>
 
       <!-- 🚪 ADMIN LOGOUT -->
-      <button
-        id="adminLogoutBtn"
-        class="admin-logout hidden"
-        type="button">
+      <button id="adminLogoutBtn" class="admin-logout hidden" type="button">
         Logout
       </button>
     </nav>
@@ -137,19 +130,12 @@
   </div>
 
   <!-- ===============================
-       CMS PAGE ROOT (🔥 ALL BLOCKS RENDER HERE)
+       CMS PAGE ROOT
   ================================ -->
   <div id="pageRoot"></div>
 
   <!-- =================================================
-       ✅ SCRIPT LOAD ORDER (FINAL & SAFE)
-       Rule:
-       1. Firebase
-       2. Admin auth
-       3. Admin session (sets adminMode)
-       4. Admin panels
-       5. Admin actions
-       6. Public render (LAST)
+       ✅ SCRIPT LOAD ORDER (FINAL & CLEAN)
   ================================================== -->
 
   <!-- 1️⃣ Firebase -->
@@ -158,18 +144,19 @@
   <!-- 2️⃣ Admin auth -->
   <script type="module" src="assets/js/cms/admin-auth.js"></script>
 
-  <!-- 3️⃣ Admin session sync -->
+  <!-- 3️⃣ Admin session (sets adminMode) -->
   <script type="module" src="assets/js/cms/admin-session.js"></script>
 
   <!-- 4️⃣ Admin panels -->
   <script type="module" src="assets/js/cms/admin-theme-panel.js"></script>
   <script type="module" src="assets/js/cms/admin-typography-panel.js"></script>
-  <script type="module" src="assets/js/cms/admin-language-panel.js"></script>
+
+  <!-- ❌ admin-language-panel.js REMOVED -->
 
   <!-- 5️⃣ Admin logout -->
   <script type="module" src="assets/js/cms/admin-logout.js"></script>
 
-  <!-- 6️⃣ PUBLIC RENDER (🚨 ALWAYS LAST) -->
+  <!-- 6️⃣ Public render (ALWAYS LAST) -->
   <script type="module" src="assets/js/site/public.js"></script>
 
 </body>
