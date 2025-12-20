@@ -1,9 +1,8 @@
 /***************************************************
- * ADMIN SESSION – SINGLE SOURCE OF TRUTH
+ * ADMIN SESSION – SINGLE SOURCE OF TRUTH (FIXED)
  ***************************************************/
 import { onAuthChange } from "../core/firebase.js";
 import { setAdminMode } from "../core/state.js";
-import { renderPage } from "../cms/render.js";
 
 console.log("🧩 admin-session.js loaded");
 
@@ -34,6 +33,12 @@ onAuthChange((user) => {
     console.log("👁️ Public mode");
   }
 
-  // 🔥 CRITICAL: re-render after auth state is known
-  renderPage();
+  /* 🔥 CRITICAL FIX
+     Render will happen ONLY after admin state is ready
+  */
+  document.dispatchEvent(
+    new CustomEvent("ADMIN_STATE_CHANGED", {
+      detail: { admin: isAdmin }
+    })
+  );
 });
