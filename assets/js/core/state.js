@@ -6,7 +6,6 @@
    STORAGE KEYS
 ================================ */
 const THEME_STORAGE_KEY = "JIOMART_THEME";
-const LANGUAGE_STORAGE_KEY = "JIOMART_LANG";
 
 /* ================================
    DEFAULT THEME
@@ -17,7 +16,7 @@ const defaultTheme = {
   text: "#000000",
   font: "system-ui",
 
-  /* 🅣 TYPOGRAPHY (PHASE 1.5) */
+  /* 🅣 TYPOGRAPHY */
   baseSize: 16,        // px
   lineHeight: 1.6,     // unitless
   headingScale: 1.25   // multiplier
@@ -31,10 +30,7 @@ const state = {
   page: null,
 
   // 🎨 THEME STATE
-  theme: loadThemeFromStorage(),
-
-  // 🌐 LANGUAGE STATE (PHASE 2.3)
-  language: loadLanguageFromStorage() // "en" | "te"
+  theme: loadThemeFromStorage()
 };
 
 /* ================================
@@ -46,10 +42,6 @@ export function getState() {
 
 export function isAdmin() {
   return state.adminMode;
-}
-
-export function getLanguage() {
-  return state.language;
 }
 
 /* ================================
@@ -107,39 +99,6 @@ export function applyThemeToDOM() {
 }
 
 /* =================================================
-   🌐 LANGUAGE SYSTEM (PHASE 2.3)
-================================================= */
-
-export function setLanguage(lang) {
-  if (lang !== "en" && lang !== "te") return;
-
-  state.language = lang;
-
-  document.documentElement.setAttribute("lang", lang);
-  document.body.setAttribute("data-lang", lang);
-
-  try {
-    localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
-  } catch {}
-
-  applyLanguageFont();
-}
-
-function applyLanguageFont() {
-  if (state.language === "te") {
-    document.documentElement.style.setProperty(
-      "--site-font",
-      "'Noto Sans Telugu', system-ui"
-    );
-  } else {
-    document.documentElement.style.setProperty(
-      "--site-font",
-      state.theme.font || "system-ui"
-    );
-  }
-}
-
-/* =================================================
    🔐 THEME PERSISTENCE
 ================================================= */
 function saveThemeToStorage() {
@@ -164,24 +123,12 @@ function loadThemeFromStorage() {
   }
 }
 
-/* =================================================
-   🌐 LANGUAGE PERSISTENCE
-================================================= */
-function loadLanguageFromStorage() {
-  try {
-    return localStorage.getItem(LANGUAGE_STORAGE_KEY) || "en";
-  } catch {
-    return "en";
-  }
-}
-
 /* ================================
-   INIT – AUTO APPLY (THEME + LANG)
+   INIT – AUTO APPLY THEME
 ================================ */
 if (typeof document !== "undefined") {
   document.addEventListener("DOMContentLoaded", () => {
     applyThemeToDOM();
-    setLanguage(state.language);
   });
 }
 
@@ -190,5 +137,4 @@ if (typeof document !== "undefined") {
 ================================ */
 if (typeof window !== "undefined") {
   window.__testTheme = updateTheme;
-  window.__testLang = setLanguage;
 }
