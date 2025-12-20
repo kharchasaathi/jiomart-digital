@@ -1,6 +1,7 @@
 /***************************************************
  * BLOCKS – FINAL SAFE + STABLE VERSION
- * UI PREBUILT (Hero, Features, Content, Products, Footer)
+ * UI PREBUILT + IMAGE + VIDEO SUPPORT
+ * Phase 3.1 + 3.2
  * ❌ No security change
  * ❌ No state logic change
  ***************************************************/
@@ -11,7 +12,7 @@ import { savePage } from "./page-store.js";
 let activeBlockId = null;
 
 /* =================================================
-   RENDER ALL BLOCKS (🔥 EXPORT FIXED)
+   RENDER ALL BLOCKS
 ================================================= */
 export function renderBlocks(container) {
   if (!container) {
@@ -23,12 +24,11 @@ export function renderBlocks(container) {
   const page = state.page;
 
   if (!page) {
-    console.warn("⚠️ No page in state");
     container.innerHTML = "";
     return;
   }
 
-  /* First-time page → auto create UI blocks */
+  /* First load → create UI skeleton */
   if (!Array.isArray(page.blocks) || page.blocks.length === 0) {
     page.blocks = createDefaultBlocks();
   }
@@ -40,6 +40,15 @@ export function renderBlocks(container) {
       case "text":
         container.appendChild(renderTextBlock(block));
         break;
+
+      case "image":
+        container.appendChild(renderImageBlock(block));
+        break;
+
+      case "video":
+        container.appendChild(renderVideoBlock(block));
+        break;
+
       default:
         console.warn("⚠️ Unknown block type:", block.type);
     }
@@ -49,29 +58,25 @@ export function renderBlocks(container) {
 }
 
 /* =================================================
-   TEXT BLOCK (ADMIN SAFE EDIT)
+   TEXT BLOCK – ADMIN SAFE EDIT
 ================================================= */
 function renderTextBlock(block) {
   const div = document.createElement("div");
-
   div.className = "cms-text-block";
   div.dataset.blockId = block.id;
 
-  /* HARD SAFETY */
   if (!block.data) block.data = {};
   if (!block.data.html || block.data.html.trim() === "") {
-    block.data.html = getFallbackHTML();
+    block.data.html = `<p>Edit this content</p>`;
   }
 
   div.innerHTML = block.data.html;
 
-  /* ===== ADMIN LIVE EDITING ===== */
   if (isAdmin()) {
-    div.setAttribute("contenteditable", "true");
-    div.setAttribute("spellcheck", "true");
+    div.contentEditable = "true";
+    div.spellcheck = true;
     div.classList.add("editable");
 
-    /* 🔥 CRITICAL FIXES (cursor + typing + selection) */
     div.style.pointerEvents = "auto";
     div.style.userSelect = "text";
     div.style.caretColor = "#000";
@@ -93,11 +98,64 @@ function renderTextBlock(block) {
 }
 
 /* =================================================
-   UPDATE BLOCK DATA IN STATE
+   IMAGE BLOCK (DISPLAY ONLY – PHASE 3.1)
+================================================= */
+function renderImageBlock(block) {
+  const wrap = document.createElement("div");
+  wrap.className = "cms-image-block";
+
+  if (!block.data) block.data = {};
+
+  if (block.data.src) {
+    const img = document.createElement("img");
+    img.src = block.data.src;
+    img.alt = "Image";
+    wrap.appendChild(img);
+  } else {
+    wrap.innerHTML = `
+      <div class="media-placeholder">
+        🖼 Image Block
+        <small>Admin: Image will be added here</small>
+      </div>
+    `;
+  }
+
+  return wrap;
+}
+
+/* =================================================
+   VIDEO BLOCK (DISPLAY ONLY – PHASE 3.2)
+================================================= */
+function renderVideoBlock(block) {
+  const wrap = document.createElement("div");
+  wrap.className = "cms-video-block";
+
+  if (!block.data) block.data = {};
+
+  if (block.data.src) {
+    wrap.innerHTML = `
+      <video controls width="100%">
+        <source src="${block.data.src}" />
+      </video>
+    `;
+  } else {
+    wrap.innerHTML = `
+      <div class="media-placeholder">
+        🎥 Video Block
+        <small>Product demo / review video</small>
+      </div>
+    `;
+  }
+
+  return wrap;
+}
+
+/* =================================================
+   UPDATE BLOCK DATA
 ================================================= */
 function updateBlock(blockId, html) {
   const state = getState();
-  if (!state.page || !Array.isArray(state.page.blocks)) return;
+  if (!state.page) return;
 
   const block = state.page.blocks.find(b => b.id === blockId);
   if (!block) return;
@@ -106,8 +164,8 @@ function updateBlock(blockId, html) {
 }
 
 /* =================================================
-   DEFAULT UI BLOCKS (FIRST LOAD ONLY)
-   👉 FULL SITE UI SKELETON
+   DEFAULT UI BLOCKS (FIRST LOAD)
+   👉 FULL SITE STRUCTURE
 ================================================= */
 function createDefaultBlocks() {
   return [
@@ -125,6 +183,11 @@ function createDefaultBlocks() {
       }
     },
     {
+      id: "hero-image",
+      type: "image",
+      data: {}
+    },
+    {
       id: "features",
       type: "text",
       data: {
@@ -137,6 +200,11 @@ function createDefaultBlocks() {
 </section>
         `
       }
+    },
+    {
+      id: "promo-video",
+      type: "video",
+      data: {}
     },
     {
       id: "content",
@@ -186,14 +254,7 @@ function createDefaultBlocks() {
 }
 
 /* =================================================
-   FALLBACK HTML
-================================================= */
-function getFallbackHTML() {
-  return `<p>Edit this content</p>`;
-}
-
-/* =================================================
-   SAVE HANDLER (GLOBAL)
+   SAVE HANDLER
 ================================================= */
 document.addEventListener("cms-save", async () => {
   const state = getState();
