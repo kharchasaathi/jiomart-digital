@@ -1,53 +1,72 @@
 /***************************************************
- * CMS RENDER – SINGLE RENDER FUNCTION (FINAL)
+ * CMS RENDER – SINGLE SOURCE OF TRUTH (FINAL)
+ *
+ * ✅ Render ONLY when state is ready
+ * ✅ No duplicate render
+ * ✅ No toolbar init here (toolbar listens itself)
+ * ✅ Safe on refresh / hard reload
  ***************************************************/
 
 import { renderBlocks } from "./blocks.js";
 import { getState } from "../core/state.js";
-import { initEditorToolbar } from "./editor-toolbar.js";
 
+let renderedOnce = false;
+
+/* =================================================
+   MAIN RENDER FUNCTION
+================================================= */
 export function renderPage() {
-  console.log("🧩 renderPage() called");
-
   const root = document.getElementById("pageRoot");
+
   if (!root) {
-    console.warn("❌ #pageRoot not found");
+    console.warn("❌ renderPage: #pageRoot not found");
     return;
   }
 
   const state = getState();
-  console.log("📦 State in render:", state);
 
-  /* ===============================
-     RESET ROOT
-  ================================ */
+  console.log("🧩 renderPage() called");
+  console.log("📦 State in render:", {
+    adminMode: state.adminMode,
+    pageReady: !!state.page,
+    blocks: state.page?.blocks?.length
+  });
+
+  /* =================================================
+     SAFETY: do not render without page data
+  ================================================= */
+  if (!state.page || !Array.isArray(state.page.blocks)) {
+    console.warn("⏳ Page data not ready, render skipped");
+    return;
+  }
+
+  /* =================================================
+     RESET ROOT (SAFE)
+  ================================================= */
   root.innerHTML = "";
 
-  /* ===============================
-     PAGE BLOCKS
-  ================================ */
-  if (state.page && Array.isArray(state.page.blocks)) {
-    renderBlocks(root);
-    console.log("🧱 Blocks rendered");
-  } else {
-    console.warn("⚠️ Page data not ready yet");
-  }
+  /* =================================================
+     RENDER BLOCKS
+  ================================================= */
+  renderBlocks(root);
+  renderedOnce = true;
 
-  /* ===============================
-     ADMIN TOOLBAR
-  ================================ */
-  const toolbar = document.getElementById("cms-toolbar");
+  console.log("🧱 Blocks rendered successfully");
 
-  if (state.adminMode === true) {
-    if (!toolbar) {
-      initEditorToolbar();
-      console.log("🛠️ Admin editor toolbar initialized");
-    }
-  } else {
-    // 🔥 CLEANUP ON LOGOUT
-    if (toolbar) {
-      toolbar.remove();
-      console.log("🧹 Admin toolbar removed");
-    }
-  }
+  /* =================================================
+     NO TOOLBAR LOGIC HERE ❌
+     Toolbar listens to ADMIN_STATE_CHANGED itself
+  ================================================= */
 }
+
+/* =================================================
+   OPTIONAL: re-render on cms-rerender
+================================================= */
+document.addEventListener("cms-rerender", () => {
+  console.log("🔄 cms-rerender received");
+
+  // Allow re-render only if already rendered once
+  if (!renderedOnce) return;
+
+  renderPage();
+});
