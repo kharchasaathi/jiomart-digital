@@ -100,3 +100,44 @@ body.admin-mode .block {
   border: 2px dashed #ccc;
   border-radius: 12px;
 }
+/* ===============================
+   MEDIA BLOCKS (PHASE 3)
+=============================== */
+
+.cms-image-block,
+.cms-video-block {
+  background: #ffffff;
+  border: 1px dashed #cfd4e0;
+  border-radius: 8px;
+  padding: 18px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.cms-image-block img,
+.cms-video-block video {
+  max-width: 100%;
+  border-radius: 6px;
+}
+
+/* Placeholder (Admin clarity) */
+.media-placeholder {
+  padding: 40px 10px;
+  color: #555;
+  font-size: 15px;
+  background: #f4f6fb;
+  border-radius: 6px;
+}
+
+.media-placeholder small {
+  display: block;
+  margin-top: 6px;
+  color: #888;
+}
+
+/* Admin highlight */
+body.admin-mode .cms-image-block:hover,
+body.admin-mode .cms-video-block:hover {
+  outline: 2px dashed var(--site-primary);
+  outline-offset: 2px;
+}
