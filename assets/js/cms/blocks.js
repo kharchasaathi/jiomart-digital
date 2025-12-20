@@ -1,7 +1,10 @@
 /***************************************************
  * BLOCKS – FINAL SAFE + STABLE VERSION
  * UI PREBUILT + IMAGE + VIDEO SUPPORT
- * Phase 3.1 + 3.2
+ * Phase 3.1 + 3.2 + 3.3
+ *
+ * ✅ Add block below active
+ * ✅ Delete block with confirmation
  * ❌ No security change
  * ❌ No state logic change
  ***************************************************/
@@ -36,22 +39,42 @@ export function renderBlocks(container) {
   container.innerHTML = "";
 
   page.blocks.forEach(block => {
+    let el = null;
+
     switch (block.type) {
       case "text":
-        container.appendChild(renderTextBlock(block));
+        el = renderTextBlock(block);
         break;
 
       case "image":
-        container.appendChild(renderImageBlock(block));
+        el = renderImageBlock(block);
         break;
 
       case "video":
-        container.appendChild(renderVideoBlock(block));
+        el = renderVideoBlock(block);
         break;
 
       default:
         console.warn("⚠️ Unknown block type:", block.type);
+        return;
     }
+
+    /* 🔥 Delete button (ADMIN ONLY) */
+    if (isAdmin()) {
+      const del = document.createElement("button");
+      del.className = "block-delete-btn";
+      del.innerHTML = "✖";
+      del.title = "Delete block";
+
+      del.addEventListener("click", e => {
+        e.stopPropagation();
+        deleteBlock(block.id);
+      });
+
+      el.appendChild(del);
+    }
+
+    container.appendChild(el);
   });
 
   console.log("✅ Blocks rendered");
@@ -98,11 +121,12 @@ function renderTextBlock(block) {
 }
 
 /* =================================================
-   IMAGE BLOCK (DISPLAY ONLY – PHASE 3.1)
+   IMAGE BLOCK (PHASE 3.1)
 ================================================= */
 function renderImageBlock(block) {
   const wrap = document.createElement("div");
   wrap.className = "cms-image-block";
+  wrap.dataset.blockId = block.id;
 
   if (!block.data) block.data = {};
 
@@ -120,15 +144,22 @@ function renderImageBlock(block) {
     `;
   }
 
+  if (isAdmin()) {
+    wrap.addEventListener("click", () => {
+      activeBlockId = block.id;
+    });
+  }
+
   return wrap;
 }
 
 /* =================================================
-   VIDEO BLOCK (DISPLAY ONLY – PHASE 3.2)
+   VIDEO BLOCK (PHASE 3.2)
 ================================================= */
 function renderVideoBlock(block) {
   const wrap = document.createElement("div");
   wrap.className = "cms-video-block";
+  wrap.dataset.blockId = block.id;
 
   if (!block.data) block.data = {};
 
@@ -147,7 +178,57 @@ function renderVideoBlock(block) {
     `;
   }
 
+  if (isAdmin()) {
+    wrap.addEventListener("click", () => {
+      activeBlockId = block.id;
+    });
+  }
+
   return wrap;
+}
+
+/* =================================================
+   OPTION A — ADD BLOCK BELOW ACTIVE
+================================================= */
+export function addBlock(type = "text") {
+  const state = getState();
+  const page = state.page;
+  if (!page || !Array.isArray(page.blocks)) return;
+
+  const newBlock = {
+    id: "block-" + Date.now(),
+    type,
+    data: {}
+  };
+
+  let index = page.blocks.findIndex(b => b.id === activeBlockId);
+
+  if (index === -1) {
+    page.blocks.push(newBlock);
+  } else {
+    page.blocks.splice(index + 1, 0, newBlock);
+  }
+
+  document.dispatchEvent(new Event("cms-rerender"));
+}
+
+/* =================================================
+   OPTION B — DELETE BLOCK (WITH CONFIRM)
+================================================= */
+function deleteBlock(blockId) {
+  if (!confirm("ఈ block delete చేయాలా?")) return;
+
+  const state = getState();
+  const page = state.page;
+  if (!page || !Array.isArray(page.blocks)) return;
+
+  page.blocks = page.blocks.filter(b => b.id !== blockId);
+
+  if (activeBlockId === blockId) {
+    activeBlockId = null;
+  }
+
+  document.dispatchEvent(new Event("cms-rerender"));
 }
 
 /* =================================================
@@ -165,91 +246,14 @@ function updateBlock(blockId, html) {
 
 /* =================================================
    DEFAULT UI BLOCKS (FIRST LOAD)
-   👉 FULL SITE STRUCTURE
 ================================================= */
 function createDefaultBlocks() {
   return [
-    {
-      id: "hero",
-      type: "text",
-      data: {
-        html: `
-<section class="hero">
-  <h1>Welcome to JioMart Digital</h1>
-  <p>Fresh groceries delivered to your doorstep.</p>
-  <button class="hero-btn">Shop Now</button>
-</section>
-        `
-      }
-    },
-    {
-      id: "hero-image",
-      type: "image",
-      data: {}
-    },
-    {
-      id: "features",
-      type: "text",
-      data: {
-        html: `
-<section class="features">
-  <h2>Why Shop With Us?</h2>
-  <div class="feature">✅ Best Prices</div>
-  <div class="feature">🚚 Fast Delivery</div>
-  <div class="feature">🛡 Trusted Quality</div>
-</section>
-        `
-      }
-    },
-    {
-      id: "promo-video",
-      type: "video",
-      data: {}
-    },
-    {
-      id: "content",
-      type: "text",
-      data: {
-        html: `
-<section class="content-section">
-  <h2>మన షాప్ ఎందుకు ప్రత్యేకం?</h2>
-  <p>
-    మీరు ఇక్కడ తెలుగు లేదా ఇంగ్లీష్ లో freely టైప్ చేయవచ్చు.
-    ఇది పూర్తిగా editable content.
-  </p>
-</section>
-        `
-      }
-    },
-    {
-      id: "products",
-      type: "text",
-      data: {
-        html: `
-<section class="product-grid">
-  <div class="product-card">
-    <img src="https://via.placeholder.com/150" />
-    <p>Product Name</p>
-  </div>
-  <div class="product-card">
-    <img src="https://via.placeholder.com/150" />
-    <p>Product Name</p>
-  </div>
-</section>
-        `
-      }
-    },
-    {
-      id: "footer",
-      type: "text",
-      data: {
-        html: `
-<footer class="site-footer">
-  © 2025 JioMart Digital. All rights reserved.
-</footer>
-        `
-      }
-    }
+    { id: "hero", type: "text", data: { html: "<h1>Welcome to JioMart Digital</h1>" } },
+    { id: "hero-image", type: "image", data: {} },
+    { id: "features", type: "text", data: { html: "<h2>Why Shop With Us?</h2>" } },
+    { id: "promo-video", type: "video", data: {} },
+    { id: "footer", type: "text", data: { html: "© 2025 JioMart Digital" } }
   ];
 }
 
