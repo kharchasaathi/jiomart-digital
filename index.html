@@ -132,40 +132,24 @@
      5. Admin actions (logout)
      6. Public render (LAST)
 ================================================== -->
-
-<!-- 1️⃣ Firebase core + auth (MUST be first) -->
+<!-- 1️⃣ Firebase -->
 <script type="module" src="assets/js/core/firebase.js"></script>
 
-<!-- 2️⃣ Admin login handler (email/password) -->
+<!-- 2️⃣ Admin auth -->
 <script type="module" src="assets/js/cms/admin-auth.js"></script>
 
-<!-- 3️⃣ Admin session sync
-     🔥 Sets adminMode
-     🔥 Dispatches ADMIN_STATE_CHANGED
--->
+<!-- 3️⃣ Admin session -->
 <script type="module" src="assets/js/cms/admin-session.js"></script>
 
-<!-- 4️⃣ Admin CMS UI (depends on adminMode) -->
-
-<!-- 🎨 Theme panel -->
+<!-- 4️⃣ Admin panels -->
 <script type="module" src="assets/js/cms/admin-theme-panel.js"></script>
-
-<!-- 🔤 Typography panel -->
 <script type="module" src="assets/js/cms/admin-typography-panel.js"></script>
-
-<!-- 📝 Language / Typing mode panel
-     (ONLY editor behaviour, NOT user language switch)
--->
 <script type="module" src="assets/js/cms/admin-language-panel.js"></script>
 
-<!-- 5️⃣ Admin logout handler -->
+<!-- 5️⃣ Logout -->
 <script type="module" src="assets/js/cms/admin-logout.js"></script>
 
-<!-- 6️⃣ Public entry (🚨 ALWAYS LAST)
-     - loadPage()
-     - renderPage()
-     - renderBlocks()
--->
+<!-- 6️⃣ PUBLIC RENDER (LAST) -->
 <script type="module" src="assets/js/site/public.js"></script>
 
 </body>
