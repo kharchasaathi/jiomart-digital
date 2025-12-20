@@ -1,6 +1,12 @@
 /***************************************************
- * PAGE STORE – SAFE + AUTO INIT
+ * PAGE STORE – FINAL SAFE + NO DATA LOSS
+ *
+ * ✅ Never overwrites existing blocks
+ * ✅ Safe on Ctrl+F5 / hard reload
+ * ✅ Default blocks injected ONLY ONCE
+ * ✅ No render / auth dependency
  ***************************************************/
+
 import { db } from "../core/firebase.js";
 import { getState, setState } from "../core/state.js";
 import {
@@ -9,12 +15,13 @@ import {
   setDoc
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-/* -------------------------------
-   Default page structure
--------------------------------- */
+/* =================================================
+   DEFAULT PAGE (FIRST TIME ONLY)
+================================================= */
 function createDefaultPage(slug) {
   return {
     id: slug,
+    createdAt: Date.now(),
     blocks: [
       {
         id: crypto.randomUUID(),
@@ -22,19 +29,33 @@ function createDefaultPage(slug) {
         data: {
           html: "<h1>Welcome to JioMart Digital</h1><p>Edit this content in admin mode.</p>"
         }
+      },
+      {
+        id: crypto.randomUUID(),
+        type: "image",
+        data: {}
+      },
+      {
+        id: crypto.randomUUID(),
+        type: "video",
+        data: {}
       }
     ]
   };
 }
 
-/* -------------------------------
-   Load page safely
--------------------------------- */
+/* =================================================
+   LOAD PAGE (🔥 SAFE & NON-DESTRUCTIVE)
+================================================= */
 export async function loadPage(slug) {
+  if (!slug) throw new Error("loadPage: slug missing");
+
   const ref = doc(db, "pages", slug);
   const snap = await getDoc(ref);
 
-  // ❌ Page does NOT exist → create it
+  /* ---------------------------------------------
+     PAGE DOES NOT EXIST → CREATE ONCE
+  --------------------------------------------- */
   if (!snap.exists()) {
     console.warn("⚠️ Page not found. Creating new page:", slug);
 
@@ -42,36 +63,60 @@ export async function loadPage(slug) {
     await setDoc(ref, newPage);
 
     setState({ page: newPage });
-    return;
+    return newPage;
   }
 
-  // ✅ Page exists
+  /* ---------------------------------------------
+     PAGE EXISTS → USE AS IS
+  --------------------------------------------- */
   const data = snap.data();
 
-  let page = {
+  const page = {
     id: slug,
+    createdAt: data.createdAt || Date.now(),
     blocks: Array.isArray(data.blocks) ? data.blocks : []
   };
 
-  // ⚠️ Page exists but NO blocks → auto add one
+  /* ---------------------------------------------
+     SAFETY: Inject default blocks ONLY if empty
+     (This runs once in lifetime)
+  --------------------------------------------- */
   if (page.blocks.length === 0) {
-    console.warn("⚠️ Page empty. Injecting default block.");
+    console.warn("⚠️ Existing page has no blocks. Injecting defaults ONCE.");
 
-    page.blocks = createDefaultPage(slug).blocks;
-    await setDoc(ref, page, { merge: true });
+    const defaults = createDefaultPage(slug).blocks;
+    page.blocks = defaults;
+
+    await setDoc(
+      ref,
+      { blocks: defaults },
+      { merge: true }
+    );
   }
 
   setState({ page });
+  return page;
 }
 
-/* -------------------------------
-   Save page
--------------------------------- */
+/* =================================================
+   SAVE PAGE (ADMIN ONLY)
+================================================= */
 export async function savePage(page) {
-  if (!page || !page.id) return;
+  if (!page || !page.id) {
+    console.warn("❌ savePage: invalid page");
+    return;
+  }
 
   const ref = doc(db, "pages", page.id);
-  await setDoc(ref, page, { merge: true });
+
+  await setDoc(
+    ref,
+    {
+      blocks: page.blocks,
+      updatedAt: Date.now()
+    },
+    { merge: true }
+  );
 
   console.log("✅ Page saved:", page.id);
 }
