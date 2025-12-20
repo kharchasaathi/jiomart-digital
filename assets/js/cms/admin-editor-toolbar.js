@@ -1,34 +1,40 @@
-/***************************************************
- * ADMIN EDITOR TOOLBAR – FINAL
- * Floating bottom toolbar (admin only)
- ***************************************************/
-
 import { isAdmin } from "../core/state.js";
 import { addBlock } from "./blocks.js";
 
-function initToolbar() {
-  if (!isAdmin()) return;
-  if (document.querySelector(".editor-toolbar")) return;
+let toolbarCreated = false;
 
-  const bar = document.createElement("div");
-  bar.className = "editor-toolbar";
+function createEditorToolbar() {
+  if (!isAdmin() || toolbarCreated) return;
 
-  bar.innerHTML = `
-    <button data-type="text">+ Text</button>
-    <button data-type="image">+ Image</button>
-    <button data-type="video">+ Video</button>
-    <button id="savePage">💾 Save</button>
+  const toolbar = document.createElement("div");
+  toolbar.className = "editor-toolbar";
+
+  toolbar.innerHTML = `
+    <button data-action="text">➕ Text</button>
+    <button data-action="image">🖼 Image</button>
+    <button data-action="video">🎥 Video</button>
+    <button data-action="save">💾 Save</button>
   `;
 
-  bar.onclick = e => {
-    const type = e.target.dataset.type;
-    if (type) addBlock(type);
-    if (e.target.id === "savePage")
-      document.dispatchEvent(new Event("cms-save"));
-  };
+  toolbar.addEventListener("click", e => {
+    const action = e.target.dataset.action;
+    if (!action) return;
 
-  document.body.appendChild(bar);
+    if (action === "save") {
+      document.dispatchEvent(new Event("cms-save"));
+    } else {
+      addBlock(action);
+    }
+  });
+
+  document.body.appendChild(toolbar);
+  toolbarCreated = true;
 }
 
-/* Init after admin ready */
-document.addEventListener("ADMIN_STATE_CHANGED", initToolbar);
+/* 🔥 wait for admin state */
+document.addEventListener("ADMIN_STATE_CHANGED", () => {
+  setTimeout(createEditorToolbar, 200);
+});
+
+/* fallback */
+setTimeout(createEditorToolbar, 800);
