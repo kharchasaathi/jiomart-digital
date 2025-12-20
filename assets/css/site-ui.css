@@ -1,0 +1,114 @@
+/* ===============================
+   SITE UI – BASE LAYOUT
+================================ */
+
+:root {
+  --site-bg: #f5f7fa;
+  --site-surface: #ffffff;
+  --site-primary: #1a73e8;
+  --site-text: #111111;
+  --site-muted: #6b7280;
+  --radius: 10px;
+}
+
+/* PAGE */
+body {
+  background: var(--site-bg);
+  color: var(--site-text);
+}
+
+/* ===============================
+   HERO SECTION
+================================ */
+.hero {
+  background: linear-gradient(
+    135deg,
+    var(--site-primary),
+    #0b5ed7
+  );
+  color: #ffffff;
+  padding: 64px 20px;
+  border-radius: 14px;
+  margin-bottom: 28px;
+}
+
+.hero h1 {
+  font-size: 34px;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  max-width: 600px;
+  opacity: 0.95;
+}
+
+.hero button {
+  margin-top: 20px;
+  padding: 12px 26px;
+  background: #ffffff;
+  color: var(--site-primary);
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+
+/* ===============================
+   FEATURE STRIP
+================================ */
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.feature {
+  background: var(--site-surface);
+  padding: 18px;
+  border-radius: var(--radius);
+  text-align: center;
+  border: 1px solid #e5e7eb;
+}
+
+/* ===============================
+   CONTENT SECTION
+================================ */
+.content-section {
+  background: var(--site-surface);
+  padding: 26px;
+  border-radius: var(--radius);
+  margin-bottom: 32px;
+}
+
+/* ===============================
+   PRODUCT GRID (STATIC NOW)
+================================ */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.product-card {
+  background: var(--site-surface);
+  padding: 16px;
+  border-radius: var(--radius);
+  text-align: center;
+  border: 1px solid #e5e7eb;
+}
+
+.product-card img {
+  height: 120px;
+  object-fit: contain;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+.site-footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--site-muted);
+  font-size: 13px;
+}
