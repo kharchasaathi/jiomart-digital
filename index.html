@@ -5,13 +5,33 @@
   <title>JioMart Digital</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <!-- ===============================
-       SHARED STYLES
-  ================================ -->
+  <!-- =================================================
+       ✅ CSS LOAD ORDER (🔥 VERY IMPORTANT)
+       1. Base reset
+       2. Site theme + typography
+       3. CMS blocks
+       4. Admin editor visuals
+       5. Actual site UI (hero, grid, footer)
+  ================================================== -->
+
+  <!-- 1️⃣ CORE BASE STYLES -->
   <link rel="stylesheet" href="assets/css/base.css">
-  <link rel="stylesheet" href="assets/css/blocks.css">
+
+  <!-- 2️⃣ SITE THEME + TYPOGRAPHY -->
   <link rel="stylesheet" href="assets/css/site.css">
 
+  <!-- 3️⃣ CMS BLOCK STYLES -->
+  <link rel="stylesheet" href="assets/css/blocks.css">
+
+  <!-- 4️⃣ ADMIN EDITOR VISUALS -->
+  <link rel="stylesheet" href="assets/css/editor.css">
+
+  <!-- 5️⃣ ACTUAL SITE UI (🔥 THIS ENABLES REAL UI) -->
+  <link rel="stylesheet" href="assets/css/site-ui.css">
+
+  <!-- =================================================
+       INLINE ADMIN LOGIN FIXES (SAFE)
+  ================================================== -->
   <style>
     /* 🔐 Admin Login Box */
     #adminLoginBox {
@@ -21,7 +41,7 @@
       border: 1px solid #ddd;
       border-radius: 6px;
       display: none;
-      background: #fff;
+      background: #ffffff;
     }
 
     #adminLoginBox input {
@@ -56,7 +76,7 @@
       <a href="#">Home</a>
       <a href="#">Products</a>
 
-      <!-- 🔐 ADMIN LOGIN BUTTON -->
+      <!-- 🔐 ADMIN LOGIN -->
       <button
         id="adminLoginBtn"
         class="admin-login"
@@ -75,7 +95,7 @@
   </header>
 
   <!-- ===============================
-       🔐 ADMIN EMAIL/PASSWORD LOGIN
+       🔐 ADMIN LOGIN BOX
   ================================ -->
   <div id="adminLoginBox">
     <input id="email" type="email" placeholder="Email" />
@@ -84,8 +104,7 @@
   </div>
 
   <!-- ===============================
-       🎨 ADMIN THEME PANEL (PHASE 2.1)
-       (HTML BASED – shown via JS)
+       🎨 ADMIN THEME PANEL
   ================================ -->
   <div id="adminThemePanel" class="hidden">
     <div class="theme-panel-header">🎨 Theme Settings</div>
@@ -118,39 +137,40 @@
   </div>
 
   <!-- ===============================
-       CMS PAGE ROOT
+       CMS PAGE ROOT (🔥 ALL BLOCKS RENDER HERE)
   ================================ -->
   <div id="pageRoot"></div>
 
-<!-- =================================================
-     ✅ SCRIPT LOAD ORDER (FINAL & SAFE)
-     Rule:
-     1. Core (Firebase, State)
-     2. Auth
-     3. Session sync (adminMode)
-     4. Admin-only UI panels
-     5. Admin actions (logout)
-     6. Public render (LAST)
-================================================== -->
-<!-- 1️⃣ Firebase -->
-<script type="module" src="assets/js/core/firebase.js"></script>
+  <!-- =================================================
+       ✅ SCRIPT LOAD ORDER (FINAL & SAFE)
+       Rule:
+       1. Firebase
+       2. Admin auth
+       3. Admin session (sets adminMode)
+       4. Admin panels
+       5. Admin actions
+       6. Public render (LAST)
+  ================================================== -->
 
-<!-- 2️⃣ Admin auth -->
-<script type="module" src="assets/js/cms/admin-auth.js"></script>
+  <!-- 1️⃣ Firebase -->
+  <script type="module" src="assets/js/core/firebase.js"></script>
 
-<!-- 3️⃣ Admin session -->
-<script type="module" src="assets/js/cms/admin-session.js"></script>
+  <!-- 2️⃣ Admin auth -->
+  <script type="module" src="assets/js/cms/admin-auth.js"></script>
 
-<!-- 4️⃣ Admin panels -->
-<script type="module" src="assets/js/cms/admin-theme-panel.js"></script>
-<script type="module" src="assets/js/cms/admin-typography-panel.js"></script>
-<script type="module" src="assets/js/cms/admin-language-panel.js"></script>
+  <!-- 3️⃣ Admin session sync -->
+  <script type="module" src="assets/js/cms/admin-session.js"></script>
 
-<!-- 5️⃣ Logout -->
-<script type="module" src="assets/js/cms/admin-logout.js"></script>
+  <!-- 4️⃣ Admin panels -->
+  <script type="module" src="assets/js/cms/admin-theme-panel.js"></script>
+  <script type="module" src="assets/js/cms/admin-typography-panel.js"></script>
+  <script type="module" src="assets/js/cms/admin-language-panel.js"></script>
 
-<!-- 6️⃣ PUBLIC RENDER (LAST) -->
-<script type="module" src="assets/js/site/public.js"></script>
+  <!-- 5️⃣ Admin logout -->
+  <script type="module" src="assets/js/cms/admin-logout.js"></script>
+
+  <!-- 6️⃣ PUBLIC RENDER (🚨 ALWAYS LAST) -->
+  <script type="module" src="assets/js/site/public.js"></script>
 
 </body>
 </html>
