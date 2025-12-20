@@ -1,5 +1,5 @@
 /***************************************************
- * PUBLIC ENTRY – FINAL & STABLE
+ * PUBLIC ENTRY – FINAL & STABLE (FIXED)
  * ✔ Load page data
  * ✔ Wait for admin state
  * ✔ Render exactly once
@@ -27,20 +27,19 @@ let adminStateReady = false;
 
 /* =================================================
    WAIT FOR ADMIN STATE (FROM admin-session.js)
+   🔥 EVENT NAME FIXED
 ================================================= */
-document.addEventListener("ADMIN_STATE_READY", (e) => {
-  const isAdmin = !!e.detail?.isAdmin;
+document.addEventListener("ADMIN_STATE_CHANGED", (e) => {
+  console.log("🔔 ADMIN_STATE_CHANGED received:", e.detail);
 
-  console.log("🔔 ADMIN_STATE_READY received:", isAdmin);
   adminStateReady = true;
-
-  tryRender(isAdmin);
+  tryRender();
 });
 
 /* =================================================
    SINGLE SAFE RENDER
 ================================================= */
-function tryRender(isAdmin) {
+function tryRender() {
   if (!pageLoaded || !adminStateReady) {
     console.log("⏳ Waiting to render...", {
       pageLoaded,
@@ -52,9 +51,5 @@ function tryRender(isAdmin) {
   console.log("🎨 Rendering page (final)");
   renderPage();
 
-  console.log(
-    isAdmin
-      ? "🛠️ Admin page ready"
-      : "👁️ Public page ready"
-  );
+  console.log("✅ Page ready");
 }
