@@ -7,7 +7,6 @@
 
   <!-- =================================================
        🔤 GOOGLE FONTS (ENGLISH + TELUGU)
-       (Must load BEFORE CSS)
   ================================================== -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,12 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu&family=Ramabhadra&family=NTR&display=swap" rel="stylesheet">
 
   <!-- =================================================
-       ✅ CSS LOAD ORDER (🔥 VERY IMPORTANT)
-       1. Base reset
-       2. Site theme + typography
-       3. CMS blocks
-       4. Admin editor visuals
-       5. Actual site UI
+       ✅ CSS LOAD ORDER
   ================================================== -->
 
   <!-- 1️⃣ CORE BASE STYLES -->
@@ -43,7 +37,7 @@
   <link rel="stylesheet" href="assets/css/site-ui.css">
 
   <!-- =================================================
-       INLINE ADMIN LOGIN FIXES (SAFE)
+       INLINE ADMIN LOGIN FIXES
   ================================================== -->
   <style>
     #adminLoginBox {
@@ -79,21 +73,19 @@
 <body>
 
   <!-- ===============================
-       SITE HEADER (PUBLIC + ADMIN)
+       SITE HEADER
   ================================ -->
   <header class="site-header">
     <div class="logo">JioMart Digital</div>
 
     <nav class="site-nav">
-      <a href="#">Home</a>
-      <a href="#">Products</a>
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
 
-      <!-- 🔐 ADMIN LOGIN -->
       <button id="adminLoginBtn" class="admin-login" type="button">
         Admin Login
       </button>
 
-      <!-- 🚪 ADMIN LOGOUT -->
       <button id="adminLogoutBtn" class="admin-logout hidden" type="button">
         Logout
       </button>
@@ -101,7 +93,7 @@
   </header>
 
   <!-- ===============================
-       🔐 ADMIN LOGIN BOX
+       ADMIN LOGIN BOX
   ================================ -->
   <div id="adminLoginBox">
     <input id="email" type="email" placeholder="Email" />
@@ -110,7 +102,7 @@
   </div>
 
   <!-- ===============================
-       🎨 ADMIN THEME PANEL
+       ADMIN THEME PANEL
   ================================ -->
   <div id="adminThemePanel" class="hidden">
     <div class="theme-panel-header">🎨 Theme Settings</div>
@@ -143,38 +135,56 @@
   </div>
 
   <!-- ===============================
-       CMS PAGE ROOT
+       CMS PAGE CONTENT
   ================================ -->
   <div id="pageRoot"></div>
 
+  <!-- ===============================
+       ⭐ FEATURED PRODUCTS (HOME)
+  ================================ -->
+  <section class="content-section">
+    <h2>Featured Products</h2>
+
+    <div id="featuredProducts" class="products-grid"></div>
+
+    <div style="text-align:center; margin-top:16px;">
+      <a href="products.html" class="call-btn">
+        View All Products
+      </a>
+    </div>
+  </section>
+
   <!-- =================================================
-       ✅ SCRIPT LOAD ORDER (FINAL & STABLE)
+       ✅ SCRIPT LOAD ORDER
   ================================================== -->
 
-  <!-- 1️⃣ Firebase (core) -->
+  <!-- Firebase -->
   <script type="module" src="assets/js/core/firebase.js"></script>
 
-  <!-- 2️⃣ Admin authentication -->
+  <!-- Admin Auth -->
   <script type="module" src="assets/js/cms/admin-auth.js"></script>
 
-  <!-- 3️⃣ Admin session -->
+  <!-- Admin Session -->
   <script type="module" src="assets/js/cms/admin-session.js"></script>
 
-  <!-- 4️⃣ CMS BLOCK ENGINE -->
+  <!-- CMS Blocks -->
   <script type="module" src="assets/js/cms/blocks.js"></script>
 
-  <!-- 5️⃣ Admin panels -->
+  <!-- Admin Panels -->
   <script type="module" src="assets/js/cms/admin-theme-panel.js"></script>
   <script type="module" src="assets/js/cms/admin-typography-panel.js"></script>
 
-  <!-- 6️⃣ Admin editor toolbar -->
+  <!-- Admin Editor -->
   <script type="module" src="assets/js/cms/admin-editor-toolbar.js"></script>
 
-  <!-- 7️⃣ Admin logout -->
+  <!-- Admin Logout -->
   <script type="module" src="assets/js/cms/admin-logout.js"></script>
 
-  <!-- 8️⃣ Public entry (🚨 ALWAYS LAST) -->
+  <!-- Public CMS Render -->
   <script type="module" src="assets/js/site/public.js"></script>
+
+  <!-- ⭐ HOME FEATURED PRODUCTS -->
+  <script type="module" src="assets/js/site/home-products.js"></script>
 
 </body>
 </html>
