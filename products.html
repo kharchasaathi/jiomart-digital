@@ -3,25 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <title>Products – JioMart Digital</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- ===============================
-       SITE STYLES
-  ================================ -->
-  <link rel="stylesheet" href="assets/css/base.css">
-  <link rel="stylesheet" href="assets/css/site.css">
-  <link rel="stylesheet" href="assets/css/site-ui.css">
+  <!-- Base site styles -->
+  <link rel="stylesheet" href="./assets/css/site.css" />
+
+  <!-- Product UI styles -->
+  <link rel="stylesheet" href="./assets/css/site-ui.css" />
 </head>
 
 <body>
 
-  <!-- ===============================
-       SITE HEADER
-  ================================ -->
+  <!-- HEADER -->
   <header class="site-header">
     <div class="logo">JioMart Digital</div>
 
-    <!-- 🔍 SEARCH (Phase 3 enable) -->
     <div class="search-box">
       <input
         type="text"
@@ -29,28 +25,21 @@
         placeholder="Search products, brands, article code…"
         disabled
       />
-      <!-- enabled in Phase 3 -->
+      <!-- 🔒 Phase 3 -->
     </div>
   </header>
 
-  <!-- ===============================
-       PRODUCTS PAGE
-  ================================ -->
+  <!-- PRODUCTS PAGE -->
   <main class="products-page">
-
     <h2>Available Products</h2>
 
-    <!-- ✅ REQUIRED GRID -->
-    <div class="products-grid" id="productsGrid">
-      <!-- Products will be injected by JS -->
+    <div id="productsGrid" class="products-grid">
+      <!-- Cards injected here -->
     </div>
-
   </main>
 
-  <!-- ===============================
-       PUBLIC PRODUCTS SCRIPT
-  ================================ -->
-  <script type="module" src="assets/js/site/products-page.js"></script>
+  <!-- PRODUCTS SCRIPT (ONLY HERE) -->
+  <script type="module" src="./assets/js/site/products-page.js"></script>
 
 </body>
 </html>
