@@ -1,9 +1,19 @@
+/***************************************************
+ * BLOCKS – FINAL STABLE (TEXT STYLE FIXED)
+ * ✔ Text / Image / Video blocks
+ * ✔ Font size, color, family works
+ * ✔ Bold / Italic works
+ * ✔ Add / Delete / Save works
+ ***************************************************/
 
 import { getState, setActiveBlock } from "../core/state.js";
 import { savePage } from "./page-store.js";
 
 let activeBlockId = null;
 
+/* ===============================
+   RENDER BLOCKS
+================================ */
 export function renderBlocks(container) {
   const state = getState();
   const page = state.page;
@@ -22,6 +32,7 @@ export function renderBlocks(container) {
     if (block.type === "image") el = renderImageBlock(block);
     if (block.type === "video") el = renderVideoBlock(block);
 
+    /* ❌ DELETE BUTTON (ADMIN ONLY) */
     if (state.adminMode) {
       const del = document.createElement("button");
       del.className = "block-delete-btn";
@@ -36,10 +47,12 @@ export function renderBlocks(container) {
     wrapper.appendChild(el);
     container.appendChild(wrapper);
   });
+
+  console.log("🧱 Blocks rendered");
 }
 
 /* ===============================
-   TEXT BLOCK (✨ STYLED)
+   TEXT BLOCK (✨ STYLED + FIXED)
 ================================ */
 function renderTextBlock(block) {
   const div = document.createElement("div");
@@ -51,7 +64,7 @@ function renderTextBlock(block) {
 
   div.innerHTML = block.data.html;
 
-  // 🎨 APPLY STYLES
+  // 🔥 APPLY TEXT STYLES (FIX)
   applyTextStyles(div, block.data.style);
 
   if (getState().adminMode) {
@@ -70,39 +83,63 @@ function renderTextBlock(block) {
   return div;
 }
 
+/* ===============================
+   APPLY TEXT STYLES (🔥 REQUIRED)
+================================ */
 function applyTextStyles(el, style = {}) {
-  if (style.fontSize) el.style.fontSize = style.fontSize + "px";
-  if (style.color) el.style.color = style.color;
-  if (style.fontFamily) el.style.fontFamily = style.fontFamily;
-  if (style.bold) el.style.fontWeight = "bold";
-  if (style.italic) el.style.fontStyle = "italic";
+  if (style.fontSize)
+    el.style.fontSize = style.fontSize + "px";
+
+  if (style.color)
+    el.style.color = style.color;
+
+  if (style.fontFamily)
+    el.style.fontFamily = style.fontFamily;
+
+  el.style.fontWeight = style.bold ? "bold" : "normal";
+  el.style.fontStyle = style.italic ? "italic" : "normal";
 }
 
 /* ===============================
-   IMAGE / VIDEO (UNCHANGED)
+   IMAGE BLOCK
 ================================ */
 function renderImageBlock(block) {
   const div = document.createElement("div");
   div.className = "cms-image-block";
+
   div.innerHTML = block.data?.src
     ? `<img src="${block.data.src}" />`
     : `<div class="media-placeholder">🖼 Image Block</div>`;
-  div.onclick = () => (activeBlockId = block.id);
-  return div;
-}
 
-function renderVideoBlock(block) {
-  const div = document.createElement("div");
-  div.className = "cms-video-block";
-  div.innerHTML = block.data?.src
-    ? `<video controls src="${block.data.src}"></video>`
-    : `<div class="media-placeholder">🎥 Video Block</div>`;
-  div.onclick = () => (activeBlockId = block.id);
+  div.onclick = () => {
+    activeBlockId = block.id;
+    setActiveBlock(block.id);
+  };
+
   return div;
 }
 
 /* ===============================
-   ADD / DELETE / SAVE (UNCHANGED)
+   VIDEO BLOCK
+================================ */
+function renderVideoBlock(block) {
+  const div = document.createElement("div");
+  div.className = "cms-video-block";
+
+  div.innerHTML = block.data?.src
+    ? `<video controls src="${block.data.src}"></video>`
+    : `<div class="media-placeholder">🎥 Video Block</div>`;
+
+  div.onclick = () => {
+    activeBlockId = block.id;
+    setActiveBlock(block.id);
+  };
+
+  return div;
+}
+
+/* ===============================
+   ADD BLOCK
 ================================ */
 export function addBlock(type) {
   const state = getState();
@@ -120,15 +157,28 @@ export function addBlock(type) {
   setActiveBlock(newBlock.id);
 
   document.dispatchEvent(new Event("cms-rerender"));
+
+  console.log("➕ Block added:", type);
 }
 
+/* ===============================
+   DELETE BLOCK
+================================ */
 function deleteBlock(id) {
   if (!confirm("Delete this block?")) return;
+
   const state = getState();
   state.page.blocks = state.page.blocks.filter(b => b.id !== id);
+
+  activeBlockId = null;
+  setActiveBlock(null);
+
   document.dispatchEvent(new Event("cms-rerender"));
 }
 
+/* ===============================
+   SAVE PAGE
+================================ */
 document.addEventListener("cms-save", async () => {
   const state = getState();
   await savePage(state.page);
