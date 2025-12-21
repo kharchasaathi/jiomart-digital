@@ -1,5 +1,5 @@
 /***************************************************
- * CMS RENDER – CONTENT ONLY (Phase 4.1)
+ * CMS RENDER – CONTENT ONLY (Phase 4.1 FIXED)
  ***************************************************/
 
 import { renderBlocks } from "./blocks.js";
@@ -22,15 +22,17 @@ export function renderPage() {
     return;
   }
 
-  /* ===============================
-     RESET PAGE
-  ================================ */
   root.innerHTML = "";
-
-  /* ===============================
-     RENDER BLOCKS
-  ================================ */
   renderBlocks(root);
 
   console.log("🧱 Blocks rendered");
 }
+
+/* =================================================
+   🔥 VERY IMPORTANT
+   Re-render when styles / blocks change
+================================================= */
+document.addEventListener("cms-rerender", () => {
+  console.log("🔁 cms-rerender received");
+  renderPage();
+});
