@@ -5,15 +5,23 @@
   <title>Products – JioMart Digital</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
+  <!-- ===============================
+       SITE STYLES
+  ================================ -->
+  <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/site.css">
   <link rel="stylesheet" href="assets/css/site-ui.css">
 </head>
 
 <body>
 
+  <!-- ===============================
+       SITE HEADER
+  ================================ -->
   <header class="site-header">
     <div class="logo">JioMart Digital</div>
 
+    <!-- 🔍 SEARCH (Phase 3 enable) -->
     <div class="search-box">
       <input
         type="text"
@@ -21,19 +29,27 @@
         placeholder="Search products, brands, article code…"
         disabled
       />
-      <!-- 🔒 disabled for now (Phase 3) -->
+      <!-- enabled in Phase 3 -->
     </div>
   </header>
 
+  <!-- ===============================
+       PRODUCTS PAGE
+  ================================ -->
   <main class="products-page">
+
     <h2>Available Products</h2>
 
-    <div id="productsGrid" class="products-grid">
-      <!-- products injected here -->
+    <!-- ✅ REQUIRED GRID -->
+    <div class="products-grid" id="productsGrid">
+      <!-- Products will be injected by JS -->
     </div>
+
   </main>
 
-  <!-- PUBLIC PRODUCTS SCRIPT -->
+  <!-- ===============================
+       PUBLIC PRODUCTS SCRIPT
+  ================================ -->
   <script type="module" src="assets/js/site/products-page.js"></script>
 
 </body>
