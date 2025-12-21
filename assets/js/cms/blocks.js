@@ -1,8 +1,8 @@
 /***************************************************
- * BLOCKS – FINAL STABLE (TEXT STYLE FIXED)
+ * BLOCKS – FINAL STABLE (TEXT STYLE REALLY FIXED)
  * ✔ Text / Image / Video blocks
- * ✔ Font size, color, family works
- * ✔ Bold / Italic toggle works
+ * ✔ Font size, color, family works ✅
+ * ✔ Bold / Italic toggle works ✅
  * ✔ Add / Delete / Save works
  ***************************************************/
 
@@ -52,7 +52,7 @@ export function renderBlocks(container) {
 }
 
 /* ===============================
-   TEXT BLOCK (✨ STYLED + FIXED)
+   TEXT BLOCK (✨ STYLED – FINAL FIX)
 ================================ */
 function renderTextBlock(block) {
   const div = document.createElement("div");
@@ -64,7 +64,7 @@ function renderTextBlock(block) {
 
   div.innerHTML = block.data.html;
 
-  // 🔥 APPLY TEXT STYLES (FINAL FIX)
+  // 🔥 APPLY TEXT STYLES (REAL FIX)
   applyTextStyles(div, block.data.style);
 
   if (getState().adminMode) {
@@ -84,35 +84,40 @@ function renderTextBlock(block) {
 }
 
 /* ===============================
-   APPLY TEXT STYLES (🔥 FINAL)
+   APPLY TEXT STYLES (🔥 REAL FIX)
+   👉 Applies to inner <p>, <h1>, etc
 ================================ */
 function applyTextStyles(el, style = {}) {
-  // Font size
-  if (style.fontSize) {
-    el.style.fontSize = style.fontSize + "px";
-  } else {
-    el.style.fontSize = "";
-  }
+  // get all inner text elements
+  const targets = el.querySelectorAll("*");
+  const nodes = targets.length ? targets : [el];
 
-  // Color
-  if (style.color) {
-    el.style.color = style.color;
-  } else {
-    el.style.color = "";
-  }
+  nodes.forEach(node => {
+    // Font size
+    if (style.fontSize) {
+      node.style.fontSize = style.fontSize + "px";
+    } else {
+      node.style.fontSize = "";
+    }
 
-  // Font family
-  if (style.fontFamily) {
-    el.style.fontFamily = style.fontFamily;
-  } else {
-    el.style.fontFamily = "";
-  }
+    // Color
+    if (style.color) {
+      node.style.color = style.color;
+    } else {
+      node.style.color = "";
+    }
 
-  // Bold
-  el.style.fontWeight = style.bold ? "bold" : "normal";
+    // Font family
+    if (style.fontFamily) {
+      node.style.fontFamily = style.fontFamily;
+    } else {
+      node.style.fontFamily = "";
+    }
 
-  // Italic
-  el.style.fontStyle = style.italic ? "italic" : "normal";
+    // Bold / Italic
+    node.style.fontWeight = style.bold ? "bold" : "normal";
+    node.style.fontStyle = style.italic ? "italic" : "normal";
+  });
 }
 
 /* ===============================
