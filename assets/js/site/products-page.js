@@ -5,42 +5,45 @@ import { getState } from "../core/state.js";
 ================================ */
 function renderProducts() {
   const grid = document.getElementById("productsGrid");
-  if (!grid) return;
+  if (!grid) {
+    console.warn("❌ #productsGrid not found");
+    return;
+  }
 
   const state = getState();
   const products = state.products || [];
 
   grid.innerHTML = "";
 
+  /* EMPTY STATE */
   if (!products.length) {
-    grid.innerHTML = "<p>No products available</p>";
+    grid.innerHTML = `<p>No products available</p>`;
     return;
   }
 
-  products.forEach(product => {
+  products.forEach(p => {
     const card = document.createElement("div");
     card.className = "product-card";
 
     const badge =
-      product.productType === "dc"
+      p.productType === "dc"
         ? `<span class="badge dc">DC Product</span>`
         : `<span class="badge store">Store Product</span>`;
 
-    const callBtn =
-      product.productType === "dc"
-        ? `<a href="tel:${product.dc.bookingPhone}"
-             class="call-btn">
+    const action =
+      p.productType === "dc"
+        ? `<a class="call-btn" href="tel:${p.dc.bookingPhone}">
              📞 Call to Book
            </a>`
-        : `<span class="store-note">
+        : `<div class="store-note">
              Available in Store
-           </span>`;
+           </div>`;
 
     card.innerHTML = `
       <div class="product-image">
         ${
-          product.images?.length
-            ? `<img src="${product.images[0]}" alt="${product.name}">`
+          p.images?.length
+            ? `<img src="${p.images[0]}" alt="${p.name}">`
             : `<div class="no-image">No Image</div>`
         }
       </div>
@@ -48,22 +51,25 @@ function renderProducts() {
       <div class="product-info">
         ${badge}
 
-        <h3>${product.name}</h3>
+        <h3>${p.name}</h3>
 
         <div class="article-code">
-          Article Code: <strong>${product.articleCode}</strong>
+          Article Code:
+          <strong>${p.articleCode || "-"}</strong>
         </div>
 
         <div class="price">
-          ₹${product.price}
+          ₹${p.price}
         </div>
 
-        ${callBtn}
+        ${action}
       </div>
     `;
 
     grid.appendChild(card);
   });
+
+  console.log("🛍 Products rendered:", products.length);
 }
 
 /* ===============================
