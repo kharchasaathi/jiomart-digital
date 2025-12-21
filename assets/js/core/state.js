@@ -34,6 +34,11 @@ const state = {
 };
 
 /* ================================
+   ACTIVE BLOCK (Phase 4.1)
+================================ */
+let activeBlockId = null;
+
+/* ================================
    GETTERS
 ================================ */
 export function getState() {
@@ -42,6 +47,10 @@ export function getState() {
 
 export function isAdmin() {
   return state.adminMode;
+}
+
+export function getActiveBlock() {
+  return activeBlockId;
 }
 
 /* ================================
@@ -54,6 +63,10 @@ export function setState(partial = {}) {
 export function setAdminMode(value) {
   state.adminMode = !!value;
   document.body.classList.toggle("admin-mode", state.adminMode);
+}
+
+export function setActiveBlock(id) {
+  activeBlockId = id;
 }
 
 /* =================================================
