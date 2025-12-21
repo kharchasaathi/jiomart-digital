@@ -1,71 +1,133 @@
-import { getState, getActiveBlock } from "../core/state.js";
+import { getActiveBlock, getState } from "../core/state.js";
 
 let toolbar;
 
-function createTextToolbar() {
+/* ===============================
+   CREATE TOOLBAR
+================================ */
+function createToolbar() {
+  if (toolbar) return;
+
   toolbar = document.createElement("div");
-  toolbar.id = "text-style-toolbar";
+  toolbar.className = "admin-text-toolbar";
+
+  /* 🔒 fallback inline styles (CSS fail అయినా safe) */
   toolbar.style.cssText = `
     position: fixed;
     bottom: 70px;
     left: 50%;
     transform: translateX(-50%);
-    background: #111;
-    padding: 8px;
-    border-radius: 8px;
-    display: flex;
-    gap: 6px;
     z-index: 9999;
   `;
 
   toolbar.innerHTML = `
-    <input type="number" id="fs" value="16" style="width:60px">
-    <input type="color" id="fc">
-    <select id="ff">
-      <option value="system-ui">Default</option>
-      <option value="Arial">Arial</option>
-      <option value="'Noto Sans Telugu', sans-serif">Telugu</option>
+    <input type="number" min="10" max="80" title="Font size" />
+
+    <input type="color" title="Text color" />
+
+    <select title="Font family">
+      <optgroup label="English">
+        <option value="system-ui">Default</option>
+        <option value="Poppins">Poppins</option>
+        <option value="Roboto">Roboto</option>
+        <option value="Montserrat">Montserrat</option>
+      </optgroup>
+      <optgroup label="Telugu">
+        <option value="Noto Sans Telugu">Noto Sans Telugu</option>
+        <option value="Ramabhadra">Ramabhadra</option>
+        <option value="NTR">NTR</option>
+      </optgroup>
     </select>
-    <button data-b="bold">B</button>
-    <button data-b="italic">I</button>
+
+    <button data-style="bold"><b>B</b></button>
+    <button data-style="italic"><i>I</i></button>
   `;
 
   document.body.appendChild(toolbar);
 
-  toolbar.addEventListener("input", applyStyle);
-  toolbar.addEventListener("click", applyStyle);
+  toolbar.addEventListener("input", onChange);
+  toolbar.addEventListener("click", onClick);
 }
 
-function applyStyle(e) {
+/* ===============================
+   APPLY STYLE – INPUT
+================================ */
+function onChange(e) {
   const state = getState();
   if (!state.adminMode) return;
 
-  const blockId = getActiveBlock();
-  if (!blockId) return;
-
-  const block = state.page.blocks.find(b => b.id === blockId);
-  if (!block || block.type !== "text") return;
+  const block = getSelectedBlock();
+  if (!block) return;
 
   block.data.style ||= {};
 
-  if (e.target.id === "fs") block.data.style.fontSize = +e.target.value;
-  if (e.target.id === "fc") block.data.style.color = e.target.value;
-  if (e.target.id === "ff") block.data.style.fontFamily = e.target.value;
+  if (e.target.type === "number") {
+    block.data.style.fontSize = +e.target.value;
+  }
 
-  if (e.target.dataset.b === "bold")
-    block.data.style.bold = !block.data.style.bold;
+  if (e.target.type === "color") {
+    block.data.style.color = e.target.value;
+  }
 
-  if (e.target.dataset.b === "italic")
-    block.data.style.italic = !block.data.style.italic;
+  if (e.target.tagName === "SELECT") {
+    block.data.style.fontFamily = e.target.value;
+  }
 
   document.dispatchEvent(new Event("cms-rerender"));
 }
 
+/* ===============================
+   APPLY STYLE – BUTTONS
+================================ */
+function onClick(e) {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+
+  const state = getState();
+  if (!state.adminMode) return;
+
+  const block = getSelectedBlock();
+  if (!block) return;
+
+  block.data.style ||= {};
+
+  if (btn.dataset.style === "bold") {
+    block.data.style.bold = !block.data.style.bold;
+  }
+
+  if (btn.dataset.style === "italic") {
+    block.data.style.italic = !block.data.style.italic;
+  }
+
+  document.dispatchEvent(new Event("cms-rerender"));
+}
+
+/* ===============================
+   HELPERS
+================================ */
+function getSelectedBlock() {
+  const state = getState();
+  const id = getActiveBlock();
+  return state.page?.blocks.find(
+    b => b.id === id && b.type === "text"
+  );
+}
+
+/* ===============================
+   ADMIN STATE HANDLING
+================================ */
 document.addEventListener("ADMIN_STATE_CHANGED", e => {
   if (e.detail?.isAdmin) {
-    if (!toolbar) createTextToolbar();
+    createToolbar();
   } else {
     toolbar?.remove();
     toolbar = null;
   }
+});
+
+/* ===============================
+   SAFE INIT
+================================ */
+document.addEventListener("DOMContentLoaded", () => {
+  if (getState().adminMode) createToolbar();
 });
