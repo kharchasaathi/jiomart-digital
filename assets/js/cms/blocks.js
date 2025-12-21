@@ -1,18 +1,12 @@
-/***************************************************
- * BLOCKS – FINAL FIX (ADD WORKS 100%)
- ***************************************************/
-import { getState } from "../core/state.js";
+
+import { getState, setActiveBlock } from "../core/state.js";
 import { savePage } from "./page-store.js";
 
 let activeBlockId = null;
 
-/* ===============================
-   RENDER BLOCKS
-================================ */
 export function renderBlocks(container) {
   const state = getState();
   const page = state.page;
-
   if (!page || !Array.isArray(page.blocks)) return;
 
   container.innerHTML = "";
@@ -28,7 +22,6 @@ export function renderBlocks(container) {
     if (block.type === "image") el = renderImageBlock(block);
     if (block.type === "video") el = renderVideoBlock(block);
 
-    // ❌ delete button
     if (state.adminMode) {
       const del = document.createElement("button");
       del.className = "block-delete-btn";
@@ -43,35 +36,57 @@ export function renderBlocks(container) {
     wrapper.appendChild(el);
     container.appendChild(wrapper);
   });
-
-  console.log("🧱 Blocks rendered");
 }
 
 /* ===============================
-   BLOCK TYPES
+   TEXT BLOCK (✨ STYLED)
 ================================ */
 function renderTextBlock(block) {
   const div = document.createElement("div");
   div.className = "cms-text-block editable";
-  div.innerHTML = block.data?.html || "<p>Edit this content</p>";
+
+  block.data ||= {};
+  block.data.html ||= "<p>Edit this content</p>";
+  block.data.style ||= {};
+
+  div.innerHTML = block.data.html;
+
+  // 🎨 APPLY STYLES
+  applyTextStyles(div, block.data.style);
 
   if (getState().adminMode) {
     div.contentEditable = "true";
+
+    div.onclick = () => {
+      activeBlockId = block.id;
+      setActiveBlock(block.id);
+    };
+
     div.oninput = () => {
       block.data.html = div.innerHTML;
     };
-    div.onclick = () => (activeBlockId = block.id);
   }
+
   return div;
 }
 
+function applyTextStyles(el, style = {}) {
+  if (style.fontSize) el.style.fontSize = style.fontSize + "px";
+  if (style.color) el.style.color = style.color;
+  if (style.fontFamily) el.style.fontFamily = style.fontFamily;
+  if (style.bold) el.style.fontWeight = "bold";
+  if (style.italic) el.style.fontStyle = "italic";
+}
+
+/* ===============================
+   IMAGE / VIDEO (UNCHANGED)
+================================ */
 function renderImageBlock(block) {
   const div = document.createElement("div");
   div.className = "cms-image-block";
   div.innerHTML = block.data?.src
     ? `<img src="${block.data.src}" />`
     : `<div class="media-placeholder">🖼 Image Block</div>`;
-
   div.onclick = () => (activeBlockId = block.id);
   return div;
 }
@@ -82,13 +97,12 @@ function renderVideoBlock(block) {
   div.innerHTML = block.data?.src
     ? `<video controls src="${block.data.src}"></video>`
     : `<div class="media-placeholder">🎥 Video Block</div>`;
-
   div.onclick = () => (activeBlockId = block.id);
   return div;
 }
 
 /* ===============================
-   ADD BLOCK (🔥 FIXED)
+   ADD / DELETE / SAVE (UNCHANGED)
 ================================ */
 export function addBlock(type) {
   const state = getState();
@@ -101,30 +115,20 @@ export function addBlock(type) {
     data: {}
   };
 
-  // ✅ ALWAYS APPEND (NO activeBlock dependency)
   page.blocks.push(newBlock);
-
   activeBlockId = newBlock.id;
+  setActiveBlock(newBlock.id);
 
   document.dispatchEvent(new Event("cms-rerender"));
-
-  console.log("➕ Block added:", type);
 }
 
-/* ===============================
-   DELETE BLOCK
-================================ */
 function deleteBlock(id) {
   if (!confirm("Delete this block?")) return;
-
   const state = getState();
   state.page.blocks = state.page.blocks.filter(b => b.id !== id);
   document.dispatchEvent(new Event("cms-rerender"));
 }
 
-/* ===============================
-   SAVE
-================================ */
 document.addEventListener("cms-save", async () => {
   const state = getState();
   await savePage(state.page);
