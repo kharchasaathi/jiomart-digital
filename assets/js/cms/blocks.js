@@ -2,7 +2,7 @@
  * BLOCKS – FINAL STABLE (TEXT STYLE FIXED)
  * ✔ Text / Image / Video blocks
  * ✔ Font size, color, family works
- * ✔ Bold / Italic works
+ * ✔ Bold / Italic toggle works
  * ✔ Add / Delete / Save works
  ***************************************************/
 
@@ -64,7 +64,7 @@ function renderTextBlock(block) {
 
   div.innerHTML = block.data.html;
 
-  // 🔥 APPLY TEXT STYLES (FIX)
+  // 🔥 APPLY TEXT STYLES (FINAL FIX)
   applyTextStyles(div, block.data.style);
 
   if (getState().adminMode) {
@@ -84,19 +84,34 @@ function renderTextBlock(block) {
 }
 
 /* ===============================
-   APPLY TEXT STYLES (🔥 REQUIRED)
+   APPLY TEXT STYLES (🔥 FINAL)
 ================================ */
 function applyTextStyles(el, style = {}) {
-  if (style.fontSize)
+  // Font size
+  if (style.fontSize) {
     el.style.fontSize = style.fontSize + "px";
+  } else {
+    el.style.fontSize = "";
+  }
 
-  if (style.color)
+  // Color
+  if (style.color) {
     el.style.color = style.color;
+  } else {
+    el.style.color = "";
+  }
 
-  if (style.fontFamily)
+  // Font family
+  if (style.fontFamily) {
     el.style.fontFamily = style.fontFamily;
+  } else {
+    el.style.fontFamily = "";
+  }
 
+  // Bold
   el.style.fontWeight = style.bold ? "bold" : "normal";
+
+  // Italic
   el.style.fontStyle = style.italic ? "italic" : "normal";
 }
 
@@ -157,7 +172,6 @@ export function addBlock(type) {
   setActiveBlock(newBlock.id);
 
   document.dispatchEvent(new Event("cms-rerender"));
-
   console.log("➕ Block added:", type);
 }
 
