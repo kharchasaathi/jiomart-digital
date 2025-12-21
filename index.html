@@ -6,12 +6,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
   <!-- =================================================
+       🔤 GOOGLE FONTS (ENGLISH + TELUGU)
+       (Must load BEFORE CSS)
+  ================================================== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- English Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&family=Roboto&family=Montserrat&display=swap" rel="stylesheet">
+
+  <!-- Telugu Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu&family=Ramabhadra&family=NTR&display=swap" rel="stylesheet">
+
+  <!-- =================================================
        ✅ CSS LOAD ORDER (🔥 VERY IMPORTANT)
        1. Base reset
        2. Site theme + typography
        3. CMS blocks
        4. Admin editor visuals
-       5. Actual site UI (hero, grid, footer)
+       5. Actual site UI
   ================================================== -->
 
   <!-- 1️⃣ CORE BASE STYLES -->
@@ -133,46 +146,35 @@
        CMS PAGE ROOT
   ================================ -->
   <div id="pageRoot"></div>
-<!-- =================================================
-     ✅ SCRIPT LOAD ORDER (FINAL & STABLE)
-================================================== -->
 
-<!-- 1️⃣ Firebase (core) -->
-<script type="module" src="assets/js/core/firebase.js"></script>
+  <!-- =================================================
+       ✅ SCRIPT LOAD ORDER (FINAL & STABLE)
+  ================================================== -->
 
-<!-- 2️⃣ Admin authentication -->
-<script type="module" src="assets/js/cms/admin-auth.js"></script>
+  <!-- 1️⃣ Firebase (core) -->
+  <script type="module" src="assets/js/core/firebase.js"></script>
 
-<!-- 3️⃣ Admin session
-     🔥 Sets adminMode
-     🔥 Dispatches ADMIN_STATE_CHANGED
--->
-<script type="module" src="assets/js/cms/admin-session.js"></script>
+  <!-- 2️⃣ Admin authentication -->
+  <script type="module" src="assets/js/cms/admin-auth.js"></script>
 
-<!-- 4️⃣ CMS BLOCK ENGINE (🔥 THIS WAS MISSING) -->
-<script type="module" src="assets/js/cms/blocks.js"></script>
+  <!-- 3️⃣ Admin session -->
+  <script type="module" src="assets/js/cms/admin-session.js"></script>
 
-<!-- 5️⃣ Admin panels (UI only, depend on adminMode) -->
-<script type="module" src="assets/js/cms/admin-theme-panel.js"></script>
-<script type="module" src="assets/js/cms/admin-typography-panel.js"></script>
+  <!-- 4️⃣ CMS BLOCK ENGINE -->
+  <script type="module" src="assets/js/cms/blocks.js"></script>
 
-<!-- ❌ admin-language-panel.js REMOVED (as decided) -->
+  <!-- 5️⃣ Admin panels -->
+  <script type="module" src="assets/js/cms/admin-theme-panel.js"></script>
+  <script type="module" src="assets/js/cms/admin-typography-panel.js"></script>
 
-<!-- 6️⃣ Admin editor toolbar
-     ➕ add text / image / video
-     💾 save page
--->
-<script type="module" src="assets/js/cms/admin-editor-toolbar.js"></script>
+  <!-- 6️⃣ Admin editor toolbar -->
+  <script type="module" src="assets/js/cms/admin-editor-toolbar.js"></script>
 
-<!-- 7️⃣ Admin logout -->
-<script type="module" src="assets/js/cms/admin-logout.js"></script>
+  <!-- 7️⃣ Admin logout -->
+  <script type="module" src="assets/js/cms/admin-logout.js"></script>
 
-<!-- 8️⃣ Public entry (🚨 ALWAYS LAST)
-     - loadPage()
-     - renderPage()
-     - renderBlocks()
--->
-<script type="module" src="assets/js/site/public.js"></script>
+  <!-- 8️⃣ Public entry (🚨 ALWAYS LAST) -->
+  <script type="module" src="assets/js/site/public.js"></script>
 
 </body>
 </html>
