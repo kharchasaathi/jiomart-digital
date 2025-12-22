@@ -1,38 +1,41 @@
 import { getState } from "../core/state.js";
 
 /* ===============================
+   DOM ELEMENTS (SAFE)
+================================ */
+const grid = document.getElementById("productsGrid");
+const searchInput = document.getElementById("productSearch");
+
+/* ===============================
    RENDER PRODUCTS (PUBLIC)
 ================================ */
-function renderProducts() {
-  const grid = document.getElementById("productsGrid");
+function renderProducts(list = []) {
   if (!grid) {
     console.warn("❌ #productsGrid not found");
     return;
   }
 
-  const state = getState();
-  const products = state.products || [];
-
   grid.innerHTML = "";
 
   /* EMPTY STATE */
-  if (!products.length) {
-    grid.innerHTML = `<p>No products available</p>`;
+  if (!list.length) {
+    grid.innerHTML = "<p>No products available</p>";
     return;
   }
 
-  products.forEach(p => {
+  list.forEach(product => {
     const card = document.createElement("div");
     card.className = "product-card";
 
     const badge =
-      p.productType === "dc"
+      product.productType === "dc"
         ? `<span class="badge dc">DC Product</span>`
         : `<span class="badge store">Store Product</span>`;
 
     const action =
-      p.productType === "dc"
-        ? `<a class="call-btn" href="tel:${p.dc.bookingPhone}">
+      product.productType === "dc"
+        ? `<a href="tel:${product.dc?.bookingPhone || "9705379219"}"
+             class="call-btn">
              📞 Call to Book
            </a>`
         : `<div class="store-note">
@@ -42,8 +45,8 @@ function renderProducts() {
     card.innerHTML = `
       <div class="product-image">
         ${
-          p.images?.length
-            ? `<img src="${p.images[0]}" alt="${p.name}">`
+          product.images?.length
+            ? `<img src="${product.images[0]}" alt="${product.name || "Product"}">`
             : `<div class="no-image">No Image</div>`
         }
       </div>
@@ -51,15 +54,15 @@ function renderProducts() {
       <div class="product-info">
         ${badge}
 
-        <h3>${p.name}</h3>
+        <h3>${product.name || "Unnamed Product"}</h3>
 
         <div class="article-code">
           Article Code:
-          <strong>${p.articleCode || "-"}</strong>
+          <strong>${product.articleCode || "-"}</strong>
         </div>
 
         <div class="price">
-          ₹${p.price}
+          ₹${product.price ?? "-"}
         </div>
 
         ${action}
@@ -69,12 +72,46 @@ function renderProducts() {
     grid.appendChild(card);
   });
 
-  console.log("🛍 Products rendered:", products.length);
+  console.log("🛍 Products rendered:", list.length);
 }
 
 /* ===============================
-   INIT
+   SEARCH LOGIC (PHASE 3.2)
+================================ */
+function handleSearch() {
+  const state = getState();
+  const products = state.products || [];
+
+  if (!searchInput) return;
+
+  const q = searchInput.value.trim().toLowerCase();
+
+  if (!q) {
+    renderProducts(products);
+    return;
+  }
+
+  const filtered = products.filter(p => {
+    return (
+      p.name?.toLowerCase().includes(q) ||
+      p.brand?.toLowerCase().includes(q) ||
+      p.articleCode?.toLowerCase().includes(q)
+    );
+  });
+
+  renderProducts(filtered);
+}
+
+/* ===============================
+   INIT (SAFE)
 ================================ */
 document.addEventListener("DOMContentLoaded", () => {
-  renderProducts();
+  const state = getState();
+  const products = state.products || [];
+
+  renderProducts(products);
+
+  if (searchInput) {
+    searchInput.addEventListener("input", handleSearch);
+  }
 });
