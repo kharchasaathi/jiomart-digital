@@ -35,7 +35,8 @@ function renderProducts(list = []) {
     const action =
       product.productType === "dc"
         ? `<a href="tel:${product.dc?.bookingPhone || "9705379219"}"
-             class="call-btn">
+             class="call-btn"
+             onclick="event.stopPropagation()">
              📞 Call to Book
            </a>`
         : `<div class="store-note">
@@ -68,6 +69,11 @@ function renderProducts(list = []) {
         ${action}
       </div>
     `;
+
+    /* 🔥 NEW: OPEN PRODUCT DETAIL PAGE */
+    card.addEventListener("click", () => {
+      window.location.href = `product.html?id=${product.id}`;
+    });
 
     grid.appendChild(card);
   });
