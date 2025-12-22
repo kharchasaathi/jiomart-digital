@@ -5,40 +5,50 @@
   <title>Products – JioMart Digital</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Base site styles -->
+  <!-- ===============================
+       BASE SITE STYLES
+  ================================ -->
   <link rel="stylesheet" href="./assets/css/site.css" />
 
-  <!-- Product UI styles -->
+  <!-- ===============================
+       PRODUCT UI STYLES
+  ================================ -->
   <link rel="stylesheet" href="./assets/css/site-ui.css" />
 </head>
 
 <body>
 
-  <!-- HEADER -->
+  <!-- ===============================
+       HEADER
+  ================================ -->
   <header class="site-header">
     <div class="logo">JioMart Digital</div>
 
+    <!-- 🔍 SEARCH BOX (PHASE 3.2 ENABLED) -->
     <div class="search-box">
       <input
         type="text"
         id="productSearch"
         placeholder="Search products, brands, article code…"
-        disabled
       />
-      <!-- 🔒 Phase 3 -->
     </div>
   </header>
 
-  <!-- PRODUCTS PAGE -->
+  <!-- ===============================
+       PRODUCTS PAGE
+  ================================ -->
   <main class="products-page">
     <h2>Available Products</h2>
 
     <div id="productsGrid" class="products-grid">
-      <!-- Cards injected here -->
+      <!-- ✅ Product cards injected by JS -->
     </div>
   </main>
 
-  <!-- PRODUCTS SCRIPT (ONLY HERE) -->
+  <!-- ===============================
+       PRODUCTS PAGE SCRIPT
+       (ONLY LOAD HERE)
+  ================================ -->
   <script type="module" src="./assets/js/site/products-page.js"></script>
 
 </body>
