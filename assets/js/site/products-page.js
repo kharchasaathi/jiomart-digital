@@ -27,6 +27,14 @@ function renderProducts(list = []) {
     const card = document.createElement("div");
     card.className = "product-card";
 
+    /* ===============================
+       PRICE TEXT (🔥 NEW)
+    ================================ */
+    const priceText =
+      product.price
+        ? `₹${product.price}`
+        : "Contact for price";
+
     const badge =
       product.productType === "dc"
         ? `<span class="badge dc">DC Product</span>`
@@ -63,14 +71,16 @@ function renderProducts(list = []) {
         </div>
 
         <div class="price">
-          ₹${product.price ?? "-"}
+          ${priceText}
         </div>
 
         ${action}
       </div>
     `;
 
-    /* 🔥 OPEN PRODUCT DETAIL PAGE */
+    /* ===============================
+       OPEN PRODUCT DETAIL PAGE
+    ================================ */
     card.addEventListener("click", () => {
       if (!product.id) {
         console.warn("❌ Product ID missing", product);
@@ -91,7 +101,7 @@ function renderProducts(list = []) {
 function handleSearch() {
   const state = getState();
 
-  /* 🔥 APPLY VISIBILITY FILTER */
+  /* 🔥 ONLY VISIBLE PRODUCTS */
   const products = (state.products || [])
     .filter(p => p.visible !== false);
 
