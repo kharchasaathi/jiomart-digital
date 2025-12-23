@@ -24,21 +24,67 @@ export function renderAdminProducts() {
   }
 
   products.forEach(product => {
+    /* 🔥 SAFETY DEFAULTS (PHASE 4.6) */
+    product.visible = product.visible ?? true;
+    product.featured = product.featured ?? false;
+
     const card = document.createElement("div");
     card.className = "admin-product-card";
 
     card.innerHTML = `
       <strong>${product.name}</strong>
+
       <div>Code: ${product.articleCode}</div>
-      <div>Price: ₹${product.price ?? "-"}</div>
-      <div>Type: ${product.productType}</div>
+      <div>₹${product.price ?? "-"}</div>
+
+      <label>
+        <input type="checkbox" data-visible
+          ${product.visible !== false ? "checked" : ""} />
+        Visible
+      </label>
+
+      <label style="margin-left:10px;">
+        <input type="checkbox" data-featured
+          ${product.featured ? "checked" : ""} />
+        Featured
+      </label>
+
+      <br/><br/>
 
       <button data-edit>Edit</button>
       <button data-delete>Delete</button>
     `;
 
     /* ===============================
-       EDIT
+       VISIBILITY TOGGLE
+    ================================ */
+    card
+      .querySelector("[data-visible]")
+      .addEventListener("change", e => {
+        product.visible = e.target.checked;
+        console.log(
+          "👁 Visibility:",
+          product.articleCode,
+          product.visible
+        );
+      });
+
+    /* ===============================
+       FEATURED TOGGLE
+    ================================ */
+    card
+      .querySelector("[data-featured]")
+      .addEventListener("change", e => {
+        product.featured = e.target.checked;
+        console.log(
+          "⭐ Featured:",
+          product.articleCode,
+          product.featured
+        );
+      });
+
+    /* ===============================
+       EDIT PRODUCT
     ================================ */
     card
       .querySelector("[data-edit]")
@@ -47,7 +93,7 @@ export function renderAdminProducts() {
       });
 
     /* ===============================
-       DELETE
+       DELETE PRODUCT
     ================================ */
     card
       .querySelector("[data-delete]")
