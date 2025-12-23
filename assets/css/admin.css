@@ -123,3 +123,31 @@ body.admin-mode {
   border-radius: 6px;
   background: #fff;
 }
+
+/* =================================================
+   🔥 ADMIN PRODUCTS LIST (PHASE 4.4)
+================================================= */
+
+.admin-products-list {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-product-card {
+  border: 1px solid #ddd;
+  padding: 12px;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.admin-product-card strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.admin-product-card button {
+  margin-right: 8px;
+  padding: 4px 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
