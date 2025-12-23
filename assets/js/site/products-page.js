@@ -70,15 +70,12 @@ function renderProducts(list = []) {
       </div>
     `;
 
-    /* ===============================
-       🔥 OPEN PRODUCT DETAIL PAGE
-    ================================ */
+    /* 🔥 OPEN PRODUCT DETAIL PAGE */
     card.addEventListener("click", () => {
       if (!product.id) {
         console.warn("❌ Product ID missing", product);
         return;
       }
-
       window.location.href = `product.html?id=${product.id}`;
     });
 
@@ -93,7 +90,10 @@ function renderProducts(list = []) {
 ================================ */
 function handleSearch() {
   const state = getState();
-  const products = state.products || [];
+
+  /* 🔥 APPLY VISIBILITY FILTER */
+  const products = (state.products || [])
+    .filter(p => p.visible !== false);
 
   if (!searchInput) return;
 
@@ -120,7 +120,10 @@ function handleSearch() {
 ================================ */
 document.addEventListener("DOMContentLoaded", () => {
   const state = getState();
-  const products = state.products || [];
+
+  /* 🔥 ONLY VISIBLE PRODUCTS */
+  const products = (state.products || [])
+    .filter(p => p.visible !== false);
 
   renderProducts(products);
 
