@@ -28,6 +28,14 @@ function renderFeaturedProducts() {
     const card = document.createElement("div");
     card.className = "product-card";
 
+    /* ===============================
+       PRICE TEXT (🔥 NEW)
+    ================================ */
+    const priceText =
+      product.price
+        ? `₹${product.price}`
+        : "Contact for price";
+
     const badge =
       product.productType === "dc"
         ? `<span class="badge dc">DC</span>`
@@ -52,13 +60,14 @@ function renderFeaturedProducts() {
         </div>
 
         <div class="price">
-          ₹${product.price ?? "-"}
+          ${priceText}
         </div>
       </div>
     `;
 
     /* 🔥 CLICK → PRODUCT DETAIL PAGE */
     card.addEventListener("click", () => {
+      if (!product.id) return;
       window.location.href = `product.html?id=${product.id}`;
     });
 
