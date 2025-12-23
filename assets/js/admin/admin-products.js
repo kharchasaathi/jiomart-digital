@@ -1,4 +1,5 @@
 import { getState } from "../core/state.js";
+import { renderAdminProducts } from "./admin-products-list.js";
 
 /* ===============================
    DOM ELEMENTS
@@ -15,7 +16,7 @@ const description = document.getElementById("description");
 const imagePreview = document.getElementById("imagePreview");
 
 /* ===============================
-   SUBMIT PRODUCT
+   SUBMIT PRODUCT (ADD / UPDATE)
 ================================ */
 form.addEventListener("submit", e => {
   e.preventDefault();
@@ -24,68 +25,107 @@ form.addEventListener("submit", e => {
   state.products ||= [];
 
   /* ===============================
-     IMAGE DRAFT (FROM admin-media.js)
+     IMAGE + DATA DRAFT
+     (from admin-media.js & admin-specs.js)
   ================================ */
-  const draft = state.currentProduct || {};
-  const images = draft.images || [];
-
-  /* ===============================
-     PRODUCT OBJECT
-  ================================ */
-  const product = {
-    id: crypto.randomUUID(),
-
-    articleCode: articleCode.value.trim(),
-    name: name.value.trim(),
-    brand: brand.value.trim(),
-    category: category.value.trim(),
-    price: Number(price.value),
-
-    productType: productType.value, // store | dc
-    description: description.value,
-
-    images,
-    videos: [],        // future ready
-    highlights: [],    // phase 3.5+
-    specs: {},         // phase 3.5+
-
-    dc: {
-      bookingPhone: "9705379219"
-    },
-
-    createdAt: Date.now()
+  const draft = state.currentProduct || {
+    images: [],
+    highlights: [],
+    specs: {}
   };
 
   /* ===============================
-     VALIDATIONS
+     BASIC VALIDATION
   ================================ */
-  if (!product.articleCode || !product.name) {
+  if (!articleCode.value.trim() || !name.value.trim()) {
     alert("❌ Article Code & Product Name required");
     return;
   }
 
-  // ❌ Duplicate article code
-  if (state.products.some(p => p.articleCode === product.articleCode)) {
-    alert("❌ Article code already exists");
-    return;
+  /* ===============================
+     UPDATE MODE
+  ================================ */
+  if (state.editingProductId) {
+    const product = state.products.find(
+      p => p.id === state.editingProductId
+    );
+
+    if (!product) {
+      alert("❌ Product not found");
+      return;
+    }
+
+    /* Update fields */
+    product.articleCode = articleCode.value.trim();
+    product.name = name.value.trim();
+    product.brand = brand.value.trim();
+    product.category = category.value.trim();
+    product.price = Number(price.value);
+    product.productType = productType.value;
+    product.description = description.value;
+
+    product.images = draft.images;
+    product.highlights = draft.highlights;
+    product.specs = draft.specs;
+
+    alert("✅ Product updated");
+
+    state.editingProductId = null;
   }
 
   /* ===============================
-     SAVE PRODUCT
+     ADD MODE
   ================================ */
-  state.products.push(product);
+  else {
+    // ❌ Duplicate article code check
+    if (
+      state.products.some(
+        p => p.articleCode === articleCode.value.trim()
+      )
+    ) {
+      alert("❌ Article code already exists");
+      return;
+    }
+
+    const product = {
+      id: crypto.randomUUID(),
+
+      articleCode: articleCode.value.trim(),
+      name: name.value.trim(),
+      brand: brand.value.trim(),
+      category: category.value.trim(),
+      price: Number(price.value),
+
+      productType: productType.value, // store | dc
+      description: description.value,
+
+      images: draft.images,
+      videos: [],                 // future ready
+      highlights: draft.highlights,
+      specs: draft.specs,
+
+      dc: {
+        bookingPhone: "9705379219"
+      },
+
+      createdAt: Date.now()
+    };
+
+    state.products.push(product);
+    alert("✅ Product added");
+  }
 
   /* ===============================
      CLEANUP
   ================================ */
-  state.currentProduct = null; // clear image draft
+  state.currentProduct = null;
   form.reset();
 
   if (imagePreview) {
     imagePreview.innerHTML = "";
   }
 
-  alert("✅ Product saved successfully");
+  renderAdminProducts();
 
   console.log("🛒 PRODUCTS:", state.products);
 });
