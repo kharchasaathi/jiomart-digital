@@ -103,3 +103,23 @@ body.admin-mode .block {
 body.admin-mode {
   overflow-x: hidden;
 }
+
+/* =================================================
+   🔥 IMAGE PREVIEW (PHASE 4.2 – MEDIA UPLOAD)
+================================================= */
+
+.image-preview {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+
+.image-preview img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+}
