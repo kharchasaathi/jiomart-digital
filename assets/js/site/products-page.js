@@ -70,8 +70,15 @@ function renderProducts(list = []) {
       </div>
     `;
 
-    /* 🔥 NEW: OPEN PRODUCT DETAIL PAGE */
+    /* ===============================
+       🔥 OPEN PRODUCT DETAIL PAGE
+    ================================ */
     card.addEventListener("click", () => {
+      if (!product.id) {
+        console.warn("❌ Product ID missing", product);
+        return;
+      }
+
       window.location.href = `product.html?id=${product.id}`;
     });
 
