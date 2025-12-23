@@ -8,16 +8,22 @@ function renderFeaturedProducts() {
   if (!container) return;
 
   const state = getState();
-  const products = state.products || [];
+
+  /* 🔥 ONLY:
+     - visible !== false
+     - featured === true
+  */
+  const products = (state.products || [])
+    .filter(p => p.visible !== false && p.featured);
 
   container.innerHTML = "";
 
   if (!products.length) {
-    container.innerHTML = "<p>No products available</p>";
+    container.innerHTML = "<p>No featured products available</p>";
     return;
   }
 
-  // 🔥 Show only first 6 products
+  /* 🔥 Show only first 6 featured products */
   products.slice(0, 6).forEach(product => {
     const card = document.createElement("div");
     card.className = "product-card";
@@ -31,7 +37,7 @@ function renderFeaturedProducts() {
       <div class="product-image">
         ${
           product.images?.length
-            ? `<img src="${product.images[0]}" alt="${product.name}">`
+            ? `<img src="${product.images[0]}" alt="${product.name || "Product"}">`
             : `<div class="no-image">No Image</div>`
         }
       </div>
@@ -39,19 +45,36 @@ function renderFeaturedProducts() {
       <div class="product-info">
         ${badge}
 
-        <h3>${product.name}</h3>
+        <h3>${product.name || "Unnamed Product"}</h3>
 
         <div class="article-code">
-          Code: ${product.articleCode}
+          Code: ${product.articleCode || "-"}
         </div>
 
-        <div class="price">₹${product.price}</div>
+        <div class="price">
+          ₹${product.price ?? "-"}
+        </div>
       </div>
     `;
 
+    /* 🔥 CLICK → PRODUCT DETAIL PAGE */
+    card.addEventListener("click", () => {
+      window.location.href = `product.html?id=${product.id}`;
+    });
+
     container.appendChild(card);
   });
+
+  console.log(
+    "⭐ Featured products rendered:",
+    products.length
+  );
 }
 
-/* INIT */
-document.addEventListener("DOMContentLoaded", renderFeaturedProducts);
+/* ===============================
+   INIT
+================================ */
+document.addEventListener(
+  "DOMContentLoaded",
+  renderFeaturedProducts
+);
