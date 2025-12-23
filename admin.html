@@ -5,6 +5,7 @@
   <title>Admin – JioMart Digital</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
+  <!-- SITE + ADMIN STYLES -->
   <link rel="stylesheet" href="assets/css/site.css" />
   <link rel="stylesheet" href="assets/css/admin.css" />
 </head>
@@ -22,26 +23,79 @@
 
   <form id="productForm" class="admin-form">
 
-    <input type="text" id="articleCode" placeholder="Article Code" required />
-    <input type="text" id="name" placeholder="Product Name" required />
-    <input type="text" id="brand" placeholder="Brand" />
-    <input type="text" id="category" placeholder="Category" />
+    <input
+      type="text"
+      id="articleCode"
+      placeholder="Article Code"
+      required
+    />
 
-    <input type="number" id="price" placeholder="Price" />
+    <input
+      type="text"
+      id="name"
+      placeholder="Product Name"
+      required
+    />
+
+    <input
+      type="text"
+      id="brand"
+      placeholder="Brand"
+    />
+
+    <input
+      type="text"
+      id="category"
+      placeholder="Category"
+    />
+
+    <input
+      type="number"
+      id="price"
+      placeholder="Price"
+    />
 
     <select id="productType">
       <option value="store">Store Product</option>
       <option value="dc">DC Product</option>
     </select>
 
-    <textarea id="description" placeholder="Description"></textarea>
+    <textarea
+      id="description"
+      placeholder="Description"
+    ></textarea>
 
+    <!-- ===============================
+         🔥 PRODUCT IMAGES (PHASE 4.2)
+    ================================ -->
+    <label>
+      Product Images
+      <input
+        type="file"
+        id="productImages"
+        multiple
+        accept="image/*"
+      />
+    </label>
+
+    <div id="imagePreview" class="image-preview"></div>
+
+    <!-- SAVE -->
     <button type="submit">➕ Save Product</button>
+
   </form>
 
 </main>
 
+<!-- ===============================
+     SCRIPTS
+================================ -->
 <script type="module" src="assets/js/admin/admin-products.js"></script>
+
+<!-- 🔥 IMAGE UPLOAD HANDLER -->
+<script type="module" src="assets/js/admin/admin-media.js"></script>
+
+<!-- ADMIN ACCESS GUARD -->
 <script type="module" src="assets/js/admin/admin-guard.js"></script>
 
 </body>
