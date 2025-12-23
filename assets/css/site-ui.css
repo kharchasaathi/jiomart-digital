@@ -249,6 +249,47 @@ body {
 }
 
 /* ===============================
+   PRODUCT HIGHLIGHTS (PHASE 3.5)
+================================ */
+.product-highlights {
+  padding-left: 18px;
+  margin: 12px 0;
+}
+
+.product-highlights li {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+/* ===============================
+   SPECIFICATIONS TABLE (PHASE 3.5)
+================================ */
+.specs-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+.specs-table td {
+  border-bottom: 1px solid #eee;
+  padding: 6px 4px;
+}
+
+.specs-table td:first-child {
+  color: #555;
+  width: 40%;
+}
+
+/* ===============================
+   MUTED TEXT
+================================ */
+.muted {
+  color: #777;
+  font-size: 13px;
+}
+
+/* ===============================
    FOOTER
 ================================ */
 .site-footer {
