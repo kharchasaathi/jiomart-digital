@@ -30,44 +30,8 @@
   <!-- 3️⃣ CMS BLOCK STYLES -->
   <link rel="stylesheet" href="assets/css/blocks.css">
 
-  <!-- 4️⃣ ADMIN EDITOR VISUALS -->
-  <link rel="stylesheet" href="assets/css/editor.css">
-
-  <!-- 5️⃣ ACTUAL SITE UI -->
+  <!-- 4️⃣ ACTUAL SITE UI -->
   <link rel="stylesheet" href="assets/css/site-ui.css">
-
-  <!-- =================================================
-       INLINE ADMIN LOGIN FIXES
-  ================================================== -->
-  <style>
-    #adminLoginBox {
-      max-width: 320px;
-      margin: 30px auto;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      display: none;
-      background: #ffffff;
-    }
-
-    #adminLoginBox input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      font-size: 14px;
-    }
-
-    #adminLoginBox button {
-      width: 100%;
-      padding: 10px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    body.admin-mode #adminLoginBox {
-      display: none;
-    }
-  </style>
 </head>
 
 <body>
@@ -81,58 +45,8 @@
     <nav class="site-nav">
       <a href="index.html">Home</a>
       <a href="products.html">Products</a>
-
-      <button id="adminLoginBtn" class="admin-login" type="button">
-        Admin Login
-      </button>
-
-      <button id="adminLogoutBtn" class="admin-logout hidden" type="button">
-        Logout
-      </button>
     </nav>
   </header>
-
-  <!-- ===============================
-       ADMIN LOGIN BOX
-  ================================ -->
-  <div id="adminLoginBox">
-    <input id="email" type="email" placeholder="Email" />
-    <input id="password" type="password" placeholder="Password" />
-    <button id="loginBtn">Login</button>
-  </div>
-
-  <!-- ===============================
-       ADMIN THEME PANEL
-  ================================ -->
-  <div id="adminThemePanel" class="hidden">
-    <div class="theme-panel-header">🎨 Theme Settings</div>
-
-    <label>
-      Background
-      <input type="color" id="themeBg" />
-    </label>
-
-    <label>
-      Primary Color
-      <input type="color" id="themePrimary" />
-    </label>
-
-    <label>
-      Text Color
-      <input type="color" id="themeText" />
-    </label>
-
-    <label>
-      Font Family
-      <select id="themeFont">
-        <option value="system-ui">System</option>
-        <option value="'Poppins', system-ui">Poppins</option>
-        <option value="'Noto Sans Telugu', system-ui">
-          Telugu – Noto Sans
-        </option>
-      </select>
-    </label>
-  </div>
 
   <!-- ===============================
        CMS PAGE CONTENT
@@ -148,37 +62,18 @@
     <div id="featuredProducts" class="products-grid"></div>
 
     <div style="text-align:center; margin-top:16px;">
-      <a href="admin-products.html" class="call-btn">
+      <a href="products.html" class="call-btn">
         View All Products
       </a>
     </div>
   </section>
 
   <!-- =================================================
-       ✅ SCRIPT LOAD ORDER
+       ✅ PUBLIC SCRIPTS ONLY
   ================================================== -->
 
-  <!-- Firebase -->
+  <!-- Firebase (Read-only public use) -->
   <script type="module" src="assets/js/core/firebase.js"></script>
-
-  <!-- Admin Auth -->
-  <script type="module" src="assets/js/cms/admin-auth.js"></script>
-
-  <!-- Admin Session -->
-  <script type="module" src="assets/js/cms/admin-session.js"></script>
-
-  <!-- CMS Blocks -->
-  <script type="module" src="assets/js/cms/blocks.js"></script>
-
-  <!-- Admin Panels -->
-  <script type="module" src="assets/js/cms/admin-theme-panel.js"></script>
-  <script type="module" src="assets/js/cms/admin-typography-panel.js"></script>
-
-  <!-- Admin Editor -->
-  <script type="module" src="assets/js/cms/admin-editor-toolbar.js"></script>
-
-  <!-- Admin Logout -->
-  <script type="module" src="assets/js/cms/admin-logout.js"></script>
 
   <!-- Public CMS Render -->
   <script type="module" src="assets/js/site/public.js"></script>
