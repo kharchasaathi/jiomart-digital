@@ -5,7 +5,6 @@ import { getState } from "../core/state.js";
 ================================ */
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("id");
-
 const container = document.getElementById("productDetail");
 
 /* ===============================
@@ -19,7 +18,6 @@ function renderProduct() {
 
   const state = getState();
   const products = state.products || [];
-
   const product = products.find(p => p.id === productId);
 
   if (!product) {
@@ -31,9 +29,7 @@ function renderProduct() {
      MAIN IMAGE
   ================================ */
   const mainImage =
-    product.images?.length
-      ? product.images[0]
-      : null;
+    product.images?.length ? product.images[0] : null;
 
   /* ===============================
      IMAGE GALLERY (THUMBS)
@@ -65,6 +61,36 @@ function renderProduct() {
         </div>
       `
       : "";
+
+  /* ===============================
+     HIGHLIGHTS (PHASE 3.5)
+  ================================ */
+  const highlights =
+    product.highlights?.length
+      ? `
+        <ul class="product-highlights">
+          ${product.highlights
+            .map(h => `<li>${h}</li>`)
+            .join("")}
+        </ul>
+      `
+      : `<p class="muted">
+           Highlights will be explained in store.
+         </p>`;
+
+  /* ===============================
+     SPECIFICATIONS (PHASE 3.5)
+  ================================ */
+  const specs = product.specs || {};
+  const specsTable = `
+    <table class="specs-table">
+      <tr><td>Brand</td><td>${specs.brand || "-"}</td></tr>
+      <tr><td>Category</td><td>${specs.category || "-"}</td></tr>
+      <tr><td>Warranty</td><td>${specs.warranty || "-"}</td></tr>
+      <tr><td>Delivery</td><td>${specs.delivery || "Store / DC"}</td></tr>
+      <tr><td>Installation</td><td>${specs.installation || "Available"}</td></tr>
+    </table>
+  `;
 
   /* ===============================
      ACTION BUTTON
@@ -123,6 +149,11 @@ function renderProduct() {
         <div class="price">
           ₹${product.price ?? "-"}
         </div>
+
+        ${highlights}
+
+        <h3>Specifications</h3>
+        ${specsTable}
 
         <p>
           ${product.description || ""}
