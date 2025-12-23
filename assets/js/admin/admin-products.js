@@ -68,6 +68,10 @@ form.addEventListener("submit", e => {
     product.highlights = draft.highlights;
     product.specs = draft.specs;
 
+    /* 🔥 NEW (PHASE 4.6 SAFETY) */
+    product.visible = product.visible ?? true;
+    product.featured = product.featured ?? false;
+
     alert("✅ Product updated");
 
     state.editingProductId = null;
@@ -103,6 +107,10 @@ form.addEventListener("submit", e => {
       videos: [],                 // future ready
       highlights: draft.highlights,
       specs: draft.specs,
+
+      /* 🔥 PHASE 4.6 */
+      visible: true,
+      featured: false,
 
       dc: {
         bookingPhone: "9705379219"
