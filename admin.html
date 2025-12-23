@@ -25,7 +25,10 @@
 ================================ -->
 <main class="content-section">
 
-  <h2>Add New Product</h2>
+  <!-- ===============================
+       ADD / EDIT PRODUCT FORM
+  ================================ -->
+  <h2>Add / Edit Product</h2>
 
   <form id="productForm" class="admin-form">
 
@@ -155,20 +158,37 @@
 
   </form>
 
+  <!-- ===============================
+       EXISTING PRODUCTS LIST (PHASE 4.4)
+  ================================ -->
+  <hr />
+
+  <h2>Existing Products</h2>
+
+  <div
+    id="adminProductsList"
+    class="admin-products-list"
+  >
+    <!-- Products injected by JS -->
+  </div>
+
 </main>
 
 <!-- ===============================
      SCRIPTS
 ================================ -->
 
-<!-- PRODUCT SAVE LOGIC -->
+<!-- PRODUCT ADD / UPDATE LOGIC -->
 <script type="module" src="assets/js/admin/admin-products.js"></script>
 
 <!-- 🔥 IMAGE UPLOAD HANDLER -->
 <script type="module" src="assets/js/admin/admin-media.js"></script>
 
-<!-- 🔥 HIGHLIGHTS + SPECS HANDLER (PHASE 4.3) -->
+<!-- 🔥 HIGHLIGHTS + SPECS HANDLER -->
 <script type="module" src="assets/js/admin/admin-specs.js"></script>
+
+<!-- 🔥 EXISTING PRODUCTS LIST (PHASE 4.4) -->
+<script type="module" src="assets/js/admin/admin-products-list.js"></script>
 
 <!-- ADMIN ACCESS GUARD -->
 <script type="module" src="assets/js/admin/admin-guard.js"></script>
