@@ -12,17 +12,24 @@
 
 <body>
 
+<!-- ===============================
+     HEADER
+================================ -->
 <header class="site-header">
   <div class="logo">JioMart Digital – Admin</div>
   <a href="index.html" class="call-btn">⬅ Back to Site</a>
 </header>
 
+<!-- ===============================
+     MAIN CONTENT
+================================ -->
 <main class="content-section">
 
   <h2>Add New Product</h2>
 
   <form id="productForm" class="admin-form">
 
+    <!-- BASIC INFO -->
     <input
       type="text"
       id="articleCode"
@@ -80,8 +87,71 @@
 
     <div id="imagePreview" class="image-preview"></div>
 
+    <hr />
+
+    <!-- ===============================
+         PRODUCT HIGHLIGHTS (PHASE 4.3)
+    ================================ -->
+    <h3>Product Highlights</h3>
+
+    <input
+      type="text"
+      id="highlightInput"
+      placeholder="Type highlight & press Add"
+    />
+
+    <button
+      type="button"
+      id="addHighlightBtn"
+    >
+      ➕ Add Highlight
+    </button>
+
+    <ul id="highlightsList"></ul>
+
+    <hr />
+
+    <!-- ===============================
+         PRODUCT SPECIFICATIONS
+    ================================ -->
+    <h3>Specifications</h3>
+
+    <input
+      type="text"
+      id="specBrand"
+      placeholder="Brand"
+    />
+
+    <input
+      type="text"
+      id="specCategory"
+      placeholder="Category"
+    />
+
+    <input
+      type="text"
+      id="specWarranty"
+      placeholder="Warranty"
+    />
+
+    <input
+      type="text"
+      id="specDelivery"
+      placeholder="Delivery"
+    />
+
+    <input
+      type="text"
+      id="specInstallation"
+      placeholder="Installation"
+    />
+
+    <hr />
+
     <!-- SAVE -->
-    <button type="submit">➕ Save Product</button>
+    <button type="submit">
+      ➕ Save Product
+    </button>
 
   </form>
 
@@ -90,10 +160,15 @@
 <!-- ===============================
      SCRIPTS
 ================================ -->
+
+<!-- PRODUCT SAVE LOGIC -->
 <script type="module" src="assets/js/admin/admin-products.js"></script>
 
 <!-- 🔥 IMAGE UPLOAD HANDLER -->
 <script type="module" src="assets/js/admin/admin-media.js"></script>
+
+<!-- 🔥 HIGHLIGHTS + SPECS HANDLER (PHASE 4.3) -->
+<script type="module" src="assets/js/admin/admin-specs.js"></script>
 
 <!-- ADMIN ACCESS GUARD -->
 <script type="module" src="assets/js/admin/admin-guard.js"></script>
