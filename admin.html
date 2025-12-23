@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin – JioMart Digital</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <link rel="stylesheet" href="assets/css/admin.css" />
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="logo">JioMart Digital – Admin</div>
+  <a href="index.html" class="call-btn">⬅ Back to Site</a>
+</header>
+
+<main class="content-section">
+
+  <h2>Add New Product</h2>
+
+  <form id="productForm" class="admin-form">
+
+    <input type="text" id="articleCode" placeholder="Article Code" required />
+    <input type="text" id="name" placeholder="Product Name" required />
+    <input type="text" id="brand" placeholder="Brand" />
+    <input type="text" id="category" placeholder="Category" />
+
+    <input type="number" id="price" placeholder="Price" />
+
+    <select id="productType">
+      <option value="store">Store Product</option>
+      <option value="dc">DC Product</option>
+    </select>
+
+    <textarea id="description" placeholder="Description"></textarea>
+
+    <button type="submit">➕ Save Product</button>
+  </form>
+
+</main>
+
+<script type="module" src="assets/js/admin/admin-products.js"></script>
+<script type="module" src="assets/js/admin/admin-guard.js"></script>
+
+</body>
+</html>
