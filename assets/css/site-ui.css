@@ -23,11 +23,7 @@ body {
    HERO SECTION
 ================================ */
 .hero {
-  background: linear-gradient(
-    135deg,
-    var(--site-primary),
-    #0b5ed7
-  );
+  background: linear-gradient(135deg, var(--site-primary), #0b5ed7);
   color: #ffffff;
   padding: 64px 20px;
   border-radius: 14px;
@@ -119,7 +115,6 @@ body {
   gap: 16px;
 }
 
-/* shared card base */
 .products-grid .product-card {
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -141,17 +136,26 @@ body {
   background: #f9f9f9;
 }
 
+/* OLD fallback (kept for structure) */
 .no-image {
   height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #eee;
-  color: #666;
-  font-size: 13px;
 }
 
-/* info */
+/* ===============================
+   🔥 FINAL NO-IMAGE STYLE (PHASE 4.7)
+================================ */
+.no-image {
+  background: #f3f4f6;
+  font-size: 12px;
+  color: #555;
+}
+
+/* ===============================
+   PRODUCT INFO
+================================ */
 .product-info {
   padding: 12px;
 }
@@ -172,7 +176,9 @@ body {
   margin: 8px 0;
 }
 
-/* badges */
+/* ===============================
+   BADGES
+================================ */
 .badge {
   font-size: 11px;
   padding: 2px 6px;
@@ -191,7 +197,9 @@ body {
   color: #1a73e8;
 }
 
-/* actions */
+/* ===============================
+   ACTIONS
+================================ */
 .call-btn {
   display: inline-block;
   margin-top: 8px;
@@ -249,7 +257,7 @@ body {
 }
 
 /* ===============================
-   PRODUCT HIGHLIGHTS (PHASE 3.5)
+   PRODUCT HIGHLIGHTS
 ================================ */
 .product-highlights {
   padding-left: 18px;
@@ -262,7 +270,7 @@ body {
 }
 
 /* ===============================
-   SPECIFICATIONS TABLE (PHASE 3.5)
+   SPECIFICATIONS TABLE
 ================================ */
 .specs-table {
   width: 100%;
