@@ -17,7 +17,20 @@
 ================================ -->
 <header class="site-header">
   <div class="logo">JioMart Digital – Admin</div>
-  <a href="index.html" class="call-btn">⬅ Back to Site</a>
+
+  <div style="display:flex; gap:10px; align-items:center;">
+    <a href="index.html" class="call-btn">⬅ Back to Site</a>
+
+    <!-- 🔥 ADMIN LOGOUT BUTTON -->
+    <button
+      id="adminLogoutBtn"
+      class="call-btn"
+      style="background:#dc2626;"
+      type="button"
+    >
+      Logout
+    </button>
+  </div>
 </header>
 
 <!-- ===============================
@@ -33,37 +46,11 @@
   <form id="productForm" class="admin-form">
 
     <!-- BASIC INFO -->
-    <input
-      type="text"
-      id="articleCode"
-      placeholder="Article Code"
-      required
-    />
-
-    <input
-      type="text"
-      id="name"
-      placeholder="Product Name"
-      required
-    />
-
-    <input
-      type="text"
-      id="brand"
-      placeholder="Brand"
-    />
-
-    <input
-      type="text"
-      id="category"
-      placeholder="Category"
-    />
-
-    <input
-      type="number"
-      id="price"
-      placeholder="Price"
-    />
+    <input type="text" id="articleCode" placeholder="Article Code" required />
+    <input type="text" id="name" placeholder="Product Name" required />
+    <input type="text" id="brand" placeholder="Brand" />
+    <input type="text" id="category" placeholder="Category" />
+    <input type="number" id="price" placeholder="Price" />
 
     <select id="productType">
       <option value="store">Store Product</option>
@@ -76,7 +63,7 @@
     ></textarea>
 
     <!-- ===============================
-         🔥 PRODUCT IMAGES (PHASE 4.2)
+         PRODUCT IMAGES (PHASE 4.2)
     ================================ -->
     <label>
       Product Images
@@ -103,10 +90,7 @@
       placeholder="Type highlight & press Add"
     />
 
-    <button
-      type="button"
-      id="addHighlightBtn"
-    >
+    <button type="button" id="addHighlightBtn">
       ➕ Add Highlight
     </button>
 
@@ -119,42 +103,16 @@
     ================================ -->
     <h3>Specifications</h3>
 
-    <input
-      type="text"
-      id="specBrand"
-      placeholder="Brand"
-    />
-
-    <input
-      type="text"
-      id="specCategory"
-      placeholder="Category"
-    />
-
-    <input
-      type="text"
-      id="specWarranty"
-      placeholder="Warranty"
-    />
-
-    <input
-      type="text"
-      id="specDelivery"
-      placeholder="Delivery"
-    />
-
-    <input
-      type="text"
-      id="specInstallation"
-      placeholder="Installation"
-    />
+    <input type="text" id="specBrand" placeholder="Brand" />
+    <input type="text" id="specCategory" placeholder="Category" />
+    <input type="text" id="specWarranty" placeholder="Warranty" />
+    <input type="text" id="specDelivery" placeholder="Delivery" />
+    <input type="text" id="specInstallation" placeholder="Installation" />
 
     <hr />
 
     <!-- SAVE -->
-    <button type="submit">
-      ➕ Save Product
-    </button>
+    <button type="submit">➕ Save Product</button>
 
   </form>
 
@@ -168,9 +126,7 @@
   <div
     id="adminProductsList"
     class="admin-products-list"
-  >
-    <!-- Products injected by JS -->
-  </div>
+  ></div>
 
 </main>
 
@@ -178,20 +134,26 @@
      SCRIPTS
 ================================ -->
 
-<!-- PRODUCT ADD / UPDATE LOGIC -->
+<!-- 🔐 ADMIN ACCESS GUARD (FIRST) -->
+<script type="module" src="assets/js/admin/admin-guard.js"></script>
+
+<!-- 🔐 ADMIN SESSION HANDLER -->
+<script type="module" src="assets/js/cms/admin-session.js"></script>
+
+<!-- 🔐 ADMIN LOGOUT -->
+<script type="module" src="assets/js/cms/admin-logout.js"></script>
+
+<!-- PRODUCT ADD / UPDATE -->
 <script type="module" src="assets/js/admin/admin-products.js"></script>
 
-<!-- 🔥 IMAGE UPLOAD HANDLER -->
+<!-- IMAGE UPLOAD -->
 <script type="module" src="assets/js/admin/admin-media.js"></script>
 
-<!-- 🔥 HIGHLIGHTS + SPECS HANDLER -->
+<!-- HIGHLIGHTS + SPECS -->
 <script type="module" src="assets/js/admin/admin-specs.js"></script>
 
-<!-- 🔥 EXISTING PRODUCTS LIST (PHASE 4.4) -->
+<!-- PRODUCTS LIST -->
 <script type="module" src="assets/js/admin/admin-products-list.js"></script>
-
-<!-- ADMIN ACCESS GUARD -->
-<script type="module" src="assets/js/admin/admin-guard.js"></script>
 
 </body>
 </html>
