@@ -1,21 +1,25 @@
 import { getState } from "../core/state.js";
 
-const list = document.getElementById("adminProductsList");
-const form = document.getElementById("productForm");
+/* ===============================
+   DOM ELEMENTS
+================================ */
+const listContainer =
+  document.getElementById("adminProductsList");
 
 /* ===============================
-   RENDER PRODUCTS LIST
+   RENDER ADMIN PRODUCTS
 ================================ */
 export function renderAdminProducts() {
-  if (!list) return;
+  if (!listContainer) return;
 
   const state = getState();
   const products = state.products || [];
 
-  list.innerHTML = "";
+  listContainer.innerHTML = "";
 
   if (!products.length) {
-    list.innerHTML = "<p>No products added yet</p>";
+    listContainer.innerHTML =
+      "<p>No products added yet</p>";
     return;
   }
 
@@ -26,62 +30,110 @@ export function renderAdminProducts() {
     card.innerHTML = `
       <strong>${product.name}</strong>
       <div>Code: ${product.articleCode}</div>
-      <div>₹${product.price}</div>
+      <div>Price: ₹${product.price ?? "-"}</div>
+      <div>Type: ${product.productType}</div>
 
       <button data-edit>Edit</button>
       <button data-delete>Delete</button>
     `;
 
-    /* EDIT */
-    card.querySelector("[data-edit]").onclick = () => {
-      loadProductIntoForm(product);
-    };
+    /* ===============================
+       EDIT
+    ================================ */
+    card
+      .querySelector("[data-edit]")
+      .addEventListener("click", () => {
+        loadProductIntoForm(product.id);
+      });
 
-    /* DELETE */
-    card.querySelector("[data-delete]").onclick = () => {
-      if (!confirm("Delete this product?")) return;
+    /* ===============================
+       DELETE
+    ================================ */
+    card
+      .querySelector("[data-delete]")
+      .addEventListener("click", () => {
+        deleteProduct(product.id);
+      });
 
-      state.products = state.products.filter(
-        p => p.id !== product.id
-      );
-
-      renderAdminProducts();
-      alert("❌ Product deleted");
-    };
-
-    list.appendChild(card);
+    listContainer.appendChild(card);
   });
 }
 
 /* ===============================
-   LOAD PRODUCT INTO FORM
+   LOAD PRODUCT INTO FORM (EDIT)
 ================================ */
-function loadProductIntoForm(product) {
+function loadProductIntoForm(productId) {
   const state = getState();
-  state.editingProductId = product.id;
+  const product = state.products.find(
+    p => p.id === productId
+  );
 
-  articleCode.value = product.articleCode;
-  name.value = product.name;
-  brand.value = product.brand;
-  category.value = product.category;
-  price.value = product.price;
-  productType.value = product.productType;
-  description.value = product.description || "";
+  if (!product) return;
 
-  /* Images */
+  /* mark edit mode */
+  state.editingProductId = productId;
+
+  /* draft data for media + specs */
   state.currentProduct = {
     images: product.images || [],
     highlights: product.highlights || [],
     specs: product.specs || {}
   };
 
-  document.getElementById("imagePreview").innerHTML =
-    product.images?.map(
-      img => `<img src="${img}" width="60" />`
-    ).join("");
+  /* fill form fields */
+  articleCode.value = product.articleCode;
+  name.value = product.name;
+  brand.value = product.brand || "";
+  category.value = product.category || "";
+  price.value = product.price || "";
+  productType.value = product.productType;
+  description.value = product.description || "";
+
+  /* image preview */
+  const preview =
+    document.getElementById("imagePreview");
+
+  if (preview) {
+    preview.innerHTML = "";
+    product.images?.forEach(img => {
+      const el = document.createElement("img");
+      el.src = img;
+      el.width = 80;
+      el.height = 80;
+      preview.appendChild(el);
+    });
+  }
 
   alert("✏️ Editing product: " + product.name);
 }
 
-/* INIT */
-document.addEventListener("DOMContentLoaded", renderAdminProducts);
+/* ===============================
+   DELETE PRODUCT
+================================ */
+function deleteProduct(productId) {
+  const state = getState();
+
+  if (!confirm("❌ Delete this product permanently?"))
+    return;
+
+  state.products = state.products.filter(
+    p => p.id !== productId
+  );
+
+  /* cleanup edit state if deleting edited product */
+  if (state.editingProductId === productId) {
+    state.editingProductId = null;
+    state.currentProduct = null;
+  }
+
+  renderAdminProducts();
+  alert("❌ Product deleted");
+}
+
+/* ===============================
+   INIT
+================================ */
+document.addEventListener(
+  "DOMContentLoaded",
+  renderAdminProducts
+);
