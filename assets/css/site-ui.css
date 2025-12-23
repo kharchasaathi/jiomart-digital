@@ -126,6 +126,7 @@ body {
   background: #fff;
   overflow: hidden;
   transition: box-shadow 0.2s ease;
+  cursor: pointer;
 }
 
 .products-grid .product-card:hover {
@@ -177,6 +178,7 @@ body {
   padding: 2px 6px;
   border-radius: 4px;
   display: inline-block;
+  margin-bottom: 6px;
 }
 
 .badge.store {
@@ -209,6 +211,41 @@ body {
   font-size: 13px;
   color: #137333;
   margin-top: 6px;
+}
+
+/* ===============================
+   PRODUCT DETAIL PAGE
+================================ */
+.product-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.product-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 80px);
+  gap: 10px;
+}
+
+.product-gallery img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #fff;
+}
+
+.product-detail-info h2 {
+  margin-bottom: 10px;
+}
+
+.product-detail-info .price {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 10px 0;
 }
 
 /* ===============================
