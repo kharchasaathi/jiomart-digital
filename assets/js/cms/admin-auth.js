@@ -1,26 +1,34 @@
 /***************************************************
- * ADMIN AUTH – EMAIL / PASSWORD
+ * ADMIN AUTH – EMAIL / PASSWORD (FINAL)
  ***************************************************/
 import { auth } from "../core/firebase.js";
 import {
   signInWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-
-const ADMIN_EMAIL = "abidalimohammad94@gmail.com";
-
-console.log("🧩 admin-auth.js loaded (email/password)");
-
-const loginBtn = document.getElementById("loginBtn");
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 /* ===============================
-   LOGIN BUTTON (INSIDE BOX)
+   CONFIG
+================================ */
+const ADMIN_EMAIL = "abidalimohammad94@gmail.com";
+
+/* ===============================
+   DOM ELEMENTS
+================================ */
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const loginBtn = document.getElementById("loginBtn");
+
+console.log("🧩 admin-auth.js loaded");
+
+/* ===============================
+   LOGIN HANDLER
 ================================ */
 loginBtn?.addEventListener("click", async () => {
-  const email = document.getElementById("email")?.value.trim();
-  const password = document.getElementById("password")?.value;
+  const email = emailInput?.value.trim();
+  const password = passwordInput?.value.trim();
 
   if (!email || !password) {
-    alert("Email & Password required");
+    alert("❌ Email & Password required");
     return;
   }
 
@@ -33,27 +41,24 @@ loginBtn?.addEventListener("click", async () => {
 
     const user = result.user;
 
+    /* 🔐 EMAIL RESTRICTION */
     if (user.email !== ADMIN_EMAIL) {
-      alert("❌ Not authorized");
+      alert("❌ Not authorized as admin");
       return;
     }
 
     console.log("✅ Admin logged in:", user.email);
 
+    /* 🔥 ADMIN SESSION FLAG */
     localStorage.setItem("ADMIN_MODE", "true");
 
-    // hide login box after success
-    document.getElementById("adminLoginBox")?.style.setProperty("display", "none");
+    alert("✅ Login successful");
+
+    /* 🔥 REDIRECT TO ADMIN DASHBOARD */
+    window.location.href = "admin.html";
 
   } catch (err) {
-    console.error("❌ Login failed:", err.message);
-    alert(err.message);
+    console.error("❌ Login failed:", err);
+    alert("❌ Invalid credentials");
   }
-});
-
-/* ===============================
-   TOP NAV "ADMIN LOGIN" BUTTON
-================================ */
-document.getElementById("adminLoginBtn")?.addEventListener("click", () => {
-  document.getElementById("adminLoginBox")?.style.setProperty("display", "block");
 });
