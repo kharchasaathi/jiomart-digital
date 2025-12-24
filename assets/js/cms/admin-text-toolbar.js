@@ -1,3 +1,11 @@
+/***************************************************
+ * ADMIN TEXT TOOLBAR – FINAL STABLE
+ * ✔ English + Telugu fonts
+ * ✔ Size / Color / Bold / Italic
+ * ✔ Toolbar follows active text block
+ * ✔ NO fixed overlay
+ ***************************************************/
+
 import { getActiveBlock, getState } from "../core/state.js";
 
 let toolbar;
@@ -9,15 +17,13 @@ function createToolbar() {
   if (toolbar) return;
 
   toolbar = document.createElement("div");
-  toolbar.className = "admin-text-toolbar";
+  toolbar.className = "admin-text-toolbar text-toolbar";
 
-  /* 🔒 fallback inline styles (CSS fail అయినా safe) */
+  /* ✅ ABSOLUTE – NOT FIXED */
   toolbar.style.cssText = `
-    position: fixed;
-    bottom: 70px;
-    left: 50%;
-    transform: translateX(-50%);
+    position: absolute;
     z-index: 9999;
+    display: none;
   `;
 
   toolbar.innerHTML = `
@@ -50,6 +56,23 @@ function createToolbar() {
 }
 
 /* ===============================
+   POSITION TOOLBAR NEAR BLOCK
+================================ */
+function positionToolbar(blockEl) {
+  if (!toolbar || !blockEl) return;
+
+  const rect = blockEl.getBoundingClientRect();
+
+  toolbar.style.top =
+    window.scrollY + rect.top - toolbar.offsetHeight - 8 + "px";
+
+  toolbar.style.left =
+    window.scrollX + rect.left + "px";
+
+  toolbar.style.display = "flex";
+}
+
+/* ===============================
    APPLY STYLE – INPUT
 ================================ */
 function onChange(e) {
@@ -72,8 +95,6 @@ function onChange(e) {
   if (e.target.tagName === "SELECT") {
     block.data.style.fontFamily = e.target.value;
   }
-
-  document.dispatchEvent(new Event("cms-rerender"));
 }
 
 /* ===============================
@@ -93,13 +114,13 @@ function onClick(e) {
 
   if (btn.dataset.style === "bold") {
     block.data.style.bold = !block.data.style.bold;
+    btn.classList.toggle("active", block.data.style.bold);
   }
 
   if (btn.dataset.style === "italic") {
     block.data.style.italic = !block.data.style.italic;
+    btn.classList.toggle("active", block.data.style.italic);
   }
-
-  document.dispatchEvent(new Event("cms-rerender"));
 }
 
 /* ===============================
@@ -112,6 +133,19 @@ function getSelectedBlock() {
     b => b.id === id && b.type === "text"
   );
 }
+
+/* ===============================
+   ACTIVE BLOCK LISTENER
+================================ */
+document.addEventListener("click", e => {
+  const blockEl = e.target.closest(".cms-text-block.editable");
+  if (!blockEl) return;
+
+  const state = getState();
+  if (!state.adminMode) return;
+
+  positionToolbar(blockEl);
+});
 
 /* ===============================
    ADMIN STATE HANDLING
