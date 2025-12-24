@@ -30,9 +30,7 @@ function createToolbar() {
 
   toolbar.innerHTML = `
     <input type="number" min="10" max="80" title="Font size" />
-
     <input type="color" title="Text color" />
-
     <input type="color" title="Text background" data-bg />
 
     <select title="Font family">
@@ -71,8 +69,7 @@ function createToolbar() {
 
   toolbar.style.display = "none";
 
-  /* 🔥 CRITICAL FIX
-     Toolbar click should NOT clear selection */
+  /* 🔥 CRITICAL FIX — toolbar click should NOT clear selection */
   toolbar.addEventListener("mousedown", e => {
     e.preventDefault();
   });
@@ -91,7 +88,8 @@ function attachToolbar(blockEl) {
 }
 
 /* ===============================
-   APPLY STYLES (OLD LOGIC – UNCHANGED)
+   APPLY STYLES (OLD LOGIC)
+   🔥 ONLY SAFE GUARD ADDED
 ================================ */
 function applyStylesToElement(blockEl, style = {}) {
   if (!blockEl) return;
@@ -107,7 +105,10 @@ function applyStyle(el, style) {
     ? style.fontSize + "px"
     : "";
 
-  el.style.color = style.color || "";
+  /* 🔥 FIX: do NOT override inline background spans */
+  if (!el.style.backgroundColor) {
+    el.style.color = style.color || "";
+  }
 
   el.style.fontFamily = style.fontFamily
     ? `"${style.fontFamily}", system-ui, sans-serif`
@@ -118,7 +119,7 @@ function applyStyle(el, style) {
 }
 
 /* ===============================
-   INLINE TEXT BACKGROUND (FIXED)
+   INLINE TEXT BACKGROUND
 ================================ */
 function applyTextBackground(color) {
   restoreSelection();
@@ -132,7 +133,7 @@ function applyTextBackground(color) {
   const span = document.createElement("span");
   span.style.backgroundColor = color;
 
-  /* 🔥 KEEP TEXT VISIBLE */
+  /* keep text visible */
   span.style.color = "inherit";
   span.style.fontFamily = "inherit";
   span.style.fontSize = "inherit";
@@ -146,7 +147,7 @@ function applyTextBackground(color) {
 }
 
 /* ===============================
-   INLINE TEXT COLOR (FIXED)
+   INLINE TEXT COLOR
 ================================ */
 function applyInlineColor(color) {
   restoreSelection();
@@ -167,7 +168,7 @@ function applyInlineColor(color) {
 }
 
 /* ===============================
-   INPUT HANDLER (FINAL FIX)
+   INPUT HANDLER (FINAL)
 ================================ */
 function onChange(e) {
   const block = getSelectedBlock();
@@ -247,7 +248,6 @@ function getActiveBlockElement() {
 
 /* ===============================
    SAVE SELECTION FROM EDITOR
-   🔥 THIS WAS MISSING
 ================================ */
 document.addEventListener("mouseup", e => {
   const blockEl = e.target.closest(".cms-text-block.editable");
