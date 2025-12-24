@@ -19,7 +19,7 @@ function createToolbar() {
   toolbar = document.createElement("div");
   toolbar.className = "admin-text-toolbar text-toolbar";
 
-  /* ✅ ABSOLUTE – NOT FIXED */
+  /* ✅ ABSOLUTE – toolbar sticks near block */
   toolbar.style.cssText = `
     position: absolute;
     z-index: 9999;
@@ -76,8 +76,7 @@ function positionToolbar(blockEl) {
    APPLY STYLE – INPUT
 ================================ */
 function onChange(e) {
-  const state = getState();
-  if (!state.adminMode) return;
+  if (!getState().adminMode) return;
 
   const block = getSelectedBlock();
   if (!block) return;
@@ -104,8 +103,7 @@ function onClick(e) {
   const btn = e.target.closest("button");
   if (!btn) return;
 
-  const state = getState();
-  if (!state.adminMode) return;
+  if (!getState().adminMode) return;
 
   const block = getSelectedBlock();
   if (!block) return;
@@ -140,9 +138,7 @@ function getSelectedBlock() {
 document.addEventListener("click", e => {
   const blockEl = e.target.closest(".cms-text-block.editable");
   if (!blockEl) return;
-
-  const state = getState();
-  if (!state.adminMode) return;
+  if (!getState().adminMode) return;
 
   positionToolbar(blockEl);
 });
