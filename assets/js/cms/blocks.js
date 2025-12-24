@@ -4,7 +4,7 @@
  * ✔ Admin-only editing
  * ✔ NO re-render while typing (🔥 FIX)
  * ✔ Cursor / Enter / Selection SAFE
- * ✔ Toolbar + Save fully working
+ * ✔ Toolbar + Fonts + Telugu fully working
  ***************************************************/
 
 import { getState, setActiveBlock } from "../core/state.js";
@@ -53,11 +53,13 @@ export function renderBlocks(container) {
 }
 
 /* ===============================
-   TEXT BLOCK (ADMIN EDITABLE)
+   TEXT BLOCK (🔥 FINAL FIX)
 ================================ */
 function renderTextBlock(block) {
   const blockEl = document.createElement("div");
-  blockEl.className = "cms-text-block";
+
+  /* 🔥 COMPATIBILITY CLASSES (VERY IMPORTANT) */
+  blockEl.className = "cms-text-block cms-block block-text";
 
   block.data ||= {};
   block.data.html ||= "<p>Edit this content</p>";
@@ -65,7 +67,7 @@ function renderTextBlock(block) {
 
   blockEl.innerHTML = block.data.html;
 
-  // ✅ APPLY TEXT STYLES
+  /* Apply stored styles */
   applyTextStyles(blockEl, block.data.style);
 
   const state = getState();
@@ -75,17 +77,15 @@ function renderTextBlock(block) {
     blockEl.classList.add("editable");
 
     /* Active block select (NO rerender) */
-    blockEl.addEventListener("focus", () => {
+    const activate = () => {
       activeBlockId = block.id;
       setActiveBlock(block.id);
-    });
+    };
 
-    blockEl.addEventListener("click", () => {
-      activeBlockId = block.id;
-      setActiveBlock(block.id);
-    });
+    blockEl.addEventListener("focus", activate);
+    blockEl.addEventListener("click", activate);
 
-    /* ✅ LIVE UPDATE WITHOUT RERENDER */
+    /* 🔥 LIVE UPDATE – NO RERENDER */
     blockEl.addEventListener("input", () => {
       block.data.html = blockEl.innerHTML;
     });
@@ -96,6 +96,7 @@ function renderTextBlock(block) {
 
 /* ===============================
    APPLY TEXT STYLES
+   (Font size, color, family, bold, italic)
 ================================ */
 function applyTextStyles(el, style = {}) {
   const targets = el.querySelectorAll("*");
@@ -118,7 +119,7 @@ function applyTextStyles(el, style = {}) {
 ================================ */
 function renderImageBlock(block) {
   const div = document.createElement("div");
-  div.className = "cms-image-block";
+  div.className = "cms-image-block cms-block";
 
   div.innerHTML = block.data?.src
     ? `<img src="${block.data.src}" />`
@@ -139,7 +140,7 @@ function renderImageBlock(block) {
 ================================ */
 function renderVideoBlock(block) {
   const div = document.createElement("div");
-  div.className = "cms-video-block";
+  div.className = "cms-video-block cms-block";
 
   div.innerHTML = block.data?.src
     ? `<video controls src="${block.data.src}"></video>`
@@ -173,7 +174,9 @@ export function addBlock(type) {
   activeBlockId = newBlock.id;
   setActiveBlock(newBlock.id);
 
+  /* 🔥 Safe rerender only on add */
   document.dispatchEvent(new Event("cms-rerender"));
+
   console.log("➕ Block added:", type);
 }
 
