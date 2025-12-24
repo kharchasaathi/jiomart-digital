@@ -1,16 +1,17 @@
 /***************************************************
  * ADMIN TEXT TOOLBAR – FINAL (BLOCK ATTACHED)
- * ✔ Toolbar appears BELOW active block
+ * ✔ Toolbar appears BELOW active TEXT block
  * ✔ NO floating / NO absolute
- * ✔ Same as OLD BACKUP behaviour
+ * ✔ SAME behaviour as OLD BACKUP
+ * ✔ Logic VERIFIED & ACTIVE
  ***************************************************/
 
 import { getActiveBlock, getState } from "../core/state.js";
 
-let toolbar;
+let toolbar = null;
 
 /* ===============================
-   CREATE TOOLBAR
+   CREATE TOOLBAR (ONCE)
 ================================ */
 function createToolbar() {
   if (toolbar) return;
@@ -20,6 +21,7 @@ function createToolbar() {
 
   toolbar.innerHTML = `
     <input type="number" min="10" max="80" title="Font size" />
+
     <input type="color" title="Text color" />
 
     <select title="Font family">
@@ -36,23 +38,26 @@ function createToolbar() {
     <button data-style="italic"><i>I</i></button>
   `;
 
+  toolbar.style.display = "none";
+
   toolbar.addEventListener("input", onChange);
   toolbar.addEventListener("click", onClick);
 }
 
 /* ===============================
-   ATTACH BELOW BLOCK (IMPORTANT)
+   ATTACH TOOLBAR BELOW BLOCK
+   (🔥 SAME AS BACKUP)
 ================================ */
 function attachToolbar(blockEl) {
   if (!toolbar || !blockEl) return;
 
-  toolbar.remove();          // remove from old place
-  blockEl.after(toolbar);    // attach BELOW block
+  toolbar.remove();           // remove from previous block
+  blockEl.after(toolbar);     // attach BELOW active block
   toolbar.style.display = "flex";
 }
 
 /* ===============================
-   APPLY STYLES
+   APPLY STYLES – INPUTS
 ================================ */
 function onChange(e) {
   const block = getSelectedBlock();
@@ -60,16 +65,22 @@ function onChange(e) {
 
   block.data.style ||= {};
 
-  if (e.target.type === "number")
-    block.data.style.fontSize = +e.target.value;
+  if (e.target.type === "number") {
+    block.data.style.fontSize = Number(e.target.value);
+  }
 
-  if (e.target.type === "color")
+  if (e.target.type === "color") {
     block.data.style.color = e.target.value;
+  }
 
-  if (e.target.tagName === "SELECT")
+  if (e.target.tagName === "SELECT") {
     block.data.style.fontFamily = e.target.value;
+  }
 }
 
+/* ===============================
+   APPLY STYLES – BUTTONS
+================================ */
 function onClick(e) {
   const btn = e.target.closest("button");
   if (!btn) return;
@@ -79,26 +90,32 @@ function onClick(e) {
 
   block.data.style ||= {};
 
-  if (btn.dataset.style === "bold")
+  if (btn.dataset.style === "bold") {
     block.data.style.bold = !block.data.style.bold;
+    btn.classList.toggle("active", block.data.style.bold);
+  }
 
-  if (btn.dataset.style === "italic")
+  if (btn.dataset.style === "italic") {
     block.data.style.italic = !block.data.style.italic;
+    btn.classList.toggle("active", block.data.style.italic);
+  }
 }
 
 /* ===============================
-   HELPERS
+   GET ACTIVE TEXT BLOCK
 ================================ */
 function getSelectedBlock() {
   const state = getState();
   const id = getActiveBlock();
+
   return state.page?.blocks.find(
     b => b.id === id && b.type === "text"
   );
 }
 
 /* ===============================
-   CLICK HANDLER
+   BLOCK CLICK LISTENER
+   (🔥 ONLY PLACE toolbar moves)
 ================================ */
 document.addEventListener("click", e => {
   const blockEl = e.target.closest(".cms-text-block.editable");
