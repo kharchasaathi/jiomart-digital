@@ -3,12 +3,29 @@
    Phase 3.3 / 3.4 / 3.5 READY
 ================================================= */
 
-/* ===============================
-   EDITOR TOOLBAR
-================================ */
+/* =================================================
+   🔥 Z-INDEX SAFETY (CRITICAL FIX)
+================================================= */
+
+/* Floating editor toolbars must stay on top */
+.editor-toolbar,
+.text-toolbar,
+.typography-panel {
+  position: fixed;
+  z-index: 9999;
+}
+
+/* Prevent blocks from covering toolbars */
+.cms-block-wrapper {
+  z-index: 1;
+  position: relative;
+}
+
+/* =================================================
+   EDITOR TOOLBAR (BOTTOM BAR)
+================================================= */
 
 .editor-toolbar {
-  position: fixed;
   bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
@@ -17,7 +34,6 @@
   border-radius: 14px;
   display: flex;
   gap: 8px;
-  z-index: 9999;
   box-shadow: 0 6px 20px rgba(0,0,0,0.35);
 }
 
@@ -58,25 +74,69 @@
   background: #218838;
 }
 
-/* ===============================
+/* =================================================
+   FLOATING TEXT TOOLBAR
+================================================= */
+
+.text-toolbar {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 6px 8px;
+  display: flex;
+  gap: 6px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+}
+
+/* =================================================
+   TYPOGRAPHY PANEL (FONT / TELUGU / ENGLISH)
+================================================= */
+
+.typography-panel {
+  top: 80px;
+  right: 20px;
+  width: 240px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.typography-panel h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.typography-panel select,
+.typography-panel input {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* =================================================
    EDITABLE TEXT BLOCK
-================================ */
+================================================= */
 
 .cms-text-block.editable {
   outline: 2px dashed #1877f2;
   outline-offset: 6px;
   cursor: text;
   position: relative;
-}
-
-/* Improve caret visibility */
-.cms-text-block.editable {
   caret-color: #000;
 }
 
-/* ===============================
+/* Prevent accidental overlay */
+.cms-text-block {
+  pointer-events: auto;
+  z-index: 5;
+}
+
+/* =================================================
    BLOCK DELETE BUTTON
-================================ */
+================================================= */
 
 .block-delete-btn {
   position: absolute;
@@ -100,9 +160,9 @@
   background: #d9363e;
 }
 
-/* ===============================
+/* =================================================
    MEDIA PLACEHOLDERS
-================================ */
+================================================= */
 
 .media-placeholder {
   padding: 30px;
@@ -113,9 +173,19 @@
   background: #fafafa;
 }
 
-/* ===============================
+/* =================================================
    IMAGE & VIDEO BLOCKS
-================================ */
+================================================= */
+
+.cms-image-block,
+.cms-video-block {
+  background: #ffffff;
+  border: 1px dashed #cfd4e0;
+  border-radius: 8px;
+  padding: 18px;
+  margin-bottom: 18px;
+  text-align: center;
+}
 
 .cms-image-block img,
 .cms-video-block video {
@@ -124,9 +194,16 @@
   display: block;
 }
 
-/* ===============================
+/* Admin hover highlight */
+body.admin-mode .cms-image-block:hover,
+body.admin-mode .cms-video-block:hover {
+  outline: 2px dashed #1877f2;
+  outline-offset: 2px;
+}
+
+/* =================================================
    MOBILE SAFETY
-================================ */
+================================================= */
 
 @media (max-width: 600px) {
   .editor-toolbar {
@@ -135,8 +212,14 @@
     padding: 8px;
   }
 
-  .editor-toolbar button {
+  .editor-toolbar button,
+  .editor-toolbar select {
     font-size: 13px;
     padding: 6px 8px;
+  }
+
+  .typography-panel {
+    right: 10px;
+    width: 200px;
   }
 }
