@@ -1,10 +1,9 @@
-import { getState } from "../core/state.js";
-
 document.addEventListener("DOMContentLoaded", () => {
-  const state = getState();
+  const isAdmin =
+    localStorage.getItem("ADMIN_MODE") === "true";
 
-  if (!state.adminMode) {
+  if (!isAdmin) {
     alert("Unauthorized access");
-    window.location.href = "index.html";
+    window.location.href = "admin-login.html";
   }
 });
