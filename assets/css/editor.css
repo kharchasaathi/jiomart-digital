@@ -1,19 +1,18 @@
 /* =================================================
-   ADMIN INLINE TEXT EDITOR + TOOLBAR (FINAL)
-   Phase 3.3 / 3.4 / 3.5 READY
+   ADMIN INLINE TEXT EDITOR + TOOLBAR (FINAL – CLEAN)
 ================================================= */
 
 /* =================================================
-   🔥 Z-INDEX SAFETY (CRITICAL FIX)
+   Z-INDEX SAFETY
 ================================================= */
 
-/* Bottom editor toolbar only */
+/* Bottom add-block toolbar only */
 .editor-toolbar {
   position: fixed;
   z-index: 9999;
 }
 
-/* Prevent blocks from covering toolbars */
+/* Prevent blocks from covering UI */
 .cms-block-wrapper {
   z-index: 1;
   position: relative;
@@ -35,7 +34,6 @@
   box-shadow: 0 6px 20px rgba(0,0,0,0.35);
 }
 
-/* Buttons, selects, color inputs */
 .editor-toolbar button,
 .editor-toolbar select,
 .editor-toolbar input[type="color"] {
@@ -49,20 +47,17 @@
   min-height: 32px;
 }
 
-/* Hover */
 .editor-toolbar button:hover,
 .editor-toolbar select:hover,
 .editor-toolbar input[type="color"]:hover {
   background: #f0f0f0;
 }
 
-/* Active state */
 .editor-toolbar button.active {
   background: #1877f2;
   color: #ffffff;
 }
 
-/* Save button */
 .editor-toolbar button.save {
   background: #28a745;
   color: #ffffff;
@@ -70,20 +65,6 @@
 
 .editor-toolbar button.save:hover {
   background: #218838;
-}
-
-/* =================================================
-   FLOATING TEXT TOOLBAR (INLINE – NO FIXED)
-================================================= */
-
-.text-toolbar,
-.admin-text-toolbar {
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 6px 8px;
-  display: flex;
-  gap: 6px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
 }
 
 /* =================================================
@@ -98,7 +79,6 @@
   caret-color: #000;
 }
 
-/* Ensure typing always works */
 .cms-text-block {
   pointer-events: auto;
   z-index: 5;
@@ -164,7 +144,6 @@
   display: block;
 }
 
-/* Admin hover highlight */
 body.admin-mode .cms-image-block:hover,
 body.admin-mode .cms-video-block:hover {
   outline: 2px dashed #1877f2;
