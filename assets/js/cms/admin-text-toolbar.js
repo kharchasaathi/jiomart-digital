@@ -1,5 +1,8 @@
 /***************************************************
- * ADMIN TEXT TOOLBAR – BACKUP STYLE (STABLE)
+ * ADMIN TEXT TOOLBAR – FINAL (BLOCK ATTACHED)
+ * ✔ Toolbar appears BELOW active block
+ * ✔ NO floating / NO absolute
+ * ✔ Same as OLD BACKUP behaviour
  ***************************************************/
 
 import { getActiveBlock, getState } from "../core/state.js";
@@ -38,13 +41,13 @@ function createToolbar() {
 }
 
 /* ===============================
-   ATTACH BELOW BLOCK (BACKUP STYLE)
+   ATTACH BELOW BLOCK (IMPORTANT)
 ================================ */
 function attachToolbar(blockEl) {
   if (!toolbar || !blockEl) return;
 
-  toolbar.remove();
-  blockEl.after(toolbar);
+  toolbar.remove();          // remove from old place
+  blockEl.after(toolbar);    // attach BELOW block
   toolbar.style.display = "flex";
 }
 
@@ -57,15 +60,14 @@ function onChange(e) {
 
   block.data.style ||= {};
 
-  if (e.target.type === "number") {
+  if (e.target.type === "number")
     block.data.style.fontSize = +e.target.value;
-  }
-  if (e.target.type === "color") {
+
+  if (e.target.type === "color")
     block.data.style.color = e.target.value;
-  }
-  if (e.target.tagName === "SELECT") {
+
+  if (e.target.tagName === "SELECT")
     block.data.style.fontFamily = e.target.value;
-  }
 }
 
 function onClick(e) {
@@ -77,12 +79,11 @@ function onClick(e) {
 
   block.data.style ||= {};
 
-  if (btn.dataset.style === "bold") {
+  if (btn.dataset.style === "bold")
     block.data.style.bold = !block.data.style.bold;
-  }
-  if (btn.dataset.style === "italic") {
+
+  if (btn.dataset.style === "italic")
     block.data.style.italic = !block.data.style.italic;
-  }
 }
 
 /* ===============================
@@ -91,7 +92,9 @@ function onClick(e) {
 function getSelectedBlock() {
   const state = getState();
   const id = getActiveBlock();
-  return state.page?.blocks.find(b => b.id === id);
+  return state.page?.blocks.find(
+    b => b.id === id && b.type === "text"
+  );
 }
 
 /* ===============================
