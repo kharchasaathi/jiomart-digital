@@ -112,7 +112,7 @@ function applyStyle(el, style) {
 
 /* ===============================
    🟨 NEW: APPLY TEXT BACKGROUND
-   (INLINE ONLY – SAFE)
+   🔥 FIXED: TEXT COLOR SAFE
 ================================ */
 function applyTextBackground(color) {
   const selection = window.getSelection();
@@ -122,7 +122,16 @@ function applyTextBackground(color) {
   if (range.collapsed) return;
 
   const span = document.createElement("span");
+
+  // ✅ Background only
   span.style.backgroundColor = color;
+
+  // 🔥 CRITICAL FIX — KEEP TEXT VISIBLE
+  span.style.color = "inherit";
+  span.style.fontFamily = "inherit";
+  span.style.fontSize = "inherit";
+  span.style.fontWeight = "inherit";
+  span.style.fontStyle = "inherit";
 
   try {
     range.surroundContents(span);
