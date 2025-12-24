@@ -31,26 +31,25 @@
   opacity: 0.9;
 }
 
-/* Push page content down when admin bar is visible */
+/* Push page content down */
 body.admin-mode {
   padding-top: 46px;
-  background: #fff !important; /* 🔥 BLACK AREA FIX */
+  background: #fff !important;
 }
 
 /* ===============================
    ADMIN OVERLAY SAFETY FIX
 ================================ */
 
-/* Prevent admin UI from covering page */
 .admin-mode #pageRoot {
   background: transparent;
   position: relative;
   z-index: 1;
-  max-width: none;     /* 🔥 FIX layout shrink */
+  max-width: none;
   width: 100%;
 }
 
-/* Kill any accidental fullscreen overlays */
+/* Kill fullscreen overlays */
 .admin-mode .overlay,
 .admin-mode .editor-overlay {
   display: none !important;
@@ -89,7 +88,7 @@ body.admin-mode {
 }
 
 /* ===============================
-   BLOCK VISIBILITY FIX (ADMIN)
+   BLOCK VISIBILITY FIX
 ================================ */
 
 body.admin-mode .block {
@@ -104,9 +103,9 @@ body.admin-mode {
   overflow-x: hidden;
 }
 
-/* =================================================
-   🔥 IMAGE PREVIEW (PHASE 4.2 – MEDIA UPLOAD)
-================================================= */
+/* ===============================
+   IMAGE PREVIEW
+================================ */
 
 .image-preview {
   display: flex;
@@ -124,9 +123,9 @@ body.admin-mode {
   background: #fff;
 }
 
-/* =================================================
-   🔥 ADMIN PRODUCTS LIST (PHASE 4.4)
-================================================= */
+/* ===============================
+   ADMIN PRODUCTS LIST
+================================ */
 
 .admin-products-list {
   display: grid;
