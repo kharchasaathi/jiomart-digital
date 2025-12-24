@@ -1,9 +1,10 @@
 /***************************************************
- * BLOCKS – FINAL STABLE (ADMIN EDIT ENABLED)
+ * BLOCKS – FINAL STABLE (ADMIN EDIT SAFE)
  * ✔ Text / Image / Video blocks
  * ✔ Admin-only editing
- * ✔ Live re-render on input + focus
- * ✔ Styles + Save fully working
+ * ✔ NO re-render while typing (🔥 FIX)
+ * ✔ Cursor / Enter / Selection SAFE
+ * ✔ Toolbar + Save fully working
  ***************************************************/
 
 import { getState, setActiveBlock } from "../core/state.js";
@@ -64,34 +65,29 @@ function renderTextBlock(block) {
 
   blockEl.innerHTML = block.data.html;
 
-  // 🔥 APPLY TEXT STYLES
+  // ✅ APPLY TEXT STYLES
   applyTextStyles(blockEl, block.data.style);
 
   const state = getState();
 
-  /* ✅ ADMIN MODE EDITING */
   if (state.adminMode) {
     blockEl.contentEditable = "true";
     blockEl.classList.add("editable");
 
-    /* Active block select */
+    /* Active block select (NO rerender) */
+    blockEl.addEventListener("focus", () => {
+      activeBlockId = block.id;
+      setActiveBlock(block.id);
+    });
+
     blockEl.addEventListener("click", () => {
       activeBlockId = block.id;
       setActiveBlock(block.id);
     });
 
-    /* 🔥 NEW: focus → force rerender (toolbar + state sync) */
-    blockEl.addEventListener("focus", () => {
-      document.dispatchEvent(new Event("cms-rerender"));
-    });
-
-    /* Live update */
+    /* ✅ LIVE UPDATE WITHOUT RERENDER */
     blockEl.addEventListener("input", () => {
       block.data.html = blockEl.innerHTML;
-
-      document.dispatchEvent(
-        new Event("cms-rerender")
-      );
     });
   }
 
