@@ -1,9 +1,9 @@
 /***************************************************
- * BLOCKS – FINAL STABLE (TEXT STYLE REALLY FIXED)
+ * BLOCKS – FINAL STABLE (ADMIN EDIT ENABLED)
  * ✔ Text / Image / Video blocks
- * ✔ Font size, color, family works ✅
- * ✔ Bold / Italic toggle works ✅
- * ✔ Add / Delete / Save works
+ * ✔ Admin-only editing
+ * ✔ Live re-render on input
+ * ✔ Styles + Save fully working
  ***************************************************/
 
 import { getState, setActiveBlock } from "../core/state.js";
@@ -27,10 +27,10 @@ export function renderBlocks(container) {
     wrapper.dataset.blockId = block.id;
     wrapper.style.position = "relative";
 
-    let el;
-    if (block.type === "text") el = renderTextBlock(block);
-    if (block.type === "image") el = renderImageBlock(block);
-    if (block.type === "video") el = renderVideoBlock(block);
+    let blockEl;
+    if (block.type === "text") blockEl = renderTextBlock(block);
+    if (block.type === "image") blockEl = renderImageBlock(block);
+    if (block.type === "video") blockEl = renderVideoBlock(block);
 
     /* ❌ DELETE BUTTON (ADMIN ONLY) */
     if (state.adminMode) {
@@ -44,7 +44,7 @@ export function renderBlocks(container) {
       wrapper.appendChild(del);
     }
 
-    wrapper.appendChild(el);
+    wrapper.appendChild(blockEl);
     container.appendChild(wrapper);
   });
 
@@ -52,69 +52,60 @@ export function renderBlocks(container) {
 }
 
 /* ===============================
-   TEXT BLOCK (✨ STYLED – FINAL FIX)
+   TEXT BLOCK (ADMIN EDITABLE)
 ================================ */
 function renderTextBlock(block) {
-  const div = document.createElement("div");
-  div.className = "cms-text-block editable";
+  const blockEl = document.createElement("div");
+  blockEl.className = "cms-text-block";
 
   block.data ||= {};
   block.data.html ||= "<p>Edit this content</p>";
   block.data.style ||= {};
 
-  div.innerHTML = block.data.html;
+  blockEl.innerHTML = block.data.html;
 
-  // 🔥 APPLY TEXT STYLES (REAL FIX)
-  applyTextStyles(div, block.data.style);
+  // 🔥 APPLY STYLES
+  applyTextStyles(blockEl, block.data.style);
 
-  if (getState().adminMode) {
-    div.contentEditable = "true";
+  const state = getState();
 
-    div.onclick = () => {
+  /* ✅ ADMIN MODE EDITING */
+  if (state.adminMode) {
+    blockEl.contentEditable = "true";
+    blockEl.classList.add("editable");
+
+    blockEl.addEventListener("click", () => {
       activeBlockId = block.id;
       setActiveBlock(block.id);
-    };
+    });
 
-    div.oninput = () => {
-      block.data.html = div.innerHTML;
-    };
+    blockEl.addEventListener("input", () => {
+      block.data.html = blockEl.innerHTML;
+
+      // 🔥 LIVE RE-RENDER
+      document.dispatchEvent(
+        new Event("cms-rerender")
+      );
+    });
   }
 
-  return div;
+  return blockEl;
 }
 
 /* ===============================
-   APPLY TEXT STYLES (🔥 REAL FIX)
-   👉 Applies to inner <p>, <h1>, etc
+   APPLY TEXT STYLES
 ================================ */
 function applyTextStyles(el, style = {}) {
-  // get all inner text elements
   const targets = el.querySelectorAll("*");
   const nodes = targets.length ? targets : [el];
 
   nodes.forEach(node => {
-    // Font size
-    if (style.fontSize) {
-      node.style.fontSize = style.fontSize + "px";
-    } else {
-      node.style.fontSize = "";
-    }
+    node.style.fontSize = style.fontSize
+      ? style.fontSize + "px"
+      : "";
 
-    // Color
-    if (style.color) {
-      node.style.color = style.color;
-    } else {
-      node.style.color = "";
-    }
-
-    // Font family
-    if (style.fontFamily) {
-      node.style.fontFamily = style.fontFamily;
-    } else {
-      node.style.fontFamily = "";
-    }
-
-    // Bold / Italic
+    node.style.color = style.color || "";
+    node.style.fontFamily = style.fontFamily || "";
     node.style.fontWeight = style.bold ? "bold" : "normal";
     node.style.fontStyle = style.italic ? "italic" : "normal";
   });
@@ -131,10 +122,12 @@ function renderImageBlock(block) {
     ? `<img src="${block.data.src}" />`
     : `<div class="media-placeholder">🖼 Image Block</div>`;
 
-  div.onclick = () => {
-    activeBlockId = block.id;
-    setActiveBlock(block.id);
-  };
+  if (getState().adminMode) {
+    div.addEventListener("click", () => {
+      activeBlockId = block.id;
+      setActiveBlock(block.id);
+    });
+  }
 
   return div;
 }
@@ -150,10 +143,12 @@ function renderVideoBlock(block) {
     ? `<video controls src="${block.data.src}"></video>`
     : `<div class="media-placeholder">🎥 Video Block</div>`;
 
-  div.onclick = () => {
-    activeBlockId = block.id;
-    setActiveBlock(block.id);
-  };
+  if (getState().adminMode) {
+    div.addEventListener("click", () => {
+      activeBlockId = block.id;
+      setActiveBlock(block.id);
+    });
+  }
 
   return div;
 }
@@ -187,7 +182,9 @@ function deleteBlock(id) {
   if (!confirm("Delete this block?")) return;
 
   const state = getState();
-  state.page.blocks = state.page.blocks.filter(b => b.id !== id);
+  state.page.blocks = state.page.blocks.filter(
+    b => b.id !== id
+  );
 
   activeBlockId = null;
   setActiveBlock(null);
