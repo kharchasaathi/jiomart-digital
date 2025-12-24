@@ -7,10 +7,8 @@
    🔥 Z-INDEX SAFETY (CRITICAL FIX)
 ================================================= */
 
-/* Floating editor toolbars must stay on top */
-.editor-toolbar,
-.text-toolbar,
-.typography-panel {
+/* Bottom editor toolbar only */
+.editor-toolbar {
   position: fixed;
   z-index: 9999;
 }
@@ -22,7 +20,7 @@
 }
 
 /* =================================================
-   EDITOR TOOLBAR (BOTTOM BAR)
+   EDITOR TOOLBAR (BOTTOM BAR – ADD BLOCK)
 ================================================= */
 
 .editor-toolbar {
@@ -58,13 +56,13 @@
   background: #f0f0f0;
 }
 
-/* Active state (bold / italic / etc) */
+/* Active state */
 .editor-toolbar button.active {
   background: #1877f2;
   color: #ffffff;
 }
 
-/* Save button (special highlight) */
+/* Save button */
 .editor-toolbar button.save {
   background: #28a745;
   color: #ffffff;
@@ -75,45 +73,17 @@
 }
 
 /* =================================================
-   FLOATING TEXT TOOLBAR
+   FLOATING TEXT TOOLBAR (INLINE – NO FIXED)
 ================================================= */
 
-.text-toolbar {
+.text-toolbar,
+.admin-text-toolbar {
   background: #ffffff;
   border-radius: 10px;
   padding: 6px 8px;
   display: flex;
   gap: 6px;
   box-shadow: 0 4px 14px rgba(0,0,0,0.25);
-}
-
-/* =================================================
-   TYPOGRAPHY PANEL (FONT / TELUGU / ENGLISH)
-================================================= */
-
-.typography-panel {
-  top: 80px;
-  right: 20px;
-  width: 240px;
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-}
-
-.typography-panel h4 {
-  margin: 0 0 8px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.typography-panel select,
-.typography-panel input {
-  width: 100%;
-  margin-bottom: 8px;
-  padding: 6px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
 }
 
 /* =================================================
@@ -128,7 +98,7 @@
   caret-color: #000;
 }
 
-/* Prevent accidental overlay */
+/* Ensure typing always works */
 .cms-text-block {
   pointer-events: auto;
   z-index: 5;
@@ -216,10 +186,5 @@ body.admin-mode .cms-video-block:hover {
   .editor-toolbar select {
     font-size: 13px;
     padding: 6px 8px;
-  }
-
-  .typography-panel {
-    right: 10px;
-    width: 200px;
   }
 }
