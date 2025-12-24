@@ -3,7 +3,7 @@
  * ✔ Toolbar appears BELOW active TEXT block
  * ✔ NO floating / NO absolute
  * ✔ SAME behaviour as OLD BACKUP
- * ✔ Logic VERIFIED & ACTIVE
+ * ✔ LOGIC FIXED – styles APPLY LIVE
  ***************************************************/
 
 import { getActiveBlock, getState } from "../core/state.js";
@@ -46,14 +46,34 @@ function createToolbar() {
 
 /* ===============================
    ATTACH TOOLBAR BELOW BLOCK
-   (🔥 SAME AS BACKUP)
 ================================ */
 function attachToolbar(blockEl) {
   if (!toolbar || !blockEl) return;
 
-  toolbar.remove();           // remove from previous block
-  blockEl.after(toolbar);     // attach BELOW active block
+  toolbar.remove();
+  blockEl.after(toolbar);
   toolbar.style.display = "flex";
+}
+
+/* ===============================
+   🔥 APPLY STYLES TO DOM (MISSING FIX)
+================================ */
+function applyStylesToElement(blockEl, style = {}) {
+  if (!blockEl) return;
+
+  const nodes = blockEl.querySelectorAll("*");
+  const targets = nodes.length ? nodes : [blockEl];
+
+  targets.forEach(el => {
+    el.style.fontSize = style.fontSize
+      ? style.fontSize + "px"
+      : "";
+
+    el.style.color = style.color || "";
+    el.style.fontFamily = style.fontFamily || "";
+    el.style.fontWeight = style.bold ? "bold" : "normal";
+    el.style.fontStyle = style.italic ? "italic" : "normal";
+  });
 }
 
 /* ===============================
@@ -76,6 +96,8 @@ function onChange(e) {
   if (e.target.tagName === "SELECT") {
     block.data.style.fontFamily = e.target.value;
   }
+
+  applyStylesToElement(getActiveBlockElement(), block.data.style);
 }
 
 /* ===============================
@@ -99,10 +121,12 @@ function onClick(e) {
     block.data.style.italic = !block.data.style.italic;
     btn.classList.toggle("active", block.data.style.italic);
   }
+
+  applyStylesToElement(getActiveBlockElement(), block.data.style);
 }
 
 /* ===============================
-   GET ACTIVE TEXT BLOCK
+   HELPERS
 ================================ */
 function getSelectedBlock() {
   const state = getState();
@@ -113,9 +137,17 @@ function getSelectedBlock() {
   );
 }
 
+function getActiveBlockElement() {
+  const id = getActiveBlock();
+  if (!id) return null;
+
+  return document.querySelector(
+    `.cms-block-wrapper[data-block-id="${id}"] .cms-text-block`
+  );
+}
+
 /* ===============================
    BLOCK CLICK LISTENER
-   (🔥 ONLY PLACE toolbar moves)
 ================================ */
 document.addEventListener("click", e => {
   const blockEl = e.target.closest(".cms-text-block.editable");
@@ -124,4 +156,9 @@ document.addEventListener("click", e => {
 
   createToolbar();
   attachToolbar(blockEl);
+
+  const block = getSelectedBlock();
+  if (block?.data?.style) {
+    applyStylesToElement(blockEl, block.data.style);
+  }
 });
