@@ -4,7 +4,7 @@ let toolbar = null;
 let savedSelection = null;
 
 /* ===============================
-   SELECTION HELPERS (NEW)
+   SELECTION HELPERS (FIXED)
 ================================ */
 function saveSelection() {
   const sel = window.getSelection();
@@ -30,7 +30,9 @@ function createToolbar() {
 
   toolbar.innerHTML = `
     <input type="number" min="10" max="80" title="Font size" />
+
     <input type="color" title="Text color" />
+
     <input type="color" title="Text background" data-bg />
 
     <select title="Font family">
@@ -69,13 +71,18 @@ function createToolbar() {
 
   toolbar.style.display = "none";
 
-  toolbar.addEventListener("mousedown", saveSelection); // 🔥 CRITICAL
+  /* 🔥 CRITICAL FIX
+     Toolbar click should NOT clear selection */
+  toolbar.addEventListener("mousedown", e => {
+    e.preventDefault();
+  });
+
   toolbar.addEventListener("input", onChange);
   toolbar.addEventListener("click", onClick);
 }
 
 /* ===============================
-   ATTACH TOOLBAR
+   ATTACH TOOLBAR BELOW BLOCK
 ================================ */
 function attachToolbar(blockEl) {
   toolbar.remove();
@@ -111,7 +118,7 @@ function applyStyle(el, style) {
 }
 
 /* ===============================
-   INLINE BACKGROUND (SAFE)
+   INLINE TEXT BACKGROUND (FIXED)
 ================================ */
 function applyTextBackground(color) {
   restoreSelection();
@@ -125,10 +132,12 @@ function applyTextBackground(color) {
   const span = document.createElement("span");
   span.style.backgroundColor = color;
 
-  // 🔥 keep text visible
+  /* 🔥 KEEP TEXT VISIBLE */
   span.style.color = "inherit";
   span.style.fontFamily = "inherit";
   span.style.fontSize = "inherit";
+  span.style.fontWeight = "inherit";
+  span.style.fontStyle = "inherit";
 
   try {
     range.surroundContents(span);
@@ -137,7 +146,7 @@ function applyTextBackground(color) {
 }
 
 /* ===============================
-   INLINE TEXT COLOR (NEW)
+   INLINE TEXT COLOR (FIXED)
 ================================ */
 function applyInlineColor(color) {
   restoreSelection();
@@ -158,7 +167,7 @@ function applyInlineColor(color) {
 }
 
 /* ===============================
-   INPUT HANDLER (FIXED)
+   INPUT HANDLER (FINAL FIX)
 ================================ */
 function onChange(e) {
   const block = getSelectedBlock();
@@ -171,7 +180,6 @@ function onChange(e) {
   }
 
   if (e.target.type === "color" && !e.target.dataset.bg) {
-    // 🔥 FIX: BOTH inline + block style
     block.data.style.color = e.target.value;
     applyInlineColor(e.target.value);
   }
@@ -238,7 +246,17 @@ function getActiveBlockElement() {
 }
 
 /* ===============================
-   CLICK LISTENER
+   SAVE SELECTION FROM EDITOR
+   🔥 THIS WAS MISSING
+================================ */
+document.addEventListener("mouseup", e => {
+  const blockEl = e.target.closest(".cms-text-block.editable");
+  if (!blockEl || !getState().adminMode) return;
+  saveSelection();
+});
+
+/* ===============================
+   BLOCK CLICK LISTENER
 ================================ */
 document.addEventListener("click", e => {
   const blockEl = e.target.closest(".cms-text-block.editable");
