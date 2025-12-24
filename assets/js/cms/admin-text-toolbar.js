@@ -77,23 +77,29 @@ function attachToolbar(blockEl) {
 }
 
 /* ===============================
-   🔥 APPLY STYLES (ROOT ONLY – FIX)
+   🔥 APPLY STYLES (BACKUP LOGIC)
+   ROOT + INNER ELEMENTS
 ================================ */
 function applyStylesToElement(blockEl, style = {}) {
   if (!blockEl) return;
 
-  blockEl.style.fontFamily = style.fontFamily
-    ? `"${style.fontFamily}", system-ui, sans-serif`
-    : "";
+  const nodes = blockEl.querySelectorAll("*");
+  const targets = nodes.length ? nodes : [blockEl];
 
-  blockEl.style.color = style.color || "";
+  targets.forEach(el => {
+    el.style.fontSize = style.fontSize
+      ? style.fontSize + "px"
+      : "";
 
-  blockEl.style.fontSize = style.fontSize
-    ? style.fontSize + "px"
-    : "";
+    el.style.color = style.color || "";
 
-  blockEl.style.fontWeight = style.bold ? "bold" : "normal";
-  blockEl.style.fontStyle = style.italic ? "italic" : "normal";
+    el.style.fontFamily = style.fontFamily
+      ? `"${style.fontFamily}", system-ui, sans-serif`
+      : "";
+
+    el.style.fontWeight = style.bold ? "bold" : "normal";
+    el.style.fontStyle = style.italic ? "italic" : "normal";
+  });
 }
 
 /* ===============================
