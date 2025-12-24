@@ -2,7 +2,7 @@
  * BLOCKS – FINAL STABLE (ADMIN EDIT SAFE)
  * ✔ Text / Image / Video blocks
  * ✔ Admin-only editing
- * ✔ NO re-render while typing (🔥 FIX)
+ * ✔ NO re-render while typing
  * ✔ Cursor / Enter / Selection SAFE
  * ✔ Toolbar + Fonts + Telugu fully working
  ***************************************************/
@@ -53,12 +53,12 @@ export function renderBlocks(container) {
 }
 
 /* ===============================
-   TEXT BLOCK (🔥 FINAL FIX)
+   TEXT BLOCK (FINAL SAFE)
 ================================ */
 function renderTextBlock(block) {
   const blockEl = document.createElement("div");
 
-  /* 🔥 COMPATIBILITY CLASSES (VERY IMPORTANT) */
+  /* 🔥 REQUIRED CLASSES */
   blockEl.className = "cms-text-block cms-block block-text";
 
   block.data ||= {};
@@ -67,7 +67,7 @@ function renderTextBlock(block) {
 
   blockEl.innerHTML = block.data.html;
 
-  /* Apply stored styles */
+  /* ✅ APPLY SAVED STYLES */
   applyTextStyles(blockEl, block.data.style);
 
   const state = getState();
@@ -76,7 +76,6 @@ function renderTextBlock(block) {
     blockEl.contentEditable = "true";
     blockEl.classList.add("editable");
 
-    /* Active block select (NO rerender) */
     const activate = () => {
       activeBlockId = block.id;
       setActiveBlock(block.id);
@@ -85,7 +84,7 @@ function renderTextBlock(block) {
     blockEl.addEventListener("focus", activate);
     blockEl.addEventListener("click", activate);
 
-    /* 🔥 LIVE UPDATE – NO RERENDER */
+    /* 🔥 LIVE HTML UPDATE (NO RERENDER) */
     blockEl.addEventListener("input", () => {
       block.data.html = blockEl.innerHTML;
     });
@@ -95,23 +94,19 @@ function renderTextBlock(block) {
 }
 
 /* ===============================
-   APPLY TEXT STYLES
-   (Font size, color, family, bold, italic)
+   APPLY TEXT STYLES (CORE FIX)
 ================================ */
 function applyTextStyles(el, style = {}) {
-  const targets = el.querySelectorAll("*");
-  const nodes = targets.length ? targets : [el];
+  if (!style) return;
 
-  nodes.forEach(node => {
-    node.style.fontSize = style.fontSize
-      ? style.fontSize + "px"
-      : "";
+  el.style.fontSize = style.fontSize
+    ? style.fontSize + "px"
+    : "";
 
-    node.style.color = style.color || "";
-    node.style.fontFamily = style.fontFamily || "";
-    node.style.fontWeight = style.bold ? "bold" : "normal";
-    node.style.fontStyle = style.italic ? "italic" : "normal";
-  });
+  el.style.color = style.color || "";
+  el.style.fontFamily = style.fontFamily || "";
+  el.style.fontWeight = style.bold ? "bold" : "normal";
+  el.style.fontStyle = style.italic ? "italic" : "normal";
 }
 
 /* ===============================
@@ -174,7 +169,7 @@ export function addBlock(type) {
   activeBlockId = newBlock.id;
   setActiveBlock(newBlock.id);
 
-  /* 🔥 Safe rerender only on add */
+  /* 🔥 SAFE RERENDER ONLY ON ADD */
   document.dispatchEvent(new Event("cms-rerender"));
 
   console.log("➕ Block added:", type);
