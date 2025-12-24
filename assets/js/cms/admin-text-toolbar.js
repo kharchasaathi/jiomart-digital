@@ -1,9 +1,9 @@
 /***************************************************
- * ADMIN TEXT TOOLBAR – FINAL STABLE
+ * ADMIN TEXT TOOLBAR – FINAL WORKING (SELECTION BASED)
  * ✔ English + Telugu fonts
  * ✔ Size / Color / Bold / Italic
- * ✔ Toolbar follows active text block
- * ✔ NO fixed overlay
+ * ✔ Toolbar follows TEXT SELECTION (NOT click)
+ * ✔ Absolute position – NO overlay
  ***************************************************/
 
 import { getActiveBlock, getState } from "../core/state.js";
@@ -19,7 +19,6 @@ function createToolbar() {
   toolbar = document.createElement("div");
   toolbar.className = "admin-text-toolbar text-toolbar";
 
-  /* ✅ ABSOLUTE – toolbar sticks near block */
   toolbar.style.cssText = `
     position: absolute;
     z-index: 9999;
@@ -28,7 +27,6 @@ function createToolbar() {
 
   toolbar.innerHTML = `
     <input type="number" min="10" max="80" title="Font size" />
-
     <input type="color" title="Text color" />
 
     <select title="Font family">
@@ -56,16 +54,36 @@ function createToolbar() {
 }
 
 /* ===============================
-   POSITION TOOLBAR NEAR BLOCK
+   POSITION TOOLBAR ON SELECTION
 ================================ */
-function positionToolbar(blockEl) {
-  if (!toolbar || !blockEl) return;
+function positionFromSelection() {
+  const state = getState();
+  if (!state.adminMode) return;
 
-  const rect = blockEl.getBoundingClientRect();
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) {
+    hideToolbar();
+    return;
+  }
+
+  const range = selection.getRangeAt(0);
+  if (range.collapsed) {
+    hideToolbar();
+    return;
+  }
+
+  const blockEl = range.startContainer.parentElement?.closest(
+    ".cms-text-block.editable"
+  );
+  if (!blockEl) {
+    hideToolbar();
+    return;
+  }
+
+  const rect = range.getBoundingClientRect();
 
   toolbar.style.top =
-    window.scrollY + rect.top - toolbar.offsetHeight - 8 + "px";
-
+    window.scrollY + rect.top - toolbar.offsetHeight - 10 + "px";
   toolbar.style.left =
     window.scrollX + rect.left + "px";
 
@@ -73,11 +91,16 @@ function positionToolbar(blockEl) {
 }
 
 /* ===============================
+   HIDE TOOLBAR
+================================ */
+function hideToolbar() {
+  if (toolbar) toolbar.style.display = "none";
+}
+
+/* ===============================
    APPLY STYLE – INPUT
 ================================ */
 function onChange(e) {
-  if (!getState().adminMode) return;
-
   const block = getSelectedBlock();
   if (!block) return;
 
@@ -102,8 +125,6 @@ function onChange(e) {
 function onClick(e) {
   const btn = e.target.closest("button");
   if (!btn) return;
-
-  if (!getState().adminMode) return;
 
   const block = getSelectedBlock();
   if (!block) return;
@@ -133,19 +154,10 @@ function getSelectedBlock() {
 }
 
 /* ===============================
-   ACTIVE BLOCK LISTENER
+   EVENTS
 ================================ */
-document.addEventListener("click", e => {
-  const blockEl = e.target.closest(".cms-text-block.editable");
-  if (!blockEl) return;
-  if (!getState().adminMode) return;
+document.addEventListener("selectionchange", positionFromSelection);
 
-  positionToolbar(blockEl);
-});
-
-/* ===============================
-   ADMIN STATE HANDLING
-================================ */
 document.addEventListener("ADMIN_STATE_CHANGED", e => {
   if (e.detail?.isAdmin) {
     createToolbar();
@@ -155,9 +167,6 @@ document.addEventListener("ADMIN_STATE_CHANGED", e => {
   }
 });
 
-/* ===============================
-   SAFE INIT
-================================ */
 document.addEventListener("DOMContentLoaded", () => {
   if (getState().adminMode) createToolbar();
 });
