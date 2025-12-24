@@ -71,35 +71,44 @@ function createToolbar() {
 function attachToolbar(blockEl) {
   if (!toolbar || !blockEl) return;
 
-  toolbar.remove();
-  blockEl.after(toolbar);
+  toolbar.remove();          // remove from previous block
+  blockEl.after(toolbar);    // attach BELOW active block
   toolbar.style.display = "flex";
 }
 
 /* ===============================
-   🔥 APPLY STYLES (BACKUP LOGIC)
-   ROOT + INNER ELEMENTS
+   🔥 APPLY STYLES (ROOT + INNER)
+   ✅ THIS IS THE CRITICAL FIX
 ================================ */
 function applyStylesToElement(blockEl, style = {}) {
   if (!blockEl) return;
 
-  const nodes = blockEl.querySelectorAll("*");
-  const targets = nodes.length ? nodes : [blockEl];
+  // Apply to ROOT
+  applyStyle(blockEl, style);
 
-  targets.forEach(el => {
-    el.style.fontSize = style.fontSize
-      ? style.fontSize + "px"
-      : "";
-
-    el.style.color = style.color || "";
-
-    el.style.fontFamily = style.fontFamily
-      ? `"${style.fontFamily}", system-ui, sans-serif`
-      : "";
-
-    el.style.fontWeight = style.bold ? "bold" : "normal";
-    el.style.fontStyle = style.italic ? "italic" : "normal";
+  // Apply to INNER elements (p, span, etc)
+  blockEl.querySelectorAll("*").forEach(el => {
+    applyStyle(el, style);
   });
+}
+
+/* ===============================
+   APPLY STYLE TO SINGLE ELEMENT
+================================ */
+function applyStyle(el, style) {
+  el.style.fontSize = style.fontSize
+    ? style.fontSize + "px"
+    : "";
+
+  el.style.color = style.color || "";
+
+  // 🔥 FONT FAMILY FIX (spaces safe)
+  el.style.fontFamily = style.fontFamily
+    ? `"${style.fontFamily}", system-ui, sans-serif`
+    : "";
+
+  el.style.fontWeight = style.bold ? "bold" : "normal";
+  el.style.fontStyle = style.italic ? "italic" : "normal";
 }
 
 /* ===============================
@@ -123,7 +132,10 @@ function onChange(e) {
     block.data.style.fontFamily = e.target.value;
   }
 
-  applyStylesToElement(getActiveBlockElement(), block.data.style);
+  applyStylesToElement(
+    getActiveBlockElement(),
+    block.data.style
+  );
 }
 
 /* ===============================
@@ -148,7 +160,10 @@ function onClick(e) {
     btn.classList.toggle("active", block.data.style.italic);
   }
 
-  applyStylesToElement(getActiveBlockElement(), block.data.style);
+  applyStylesToElement(
+    getActiveBlockElement(),
+    block.data.style
+  );
 }
 
 /* ===============================
