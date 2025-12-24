@@ -1,5 +1,5 @@
 /***************************************************
- * PUBLIC ENTRY – FINAL & STABLE
+ * PUBLIC ENTRY – FINAL & ERROR FREE
  ***************************************************/
 import { loadPage } from "../cms/page-store.js";
 import { renderPage } from "../cms/render.js";
@@ -7,32 +7,28 @@ import { renderPage } from "../cms/render.js";
 console.log("🚀 Public entry loaded");
 
 let pageLoaded = false;
-let adminKnown = false;
 
 /* ===============================
-   LOAD PAGE FIRST
+   LOAD PAGE FIRST (PUBLIC)
 ================================ */
 (async function initPublic() {
   console.log("📥 Loading page: home");
-  await loadPage("home");
-  pageLoaded = true;
-  tryRender();
+
+  try {
+    await loadPage("home");
+    pageLoaded = true;
+    renderSafe();
+  } catch (err) {
+    console.error("❌ Failed to load page:", err);
+  }
 })();
 
 /* ===============================
-   WAIT FOR ADMIN STATE
+   SAFE RENDER (NO ADMIN DEPENDENCY)
 ================================ */
-document.addEventListener("ADMIN_STATE_CHANGED", () => {
-  adminKnown = true;
-  tryRender();
-});
-
-/* ===============================
-   SINGLE SAFE RENDER
-================================ */
-function tryRender() {
-  if (!pageLoaded || !adminKnown) {
-    console.log("⏳ Waiting...", { pageLoaded, adminKnown });
+function renderSafe() {
+  if (!pageLoaded) {
+    console.log("⏳ Waiting for page load...");
     return;
   }
 
@@ -41,7 +37,7 @@ function tryRender() {
 }
 
 /* ===============================
-   🔥 CMS RE-RENDER FIX (ONLY THIS)
+   🔥 CMS RE-RENDER (ADMIN EDIT)
 ================================ */
 document.addEventListener("cms-rerender", () => {
   console.log("🔁 cms-rerender received");
