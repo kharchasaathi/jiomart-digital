@@ -1,5 +1,5 @@
 /***************************************************
- * ADMIN AUTH – EMAIL / PASSWORD (FINAL)
+ * ADMIN AUTH – EMAIL / PASSWORD (FINAL VERIFIED)
  ***************************************************/
 import { auth } from "../core/firebase.js";
 import {
@@ -41,7 +41,7 @@ loginBtn?.addEventListener("click", async () => {
 
     const user = result.user;
 
-    /* 🔐 EMAIL RESTRICTION */
+    /* 🔐 ADMIN EMAIL CHECK */
     if (user.email !== ADMIN_EMAIL) {
       alert("❌ Not authorized as admin");
       return;
@@ -49,12 +49,12 @@ loginBtn?.addEventListener("click", async () => {
 
     console.log("✅ Admin logged in:", user.email);
 
-    /* 🔥 ADMIN SESSION FLAG */
+    /* 🔥 ADMIN SESSION FLAG (CRITICAL) */
     localStorage.setItem("ADMIN_MODE", "true");
 
     alert("✅ Login successful");
 
-    /* 🔥 REDIRECT TO ADMIN DASHBOARD */
+    /* 🔥 REDIRECT */
     window.location.href = "admin.html";
 
   } catch (err) {
