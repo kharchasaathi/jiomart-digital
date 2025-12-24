@@ -69,16 +69,19 @@
   </section>
 
   <!-- =================================================
-       ✅ PUBLIC SCRIPTS ONLY
+       ✅ SCRIPTS (ORDER MATTERS)
   ================================================== -->
 
-  <!-- Firebase (Read-only public use) -->
+  <!-- 🔥 1️⃣ Firebase -->
   <script type="module" src="assets/js/core/firebase.js"></script>
 
-  <!-- Public CMS Render -->
+  <!-- 🔥 2️⃣ ADMIN SESSION (KEY FIX – DO NOT REMOVE) -->
+  <script type="module" src="assets/js/admin/admin-session.js"></script>
+
+  <!-- 3️⃣ Public CMS Entry -->
   <script type="module" src="assets/js/site/public.js"></script>
 
-  <!-- ⭐ HOME FEATURED PRODUCTS -->
+  <!-- 4️⃣ Home Featured Products -->
   <script type="module" src="assets/js/site/home-products.js"></script>
 
 </body>
