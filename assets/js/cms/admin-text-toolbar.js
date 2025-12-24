@@ -71,30 +71,29 @@ function createToolbar() {
 function attachToolbar(blockEl) {
   if (!toolbar || !blockEl) return;
 
-  toolbar.remove();          // remove from previous block
-  blockEl.after(toolbar);    // attach BELOW active block
+  toolbar.remove();
+  blockEl.after(toolbar);
   toolbar.style.display = "flex";
 }
 
 /* ===============================
-   APPLY STYLES TO DOM (LIVE)
+   🔥 APPLY STYLES (ROOT ONLY – FIX)
 ================================ */
 function applyStylesToElement(blockEl, style = {}) {
   if (!blockEl) return;
 
-  const nodes = blockEl.querySelectorAll("*");
-  const targets = nodes.length ? nodes : [blockEl];
+  blockEl.style.fontFamily = style.fontFamily
+    ? `"${style.fontFamily}", system-ui, sans-serif`
+    : "";
 
-  targets.forEach(el => {
-    el.style.fontSize = style.fontSize
-      ? style.fontSize + "px"
-      : "";
+  blockEl.style.color = style.color || "";
 
-    el.style.color = style.color || "";
-    el.style.fontFamily = style.fontFamily || "";
-    el.style.fontWeight = style.bold ? "bold" : "normal";
-    el.style.fontStyle = style.italic ? "italic" : "normal";
-  });
+  blockEl.style.fontSize = style.fontSize
+    ? style.fontSize + "px"
+    : "";
+
+  blockEl.style.fontWeight = style.bold ? "bold" : "normal";
+  blockEl.style.fontStyle = style.italic ? "italic" : "normal";
 }
 
 /* ===============================
