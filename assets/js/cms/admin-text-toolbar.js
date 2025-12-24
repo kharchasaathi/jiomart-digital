@@ -1,16 +1,23 @@
-/***************************************************
- * ADMIN TEXT TOOLBAR – FINAL (BLOCK ATTACHED)
- * ✔ Toolbar appears BELOW active TEXT block
- * ✔ NO floating / NO absolute
- * ✔ SAME behaviour as OLD BACKUP
- * ✔ LOGIC FIXED – styles APPLY LIVE
- * ✔ 10 English + 10 Telugu fonts
- * ✔ NEW: TEXT BACKGROUND COLOR (INLINE)
- ***************************************************/
-
 import { getActiveBlock, getState } from "../core/state.js";
 
 let toolbar = null;
+let savedSelection = null;
+
+/* ===============================
+   SELECTION HELPERS (NEW)
+================================ */
+function saveSelection() {
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0) return;
+  savedSelection = sel.getRangeAt(0);
+}
+
+function restoreSelection() {
+  if (!savedSelection) return;
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(savedSelection);
+}
 
 /* ===============================
    CREATE TOOLBAR (ONCE)
@@ -21,13 +28,9 @@ function createToolbar() {
   toolbar = document.createElement("div");
   toolbar.className = "admin-text-toolbar";
 
-  /* 🔥 ONLY ADDITIONS – OLD HTML UNTOUCHED */
   toolbar.innerHTML = `
     <input type="number" min="10" max="80" title="Font size" />
-
     <input type="color" title="Text color" />
-
-    <!-- 🟨 NEW: TEXT BACKGROUND COLOR -->
     <input type="color" title="Text background" data-bg />
 
     <select title="Font family">
@@ -66,33 +69,30 @@ function createToolbar() {
 
   toolbar.style.display = "none";
 
+  toolbar.addEventListener("mousedown", saveSelection); // 🔥 CRITICAL
   toolbar.addEventListener("input", onChange);
   toolbar.addEventListener("click", onClick);
 }
 
 /* ===============================
-   ATTACH TOOLBAR BELOW BLOCK
+   ATTACH TOOLBAR
 ================================ */
 function attachToolbar(blockEl) {
-  if (!toolbar || !blockEl) return;
-
   toolbar.remove();
   blockEl.after(toolbar);
   toolbar.style.display = "flex";
 }
 
 /* ===============================
-   🔥 APPLY STYLES (ROOT + INNER)
-   (OLD LOGIC – UNCHANGED)
+   APPLY STYLES (OLD LOGIC – UNCHANGED)
 ================================ */
 function applyStylesToElement(blockEl, style = {}) {
   if (!blockEl) return;
 
   applyStyle(blockEl, style);
-
-  blockEl.querySelectorAll("*").forEach(el => {
-    applyStyle(el, style);
-  });
+  blockEl.querySelectorAll("*").forEach(el =>
+    applyStyle(el, style)
+  );
 }
 
 function applyStyle(el, style) {
@@ -111,39 +111,54 @@ function applyStyle(el, style) {
 }
 
 /* ===============================
-   🟨 NEW: APPLY TEXT BACKGROUND
-   🔥 FIXED: TEXT COLOR SAFE
+   INLINE BACKGROUND (SAFE)
 ================================ */
 function applyTextBackground(color) {
-  const selection = window.getSelection();
-  if (!selection || selection.rangeCount === 0) return;
+  restoreSelection();
 
-  const range = selection.getRangeAt(0);
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0) return;
+
+  const range = sel.getRangeAt(0);
   if (range.collapsed) return;
 
   const span = document.createElement("span");
-
-  // ✅ Background only
   span.style.backgroundColor = color;
 
-  // 🔥 CRITICAL FIX — KEEP TEXT VISIBLE
+  // 🔥 keep text visible
   span.style.color = "inherit";
   span.style.fontFamily = "inherit";
   span.style.fontSize = "inherit";
-  span.style.fontWeight = "inherit";
-  span.style.fontStyle = "inherit";
 
   try {
     range.surroundContents(span);
-    selection.removeAllRanges();
-  } catch (e) {
-    console.warn("Invalid selection for background color");
-  }
+    sel.removeAllRanges();
+  } catch {}
 }
 
 /* ===============================
-   APPLY STYLES – INPUTS
-   (🔥 ONLY EXTENDED – NOT MODIFIED)
+   INLINE TEXT COLOR (NEW)
+================================ */
+function applyInlineColor(color) {
+  restoreSelection();
+
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0) return;
+
+  const range = sel.getRangeAt(0);
+  if (range.collapsed) return;
+
+  const span = document.createElement("span");
+  span.style.color = color;
+
+  try {
+    range.surroundContents(span);
+    sel.removeAllRanges();
+  } catch {}
+}
+
+/* ===============================
+   INPUT HANDLER (FIXED)
 ================================ */
 function onChange(e) {
   const block = getSelectedBlock();
@@ -153,36 +168,31 @@ function onChange(e) {
 
   if (e.target.type === "number") {
     block.data.style.fontSize = Number(e.target.value);
-    applyStylesToElement(
-      getActiveBlockElement(),
-      block.data.style
-    );
   }
 
   if (e.target.type === "color" && !e.target.dataset.bg) {
+    // 🔥 FIX: BOTH inline + block style
     block.data.style.color = e.target.value;
-    applyStylesToElement(
-      getActiveBlockElement(),
-      block.data.style
-    );
+    applyInlineColor(e.target.value);
   }
 
-  // 🟨 TEXT BACKGROUND (INLINE)
   if (e.target.dataset.bg) {
     applyTextBackground(e.target.value);
+    return;
   }
 
   if (e.target.tagName === "SELECT") {
     block.data.style.fontFamily = e.target.value;
-    applyStylesToElement(
-      getActiveBlockElement(),
-      block.data.style
-    );
   }
+
+  applyStylesToElement(
+    getActiveBlockElement(),
+    block.data.style
+  );
 }
 
 /* ===============================
-   APPLY STYLES – BUTTONS
+   BUTTON HANDLER (UNCHANGED)
 ================================ */
 function onClick(e) {
   const btn = e.target.closest("button");
@@ -215,7 +225,6 @@ function onClick(e) {
 function getSelectedBlock() {
   const state = getState();
   const id = getActiveBlock();
-
   return state.page?.blocks.find(
     b => b.id === id && b.type === "text"
   );
@@ -223,20 +232,17 @@ function getSelectedBlock() {
 
 function getActiveBlockElement() {
   const id = getActiveBlock();
-  if (!id) return null;
-
   return document.querySelector(
     `.cms-block-wrapper[data-block-id="${id}"] .cms-text-block`
   );
 }
 
 /* ===============================
-   BLOCK CLICK LISTENER
+   CLICK LISTENER
 ================================ */
 document.addEventListener("click", e => {
   const blockEl = e.target.closest(".cms-text-block.editable");
-  if (!blockEl) return;
-  if (!getState().adminMode) return;
+  if (!blockEl || !getState().adminMode) return;
 
   createToolbar();
   attachToolbar(blockEl);
