@@ -2,7 +2,7 @@
  * BLOCKS – FINAL STABLE (ADMIN EDIT ENABLED)
  * ✔ Text / Image / Video blocks
  * ✔ Admin-only editing
- * ✔ Live re-render on input
+ * ✔ Live re-render on input + focus
  * ✔ Styles + Save fully working
  ***************************************************/
 
@@ -64,7 +64,7 @@ function renderTextBlock(block) {
 
   blockEl.innerHTML = block.data.html;
 
-  // 🔥 APPLY STYLES
+  // 🔥 APPLY TEXT STYLES
   applyTextStyles(blockEl, block.data.style);
 
   const state = getState();
@@ -74,15 +74,21 @@ function renderTextBlock(block) {
     blockEl.contentEditable = "true";
     blockEl.classList.add("editable");
 
+    /* Active block select */
     blockEl.addEventListener("click", () => {
       activeBlockId = block.id;
       setActiveBlock(block.id);
     });
 
+    /* 🔥 NEW: focus → force rerender (toolbar + state sync) */
+    blockEl.addEventListener("focus", () => {
+      document.dispatchEvent(new Event("cms-rerender"));
+    });
+
+    /* Live update */
     blockEl.addEventListener("input", () => {
       block.data.html = blockEl.innerHTML;
 
-      // 🔥 LIVE RE-RENDER
       document.dispatchEvent(
         new Event("cms-rerender")
       );
