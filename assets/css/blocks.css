@@ -1,16 +1,67 @@
-/* ===============================
-   PAGE BLOCKS
-================================ */
-
+/* =================================================
+   PAGE ROOT
+================================================= */
 #pageRoot {
   max-width: 1200px;
   margin: auto;
   padding: 16px;
 }
 
-/* ===============================
+/* =================================================
+   CMS BLOCK WRAPPER (KEY FIX)
+================================================= */
+.cms-block-wrapper {
+  position: relative;
+  pointer-events: auto;
+}
+
+/* =================================================
+   TEXT BLOCK (🔥 CRITICAL FIX)
+================================================= */
+.cms-text-block {
+  pointer-events: auto;
+  min-height: 40px;
+}
+
+.cms-text-block.editable {
+  position: relative;
+  z-index: 5;
+  outline: none;
+  cursor: text;
+}
+
+/* editable inner content */
+.cms-text-block[contenteditable="true"] {
+  outline: none;
+  cursor: text;
+}
+
+/* =================================================
+   DELETE BUTTON (ADMIN ONLY)
+================================================= */
+.block-delete-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #ff4d4f;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 12px;
+  cursor: pointer;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.block-delete-btn:hover {
+  background: #d9363e;
+}
+
+/* =================================================
    GENERIC CMS BLOCK
-================================ */
+================================================= */
 .cms-block {
   background: #fff;
   border: 1px dashed #ccc;
@@ -21,28 +72,22 @@
   border-radius: 12px;
 }
 
-/* Admin hover (CMS block) */
+/* Admin hover highlight */
 body.admin-mode .cms-block:hover {
   outline: 2px solid #1877f2;
   outline-offset: 2px;
 }
 
-/* Empty block placeholder */
+/* Empty placeholder */
 .cms-block:empty::before {
   content: "Click to edit content";
   color: #999;
   font-size: 13px;
 }
 
-/* Editable content */
-.cms-block [contenteditable="true"] {
-  outline: none;
-  cursor: text;
-}
-
-/* ===============================
+/* =================================================
    LEGACY / GENERIC BLOCK
-================================ */
+================================================= */
 .block {
   background: #fff;
   margin-bottom: 18px;
@@ -51,15 +96,14 @@ body.admin-mode .cms-block:hover {
   position: relative;
 }
 
-/* Admin outline for old blocks */
 body.admin-mode .block {
-  outline: 2px dashed rgba(24,119,242,0.4);
+  outline: 2px dashed rgba(24, 119, 242, 0.4);
   outline-offset: 2px;
 }
 
-/* ===============================
+/* =================================================
    BLOCK CONTROLS (ADMIN ONLY)
-================================ */
+================================================= */
 .block-controls {
   position: absolute;
   top: 8px;
@@ -76,23 +120,24 @@ body.admin-mode .block {
   padding: 4px 6px;
   font-size: 12px;
   border-radius: 4px;
+  cursor: pointer;
 }
 
 .block-controls button:hover {
   background: #0f5bd7;
 }
 
-/* ===============================
-   TEXT BLOCK
-================================ */
+/* =================================================
+   TEXT CONTENT
+================================================= */
 .block-text {
   font-size: 16px;
   line-height: 1.6;
 }
 
-/* ===============================
+/* =================================================
    PLACEHOLDER BLOCK
-================================ */
+================================================= */
 .block-placeholder {
   padding: 40px;
   text-align: center;
@@ -100,10 +145,10 @@ body.admin-mode .block {
   border: 2px dashed #ccc;
   border-radius: 12px;
 }
-/* ===============================
-   MEDIA BLOCKS (PHASE 3)
-=============================== */
 
+/* =================================================
+   MEDIA BLOCKS (IMAGE / VIDEO)
+================================================= */
 .cms-image-block,
 .cms-video-block {
   background: #ffffff;
@@ -112,6 +157,7 @@ body.admin-mode .block {
   padding: 18px;
   margin-bottom: 18px;
   text-align: center;
+  pointer-events: auto;
 }
 
 .cms-image-block img,
@@ -120,7 +166,7 @@ body.admin-mode .block {
   border-radius: 6px;
 }
 
-/* Placeholder (Admin clarity) */
+/* Placeholder */
 .media-placeholder {
   padding: 40px 10px;
   color: #555;
@@ -135,7 +181,7 @@ body.admin-mode .block {
   color: #888;
 }
 
-/* Admin highlight */
+/* Admin hover highlight */
 body.admin-mode .cms-image-block:hover,
 body.admin-mode .cms-video-block:hover {
   outline: 2px dashed var(--site-primary);
