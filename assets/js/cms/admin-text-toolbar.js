@@ -5,6 +5,7 @@
  * ✔ SAME behaviour as OLD BACKUP
  * ✔ LOGIC FIXED – styles APPLY LIVE
  * ✔ 10 English + 10 Telugu fonts
+ * ✔ NEW: TEXT BACKGROUND COLOR (INLINE)
  ***************************************************/
 
 import { getActiveBlock, getState } from "../core/state.js";
@@ -20,10 +21,14 @@ function createToolbar() {
   toolbar = document.createElement("div");
   toolbar.className = "admin-text-toolbar";
 
+  /* 🔥 ONLY ADDITIONS – OLD HTML UNTOUCHED */
   toolbar.innerHTML = `
     <input type="number" min="10" max="80" title="Font size" />
 
     <input type="color" title="Text color" />
+
+    <!-- 🟨 NEW: TEXT BACKGROUND COLOR -->
+    <input type="color" title="Text background" data-bg />
 
     <select title="Font family">
       <option value="">Default</option>
@@ -71,30 +76,25 @@ function createToolbar() {
 function attachToolbar(blockEl) {
   if (!toolbar || !blockEl) return;
 
-  toolbar.remove();          // remove from previous block
-  blockEl.after(toolbar);    // attach BELOW active block
+  toolbar.remove();
+  blockEl.after(toolbar);
   toolbar.style.display = "flex";
 }
 
 /* ===============================
    🔥 APPLY STYLES (ROOT + INNER)
-   ✅ THIS IS THE CRITICAL FIX
+   (OLD LOGIC – UNCHANGED)
 ================================ */
 function applyStylesToElement(blockEl, style = {}) {
   if (!blockEl) return;
 
-  // Apply to ROOT
   applyStyle(blockEl, style);
 
-  // Apply to INNER elements (p, span, etc)
   blockEl.querySelectorAll("*").forEach(el => {
     applyStyle(el, style);
   });
 }
 
-/* ===============================
-   APPLY STYLE TO SINGLE ELEMENT
-================================ */
 function applyStyle(el, style) {
   el.style.fontSize = style.fontSize
     ? style.fontSize + "px"
@@ -102,7 +102,6 @@ function applyStyle(el, style) {
 
   el.style.color = style.color || "";
 
-  // 🔥 FONT FAMILY FIX (spaces safe)
   el.style.fontFamily = style.fontFamily
     ? `"${style.fontFamily}", system-ui, sans-serif`
     : "";
@@ -112,7 +111,30 @@ function applyStyle(el, style) {
 }
 
 /* ===============================
+   🟨 NEW: APPLY TEXT BACKGROUND
+   (INLINE ONLY – SAFE)
+================================ */
+function applyTextBackground(color) {
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) return;
+
+  const range = selection.getRangeAt(0);
+  if (range.collapsed) return;
+
+  const span = document.createElement("span");
+  span.style.backgroundColor = color;
+
+  try {
+    range.surroundContents(span);
+    selection.removeAllRanges();
+  } catch (e) {
+    console.warn("Invalid selection for background color");
+  }
+}
+
+/* ===============================
    APPLY STYLES – INPUTS
+   (🔥 ONLY EXTENDED – NOT MODIFIED)
 ================================ */
 function onChange(e) {
   const block = getSelectedBlock();
@@ -122,20 +144,32 @@ function onChange(e) {
 
   if (e.target.type === "number") {
     block.data.style.fontSize = Number(e.target.value);
+    applyStylesToElement(
+      getActiveBlockElement(),
+      block.data.style
+    );
   }
 
-  if (e.target.type === "color") {
+  if (e.target.type === "color" && !e.target.dataset.bg) {
     block.data.style.color = e.target.value;
+    applyStylesToElement(
+      getActiveBlockElement(),
+      block.data.style
+    );
+  }
+
+  // 🟨 TEXT BACKGROUND (INLINE)
+  if (e.target.dataset.bg) {
+    applyTextBackground(e.target.value);
   }
 
   if (e.target.tagName === "SELECT") {
     block.data.style.fontFamily = e.target.value;
+    applyStylesToElement(
+      getActiveBlockElement(),
+      block.data.style
+    );
   }
-
-  applyStylesToElement(
-    getActiveBlockElement(),
-    block.data.style
-  );
 }
 
 /* ===============================
