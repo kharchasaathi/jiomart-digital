@@ -1,26 +1,18 @@
+/***************************************************
+ * ADMIN TEXT TOOLBAR â€“ FINAL (BLOCK ATTACHED)
+ * âœ” Toolbar appears BELOW active TEXT block
+ * âœ” NO floating / NO absolute
+ * âœ” SAME behaviour as OLD BACKUP
+ * âœ” LOGIC FIXED â€“ styles APPLY LIVE
+ * âœ” 10 English + 10 Telugu fonts
+ ***************************************************/
+
 import { getActiveBlock, getState } from "../core/state.js";
 
 let toolbar = null;
-let savedSelection = null;
 
 /* ===============================
-   SELECTION HELPERS
-================================ */
-function saveSelection() {
-  const sel = window.getSelection();
-  if (!sel || sel.rangeCount === 0) return;
-  savedSelection = sel.getRangeAt(0);
-}
-
-function restoreSelection() {
-  if (!savedSelection) return;
-  const sel = window.getSelection();
-  sel.removeAllRanges();
-  sel.addRange(savedSelection);
-}
-
-/* ===============================
-   CREATE TOOLBAR
+   CREATE TOOLBAR (ONCE)
 ================================ */
 function createToolbar() {
   if (toolbar) return;
@@ -30,14 +22,37 @@ function createToolbar() {
 
   toolbar.innerHTML = `
     <input type="number" min="10" max="80" title="Font size" />
+
     <input type="color" title="Text color" />
-    <input type="color" title="Text background" data-bg />
 
     <select title="Font family">
       <option value="">Default</option>
-      <option value="Poppins">Poppins</option>
-      <option value="Roboto">Roboto</option>
-      <option value="Montserrat">Montserrat</option>
+
+      <optgroup label="English Fonts">
+        <option value="Poppins">Poppins</option>
+        <option value="Roboto">Roboto</option>
+        <option value="Montserrat">Montserrat</option>
+        <option value="Inter">Inter</option>
+        <option value="Open Sans">Open Sans</option>
+        <option value="Lato">Lato</option>
+        <option value="Nunito">Nunito</option>
+        <option value="Raleway">Raleway</option>
+        <option value="Playfair Display">Playfair Display</option>
+        <option value="Merriweather">Merriweather</option>
+      </optgroup>
+
+      <optgroup label="Telugu Fonts">
+        <option value="Noto Sans Telugu">Noto Sans Telugu</option>
+        <option value="Ramabhadra">Ramabhadra</option>
+        <option value="NTR">NTR</option>
+        <option value="Gurajada">Gurajada</option>
+        <option value="Suranna">Suranna</option>
+        <option value="Pothana2000">Pothana2000</option>
+        <option value="Timmana">Timmana</option>
+        <option value="Mallanna">Mallanna</option>
+        <option value="Tenali Ramakrishna">Tenali Ramakrishna</option>
+        <option value="Sree Krushnadevaraya">Sree Krushnadevaraya</option>
+      </optgroup>
     </select>
 
     <button data-style="bold"><b>B</b></button>
@@ -46,96 +61,60 @@ function createToolbar() {
 
   toolbar.style.display = "none";
 
-  // 🔥 DO NOT LOSE SELECTION
-  toolbar.addEventListener("mousedown", e => e.preventDefault());
-
-  toolbar.addEventListener("input", handleInput);
-  toolbar.addEventListener("click", handleClick);
+  toolbar.addEventListener("input", onChange);
+  toolbar.addEventListener("click", onClick);
 }
 
 /* ===============================
-   ATTACH TOOLBAR
+   ATTACH TOOLBAR BELOW BLOCK
 ================================ */
 function attachToolbar(blockEl) {
-  toolbar.remove();
-  blockEl.after(toolbar);
+  if (!toolbar || !blockEl) return;
+
+  toolbar.remove();          // remove from previous block
+  blockEl.after(toolbar);    // attach BELOW active block
   toolbar.style.display = "flex";
 }
 
 /* ===============================
-   ROOT STYLE APPLY (ONLY ROOT)
+   ðŸ”¥ APPLY STYLES (ROOT + INNER)
+   âœ… THIS IS THE CRITICAL FIX
 ================================ */
-function applyBlockStyles(blockEl, style = {}) {
+function applyStylesToElement(blockEl, style = {}) {
   if (!blockEl) return;
 
-  if (style.fontSize) {
-    blockEl.style.fontSize = style.fontSize + "px";
-  }
+  // Apply to ROOT
+  applyStyle(blockEl, style);
 
-  if (style.color) {
-    blockEl.style.color = style.color;
-  }
-
-  if (style.fontFamily) {
-    blockEl.style.fontFamily =
-      `"${style.fontFamily}", system-ui, sans-serif`;
-  }
-
-  blockEl.style.fontWeight = style.bold ? "bold" : "normal";
-  blockEl.style.fontStyle = style.italic ? "italic" : "normal";
+  // Apply to INNER elements (p, span, etc)
+  blockEl.querySelectorAll("*").forEach(el => {
+    applyStyle(el, style);
+  });
 }
 
 /* ===============================
-   INLINE TEXT COLOR
+   APPLY STYLE TO SINGLE ELEMENT
 ================================ */
-function applyInlineColor(color) {
-  restoreSelection();
+function applyStyle(el, style) {
+  el.style.fontSize = style.fontSize
+    ? style.fontSize + "px"
+    : "";
 
-  const sel = window.getSelection();
-  if (!sel || sel.rangeCount === 0) return;
+  el.style.color = style.color || "";
 
-  const range = sel.getRangeAt(0);
-  if (range.collapsed) return;
+  // ðŸ”¥ FONT FAMILY FIX (spaces safe)
+  el.style.fontFamily = style.fontFamily
+    ? `"${style.fontFamily}", system-ui, sans-serif`
+    : "";
 
-  const span = document.createElement("span");
-  span.style.color = color;
-
-  try {
-    range.surroundContents(span);
-    sel.removeAllRanges();
-  } catch {}
+  el.style.fontWeight = style.bold ? "bold" : "normal";
+  el.style.fontStyle = style.italic ? "italic" : "normal";
 }
 
 /* ===============================
-   INLINE BACKGROUND
+   APPLY STYLES â€“ INPUTS
 ================================ */
-function applyTextBackground(color) {
-  restoreSelection();
-
-  const sel = window.getSelection();
-  if (!sel || sel.rangeCount === 0) return;
-
-  const range = sel.getRangeAt(0);
-  if (range.collapsed) return;
-
-  const span = document.createElement("span");
-  span.style.backgroundColor = color;
-
-  // inherit everything else
-  span.style.color = "inherit";
-  span.style.fontSize = "inherit";
-  span.style.fontFamily = "inherit";
-
-  try {
-    range.surroundContents(span);
-    sel.removeAllRanges();
-  } catch {}
-}
-
-/* ===============================
-   INPUT HANDLER
-================================ */
-function handleInput(e) {
+function onChange(e) {
   const block = getSelectedBlock();
   if (!block) return;
 
@@ -145,30 +124,24 @@ function handleInput(e) {
     block.data.style.fontSize = Number(e.target.value);
   }
 
-  if (e.target.type === "color" && !e.target.dataset.bg) {
+  if (e.target.type === "color") {
     block.data.style.color = e.target.value;
-    applyInlineColor(e.target.value);
-  }
-
-  if (e.target.dataset.bg) {
-    applyTextBackground(e.target.value);
-    return;
   }
 
   if (e.target.tagName === "SELECT") {
     block.data.style.fontFamily = e.target.value;
   }
 
-  applyBlockStyles(
+  applyStylesToElement(
     getActiveBlockElement(),
     block.data.style
   );
 }
 
 /* ===============================
-   BUTTON HANDLER
+   APPLY STYLES â€“ BUTTONS
 ================================ */
-function handleClick(e) {
+function onClick(e) {
   const btn = e.target.closest("button");
   if (!btn) return;
 
@@ -179,13 +152,15 @@ function handleClick(e) {
 
   if (btn.dataset.style === "bold") {
     block.data.style.bold = !block.data.style.bold;
+    btn.classList.toggle("active", block.data.style.bold);
   }
 
   if (btn.dataset.style === "italic") {
     block.data.style.italic = !block.data.style.italic;
+    btn.classList.toggle("active", block.data.style.italic);
   }
 
-  applyBlockStyles(
+  applyStylesToElement(
     getActiveBlockElement(),
     block.data.style
   );
@@ -197,6 +172,7 @@ function handleClick(e) {
 function getSelectedBlock() {
   const state = getState();
   const id = getActiveBlock();
+
   return state.page?.blocks.find(
     b => b.id === id && b.type === "text"
   );
@@ -204,31 +180,26 @@ function getSelectedBlock() {
 
 function getActiveBlockElement() {
   const id = getActiveBlock();
+  if (!id) return null;
+
   return document.querySelector(
     `.cms-block-wrapper[data-block-id="${id}"] .cms-text-block`
   );
 }
 
 /* ===============================
-   SELECTION SAVE
-================================ */
-document.addEventListener("mouseup", e => {
-  const el = e.target.closest(".cms-text-block.editable");
-  if (el && getState().adminMode) saveSelection();
-});
-
-/* ===============================
-   BLOCK CLICK
+   BLOCK CLICK LISTENER
 ================================ */
 document.addEventListener("click", e => {
   const blockEl = e.target.closest(".cms-text-block.editable");
-  if (!blockEl || !getState().adminMode) return;
+  if (!blockEl) return;
+  if (!getState().adminMode) return;
 
   createToolbar();
   attachToolbar(blockEl);
 
   const block = getSelectedBlock();
   if (block?.data?.style) {
-    applyBlockStyles(blockEl, block.data.style);
+    applyStylesToElement(blockEl, block.data.style);
   }
 });
