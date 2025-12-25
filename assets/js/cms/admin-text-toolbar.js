@@ -4,7 +4,7 @@ let toolbar = null;
 let savedSelection = null;
 
 /* ===============================
-   SELECTION HELPERS (FIXED)
+   SELECTION HELPERS
 ================================ */
 function saveSelection() {
   const sel = window.getSelection();
@@ -20,7 +20,7 @@ function restoreSelection() {
 }
 
 /* ===============================
-   CREATE TOOLBAR (ONCE)
+   CREATE TOOLBAR
 ================================ */
 function createToolbar() {
   if (toolbar) return;
@@ -69,17 +69,15 @@ function createToolbar() {
 
   toolbar.style.display = "none";
 
-  /* 🔥 CRITICAL FIX — toolbar click should NOT clear selection */
-  toolbar.addEventListener("mousedown", e => {
-    e.preventDefault();
-  });
+  // 🔥 toolbar click should NOT kill selection
+  toolbar.addEventListener("mousedown", e => e.preventDefault());
 
   toolbar.addEventListener("input", onChange);
   toolbar.addEventListener("click", onClick);
 }
 
 /* ===============================
-   ATTACH TOOLBAR BELOW BLOCK
+   ATTACH TOOLBAR
 ================================ */
 function attachToolbar(blockEl) {
   toolbar.remove();
@@ -88,28 +86,46 @@ function attachToolbar(blockEl) {
 }
 
 /* ===============================
-   APPLY STYLES (OLD LOGIC)
-   🔥 ONLY SAFE GUARD ADDED
+   APPLY STYLES (FIXED)
 ================================ */
 function applyStylesToElement(blockEl, style = {}) {
   if (!blockEl) return;
 
-  applyStyle(blockEl, style);
-  blockEl.querySelectorAll("*").forEach(el =>
-    applyStyle(el, style)
-  );
-}
-
-function applyStyle(el, style) {
-  el.style.fontSize = style.fontSize
+  // ✅ ROOT — always apply font size & base color
+  blockEl.style.fontSize = style.fontSize
     ? style.fontSize + "px"
     : "";
 
-  /* 🔥 FIX: do NOT override inline background spans */
-  if (!el.style.backgroundColor) {
+  blockEl.style.color = style.color || "";
+
+  blockEl.style.fontFamily = style.fontFamily
+    ? `"${style.fontFamily}", system-ui, sans-serif`
+    : "";
+
+  blockEl.style.fontWeight = style.bold ? "bold" : "normal";
+  blockEl.style.fontStyle = style.italic ? "italic" : "normal";
+
+  // ✅ INNER — DO NOT override inline spans
+  blockEl.querySelectorAll("*").forEach(el => applyStyle(el, style));
+}
+
+/* ===============================
+   🔥 CRITICAL GUARD LOGIC
+================================ */
+function applyStyle(el, style) {
+  // FONT SIZE → only if inline size NOT set
+  if (!el.style.fontSize) {
+    el.style.fontSize = style.fontSize
+      ? style.fontSize + "px"
+      : "";
+  }
+
+  // TEXT COLOR → only if inline color NOT set
+  if (!el.style.color) {
     el.style.color = style.color || "";
   }
 
+  // FONT FAMILY safe to apply
   el.style.fontFamily = style.fontFamily
     ? `"${style.fontFamily}", system-ui, sans-serif`
     : "";
@@ -133,7 +149,7 @@ function applyTextBackground(color) {
   const span = document.createElement("span");
   span.style.backgroundColor = color;
 
-  /* keep text visible */
+  // 🔒 inherit everything else
   span.style.color = "inherit";
   span.style.fontFamily = "inherit";
   span.style.fontSize = "inherit";
@@ -168,7 +184,7 @@ function applyInlineColor(color) {
 }
 
 /* ===============================
-   INPUT HANDLER (FINAL)
+   INPUT HANDLER
 ================================ */
 function onChange(e) {
   const block = getSelectedBlock();
@@ -194,14 +210,11 @@ function onChange(e) {
     block.data.style.fontFamily = e.target.value;
   }
 
-  applyStylesToElement(
-    getActiveBlockElement(),
-    block.data.style
-  );
+  applyStylesToElement(getActiveBlockElement(), block.data.style);
 }
 
 /* ===============================
-   BUTTON HANDLER (UNCHANGED)
+   BUTTON HANDLER
 ================================ */
 function onClick(e) {
   const btn = e.target.closest("button");
@@ -222,10 +235,7 @@ function onClick(e) {
     btn.classList.toggle("active", block.data.style.italic);
   }
 
-  applyStylesToElement(
-    getActiveBlockElement(),
-    block.data.style
-  );
+  applyStylesToElement(getActiveBlockElement(), block.data.style);
 }
 
 /* ===============================
@@ -234,9 +244,7 @@ function onClick(e) {
 function getSelectedBlock() {
   const state = getState();
   const id = getActiveBlock();
-  return state.page?.blocks.find(
-    b => b.id === id && b.type === "text"
-  );
+  return state.page?.blocks.find(b => b.id === id && b.type === "text");
 }
 
 function getActiveBlockElement() {
@@ -247,7 +255,7 @@ function getActiveBlockElement() {
 }
 
 /* ===============================
-   SAVE SELECTION FROM EDITOR
+   SAVE SELECTION
 ================================ */
 document.addEventListener("mouseup", e => {
   const blockEl = e.target.closest(".cms-text-block.editable");
@@ -256,7 +264,7 @@ document.addEventListener("mouseup", e => {
 });
 
 /* ===============================
-   BLOCK CLICK LISTENER
+   BLOCK CLICK
 ================================ */
 document.addEventListener("click", e => {
   const blockEl = e.target.closest(".cms-text-block.editable");
