@@ -35,32 +35,9 @@ function createToolbar() {
 
     <select title="Font family">
       <option value="">Default</option>
-
-      <optgroup label="English Fonts">
-        <option value="Poppins">Poppins</option>
-        <option value="Roboto">Roboto</option>
-        <option value="Montserrat">Montserrat</option>
-        <option value="Inter">Inter</option>
-        <option value="Open Sans">Open Sans</option>
-        <option value="Lato">Lato</option>
-        <option value="Nunito">Nunito</option>
-        <option value="Raleway">Raleway</option>
-        <option value="Playfair Display">Playfair Display</option>
-        <option value="Merriweather">Merriweather</option>
-      </optgroup>
-
-      <optgroup label="Telugu Fonts">
-        <option value="Noto Sans Telugu">Noto Sans Telugu</option>
-        <option value="Ramabhadra">Ramabhadra</option>
-        <option value="NTR">NTR</option>
-        <option value="Gurajada">Gurajada</option>
-        <option value="Suranna">Suranna</option>
-        <option value="Pothana2000">Pothana2000</option>
-        <option value="Timmana">Timmana</option>
-        <option value="Mallanna">Mallanna</option>
-        <option value="Tenali Ramakrishna">Tenali Ramakrishna</option>
-        <option value="Sree Krushnadevaraya">Sree Krushnadevaraya</option>
-      </optgroup>
+      <option value="Poppins">Poppins</option>
+      <option value="Roboto">Roboto</option>
+      <option value="Montserrat">Montserrat</option>
     </select>
 
     <button data-style="bold"><b>B</b></button>
@@ -69,9 +46,11 @@ function createToolbar() {
 
   toolbar.style.display = "none";
 
+  // 🔥 DO NOT LOSE SELECTION
   toolbar.addEventListener("mousedown", e => e.preventDefault());
-  toolbar.addEventListener("input", onChange);
-  toolbar.addEventListener("click", onClick);
+
+  toolbar.addEventListener("input", handleInput);
+  toolbar.addEventListener("click", handleClick);
 }
 
 /* ===============================
@@ -84,60 +63,26 @@ function attachToolbar(blockEl) {
 }
 
 /* ===============================
-   APPLY STYLES (DOWNLOAD LOGIC FIXED)
+   ROOT STYLE APPLY (ONLY ROOT)
 ================================ */
-function applyStylesToElement(blockEl, style = {}) {
+function applyBlockStyles(blockEl, style = {}) {
   if (!blockEl) return;
 
-  applyStyle(blockEl, style);
-
-  blockEl.querySelectorAll("*").forEach(el => {
-    applyStyle(el, style);
-  });
-}
-
-function applyStyle(el, style) {
-  /* FONT SIZE – ALWAYS APPLY */
-  el.style.fontSize = style.fontSize
-    ? style.fontSize + "px"
-    : "";
-
-  /* TEXT COLOR – ROOT ONLY */
-  if (!el.closest("span")) {
-    el.style.color = style.color || "";
+  if (style.fontSize) {
+    blockEl.style.fontSize = style.fontSize + "px";
   }
 
-  /* FONT FAMILY */
-  el.style.fontFamily = style.fontFamily
-    ? `"${style.fontFamily}", system-ui, sans-serif`
-    : "";
+  if (style.color) {
+    blockEl.style.color = style.color;
+  }
 
-  el.style.fontWeight = style.bold ? "bold" : "normal";
-  el.style.fontStyle = style.italic ? "italic" : "normal";
-}
+  if (style.fontFamily) {
+    blockEl.style.fontFamily =
+      `"${style.fontFamily}", system-ui, sans-serif`;
+  }
 
-/* ===============================
-   INLINE BACKGROUND
-================================ */
-function applyTextBackground(color) {
-  restoreSelection();
-
-  const sel = window.getSelection();
-  if (!sel || sel.rangeCount === 0) return;
-
-  const range = sel.getRangeAt(0);
-  if (range.collapsed) return;
-
-  const span = document.createElement("span");
-  span.style.backgroundColor = color;
-  span.style.color = "inherit";
-  span.style.fontFamily = "inherit";
-  span.style.fontSize = "inherit";
-
-  try {
-    range.surroundContents(span);
-    sel.removeAllRanges();
-  } catch {}
+  blockEl.style.fontWeight = style.bold ? "bold" : "normal";
+  blockEl.style.fontStyle = style.italic ? "italic" : "normal";
 }
 
 /* ===============================
@@ -162,9 +107,35 @@ function applyInlineColor(color) {
 }
 
 /* ===============================
+   INLINE BACKGROUND
+================================ */
+function applyTextBackground(color) {
+  restoreSelection();
+
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0) return;
+
+  const range = sel.getRangeAt(0);
+  if (range.collapsed) return;
+
+  const span = document.createElement("span");
+  span.style.backgroundColor = color;
+
+  // inherit everything else
+  span.style.color = "inherit";
+  span.style.fontSize = "inherit";
+  span.style.fontFamily = "inherit";
+
+  try {
+    range.surroundContents(span);
+    sel.removeAllRanges();
+  } catch {}
+}
+
+/* ===============================
    INPUT HANDLER
 ================================ */
-function onChange(e) {
+function handleInput(e) {
   const block = getSelectedBlock();
   if (!block) return;
 
@@ -188,7 +159,7 @@ function onChange(e) {
     block.data.style.fontFamily = e.target.value;
   }
 
-  applyStylesToElement(
+  applyBlockStyles(
     getActiveBlockElement(),
     block.data.style
   );
@@ -197,7 +168,7 @@ function onChange(e) {
 /* ===============================
    BUTTON HANDLER
 ================================ */
-function onClick(e) {
+function handleClick(e) {
   const btn = e.target.closest("button");
   if (!btn) return;
 
@@ -214,7 +185,7 @@ function onClick(e) {
     block.data.style.italic = !block.data.style.italic;
   }
 
-  applyStylesToElement(
+  applyBlockStyles(
     getActiveBlockElement(),
     block.data.style
   );
@@ -226,7 +197,9 @@ function onClick(e) {
 function getSelectedBlock() {
   const state = getState();
   const id = getActiveBlock();
-  return state.page?.blocks.find(b => b.id === id && b.type === "text");
+  return state.page?.blocks.find(
+    b => b.id === id && b.type === "text"
+  );
 }
 
 function getActiveBlockElement() {
@@ -256,6 +229,6 @@ document.addEventListener("click", e => {
 
   const block = getSelectedBlock();
   if (block?.data?.style) {
-    applyStylesToElement(blockEl, block.data.style);
+    applyBlockStyles(blockEl, block.data.style);
   }
 });
