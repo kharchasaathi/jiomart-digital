@@ -69,9 +69,7 @@ function createToolbar() {
 
   toolbar.style.display = "none";
 
-  // 🔥 toolbar click should NOT kill selection
   toolbar.addEventListener("mousedown", e => e.preventDefault());
-
   toolbar.addEventListener("input", onChange);
   toolbar.addEventListener("click", onClick);
 }
@@ -86,46 +84,30 @@ function attachToolbar(blockEl) {
 }
 
 /* ===============================
-   APPLY STYLES (FIXED)
+   APPLY STYLES (DOWNLOAD LOGIC FIXED)
 ================================ */
 function applyStylesToElement(blockEl, style = {}) {
   if (!blockEl) return;
 
-  // ✅ ROOT — always apply font size & base color
-  blockEl.style.fontSize = style.fontSize
+  applyStyle(blockEl, style);
+
+  blockEl.querySelectorAll("*").forEach(el => {
+    applyStyle(el, style);
+  });
+}
+
+function applyStyle(el, style) {
+  /* FONT SIZE – ALWAYS APPLY */
+  el.style.fontSize = style.fontSize
     ? style.fontSize + "px"
     : "";
 
-  blockEl.style.color = style.color || "";
-
-  blockEl.style.fontFamily = style.fontFamily
-    ? `"${style.fontFamily}", system-ui, sans-serif`
-    : "";
-
-  blockEl.style.fontWeight = style.bold ? "bold" : "normal";
-  blockEl.style.fontStyle = style.italic ? "italic" : "normal";
-
-  // ✅ INNER — DO NOT override inline spans
-  blockEl.querySelectorAll("*").forEach(el => applyStyle(el, style));
-}
-
-/* ===============================
-   🔥 CRITICAL GUARD LOGIC
-================================ */
-function applyStyle(el, style) {
-  // FONT SIZE → only if inline size NOT set
-  if (!el.style.fontSize) {
-    el.style.fontSize = style.fontSize
-      ? style.fontSize + "px"
-      : "";
-  }
-
-  // TEXT COLOR → only if inline color NOT set
-  if (!el.style.color) {
+  /* TEXT COLOR – ROOT ONLY */
+  if (!el.closest("span")) {
     el.style.color = style.color || "";
   }
 
-  // FONT FAMILY safe to apply
+  /* FONT FAMILY */
   el.style.fontFamily = style.fontFamily
     ? `"${style.fontFamily}", system-ui, sans-serif`
     : "";
@@ -135,7 +117,7 @@ function applyStyle(el, style) {
 }
 
 /* ===============================
-   INLINE TEXT BACKGROUND
+   INLINE BACKGROUND
 ================================ */
 function applyTextBackground(color) {
   restoreSelection();
@@ -148,13 +130,9 @@ function applyTextBackground(color) {
 
   const span = document.createElement("span");
   span.style.backgroundColor = color;
-
-  // 🔒 inherit everything else
   span.style.color = "inherit";
   span.style.fontFamily = "inherit";
   span.style.fontSize = "inherit";
-  span.style.fontWeight = "inherit";
-  span.style.fontStyle = "inherit";
 
   try {
     range.surroundContents(span);
@@ -210,7 +188,10 @@ function onChange(e) {
     block.data.style.fontFamily = e.target.value;
   }
 
-  applyStylesToElement(getActiveBlockElement(), block.data.style);
+  applyStylesToElement(
+    getActiveBlockElement(),
+    block.data.style
+  );
 }
 
 /* ===============================
@@ -227,15 +208,16 @@ function onClick(e) {
 
   if (btn.dataset.style === "bold") {
     block.data.style.bold = !block.data.style.bold;
-    btn.classList.toggle("active", block.data.style.bold);
   }
 
   if (btn.dataset.style === "italic") {
     block.data.style.italic = !block.data.style.italic;
-    btn.classList.toggle("active", block.data.style.italic);
   }
 
-  applyStylesToElement(getActiveBlockElement(), block.data.style);
+  applyStylesToElement(
+    getActiveBlockElement(),
+    block.data.style
+  );
 }
 
 /* ===============================
@@ -255,12 +237,11 @@ function getActiveBlockElement() {
 }
 
 /* ===============================
-   SAVE SELECTION
+   SELECTION SAVE
 ================================ */
 document.addEventListener("mouseup", e => {
-  const blockEl = e.target.closest(".cms-text-block.editable");
-  if (!blockEl || !getState().adminMode) return;
-  saveSelection();
+  const el = e.target.closest(".cms-text-block.editable");
+  if (el && getState().adminMode) saveSelection();
 });
 
 /* ===============================
