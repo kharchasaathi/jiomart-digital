@@ -1,10 +1,10 @@
 /***************************************************
- * ADMIN TEXT TOOLBAR â€“ FINAL (BLOCK ATTACHED)
- * âœ” Toolbar appears BELOW active TEXT block
- * âœ” NO floating / NO absolute
- * âœ” SAME behaviour as OLD BACKUP
- * âœ” LOGIC FIXED â€“ styles APPLY LIVE
- * âœ” 10 English + 10 Telugu fonts
+ * ADMIN TEXT TOOLBAR – FINAL (BLOCK ATTACHED)
+ * ✔ Toolbar appears BELOW active TEXT block
+ * ✔ NO floating / NO absolute
+ * ✔ SAME behaviour as OLD BACKUP
+ * ✔ LOGIC FIXED – styles APPLY LIVE
+ * ✔ 10 English + 10 Telugu fonts
  ***************************************************/
 
 import { getActiveBlock, getState } from "../core/state.js";
@@ -22,7 +22,6 @@ function createToolbar() {
 
   toolbar.innerHTML = `
     <input type="number" min="10" max="80" title="Font size" />
-
     <input type="color" title="Text color" />
 
     <select title="Font family">
@@ -60,7 +59,6 @@ function createToolbar() {
   `;
 
   toolbar.style.display = "none";
-
   toolbar.addEventListener("input", onChange);
   toolbar.addEventListener("click", onClick);
 }
@@ -71,30 +69,23 @@ function createToolbar() {
 function attachToolbar(blockEl) {
   if (!toolbar || !blockEl) return;
 
-  toolbar.remove();          // remove from previous block
-  blockEl.after(toolbar);    // attach BELOW active block
+  toolbar.remove();
+  blockEl.after(toolbar);
   toolbar.style.display = "flex";
 }
 
 /* ===============================
-   ðŸ”¥ APPLY STYLES (ROOT + INNER)
-   âœ… THIS IS THE CRITICAL FIX
+   🔥 APPLY STYLES (ROOT + INNER)
 ================================ */
 function applyStylesToElement(blockEl, style = {}) {
   if (!blockEl) return;
 
-  // Apply to ROOT
   applyStyle(blockEl, style);
-
-  // Apply to INNER elements (p, span, etc)
   blockEl.querySelectorAll("*").forEach(el => {
     applyStyle(el, style);
   });
 }
 
-/* ===============================
-   APPLY STYLE TO SINGLE ELEMENT
-================================ */
 function applyStyle(el, style) {
   el.style.fontSize = style.fontSize
     ? style.fontSize + "px"
@@ -102,7 +93,6 @@ function applyStyle(el, style) {
 
   el.style.color = style.color || "";
 
-  // ðŸ”¥ FONT FAMILY FIX (spaces safe)
   el.style.fontFamily = style.fontFamily
     ? `"${style.fontFamily}", system-ui, sans-serif`
     : "";
@@ -112,7 +102,7 @@ function applyStyle(el, style) {
 }
 
 /* ===============================
-   APPLY STYLES â€“ INPUTS
+   APPLY STYLES – INPUTS
 ================================ */
 function onChange(e) {
   const block = getSelectedBlock();
@@ -132,14 +122,15 @@ function onChange(e) {
     block.data.style.fontFamily = e.target.value;
   }
 
-  applyStylesToElement(
-    getActiveBlockElement(),
-    block.data.style
-  );
+  /* 🔥 FIX #1 — FORCE FOCUS */
+  const el = getActiveBlockElement();
+  if (el) el.focus();
+
+  applyStylesToElement(el, block.data.style);
 }
 
 /* ===============================
-   APPLY STYLES â€“ BUTTONS
+   APPLY STYLES – BUTTONS
 ================================ */
 function onClick(e) {
   const btn = e.target.closest("button");
@@ -160,10 +151,11 @@ function onClick(e) {
     btn.classList.toggle("active", block.data.style.italic);
   }
 
-  applyStylesToElement(
-    getActiveBlockElement(),
-    block.data.style
-  );
+  /* 🔥 FIX #2 — FORCE FOCUS */
+  const el = getActiveBlockElement();
+  if (el) el.focus();
+
+  applyStylesToElement(el, block.data.style);
 }
 
 /* ===============================
