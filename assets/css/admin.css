@@ -1,3 +1,8 @@
+/* 🔥 Allow block background override */
+body.admin-mode .cms-block {
+  background: transparent !important;
+}
+
 /* ===============================
    ADMIN BAR
 ================================ */
