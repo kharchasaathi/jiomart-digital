@@ -150,3 +150,26 @@ body.admin-mode {
   font-size: 13px;
   cursor: pointer;
 }
+
+/* =================================================
+   🟢 PAGE STYLE TOOLBAR (STEP 1 – NEW ADDITION)
+   ✔ Page background color
+   ✔ Admin only
+================================================== */
+
+.page-style-toolbar {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 10px;
+  z-index: 9999;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.page-style-title {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
