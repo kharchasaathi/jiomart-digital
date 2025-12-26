@@ -90,24 +90,23 @@ function attachToolbar(blockEl) {
 function applyStyles(blockEl, style = {}) {
   if (!blockEl) return;
 
+  // TEXT (root + children)
   applyTextStyle(blockEl, style);
   blockEl.querySelectorAll("*").forEach(el => {
     applyTextStyle(el, style);
   });
 
-  /* 🔥 TEXT BLOCK BACKGROUND (REAL FIX) */
+  /* 🔥 TEXT BLOCK BACKGROUND – REAL FIX */
   const wrapper = blockEl.closest(".cms-block-wrapper");
 
   if (wrapper && style.backgroundColor) {
-    wrapper.style.setProperty(
-      "background",
-      style.backgroundColor,
-      "important"
-    );
-    wrapper.style.padding = "16px";
+    wrapper.classList.add("has-bg");
+    wrapper.style.setProperty("--block-bg", style.backgroundColor);
+    wrapper.style.padding = "12px";
     wrapper.style.borderRadius = "8px";
   } else if (wrapper) {
-    wrapper.style.removeProperty("background");
+    wrapper.classList.remove("has-bg");
+    wrapper.style.removeProperty("--block-bg");
   }
 }
 
