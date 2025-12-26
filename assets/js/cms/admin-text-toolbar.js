@@ -12,6 +12,22 @@ import { getActiveBlock, getState } from "../core/state.js";
 let toolbar = null;
 
 /* ===============================
+   🔥 FORCE REPAINT (CRITICAL FIX)
+   contentEditable repaint bug fix
+================================ */
+function forceRepaint(el) {
+  if (!el) return;
+
+  if (el.isContentEditable) {
+    el.contentEditable = "false";
+    // force browser reflow
+    el.offsetHeight;
+    el.contentEditable = "true";
+    el.focus();
+  }
+}
+
+/* ===============================
    CREATE TOOLBAR (ONCE)
 ================================ */
 function createToolbar() {
@@ -122,11 +138,12 @@ function onChange(e) {
     block.data.style.fontFamily = e.target.value;
   }
 
-  /* 🔥 FIX #1 — FORCE FOCUS */
   const el = getActiveBlockElement();
-  if (el) el.focus();
 
   applyStylesToElement(el, block.data.style);
+
+  // 🔥 REAL FIX – repaint immediately
+  forceRepaint(el);
 }
 
 /* ===============================
@@ -151,11 +168,12 @@ function onClick(e) {
     btn.classList.toggle("active", block.data.style.italic);
   }
 
-  /* 🔥 FIX #2 — FORCE FOCUS */
   const el = getActiveBlockElement();
-  if (el) el.focus();
 
   applyStylesToElement(el, block.data.style);
+
+  // 🔥 REAL FIX – repaint immediately
+  forceRepaint(el);
 }
 
 /* ===============================
@@ -193,5 +211,6 @@ document.addEventListener("click", e => {
   const block = getSelectedBlock();
   if (block?.data?.style) {
     applyStylesToElement(blockEl, block.data.style);
+    forceRepaint(blockEl);
   }
 });
