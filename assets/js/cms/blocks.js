@@ -10,7 +10,7 @@
 
 import { getState, setActiveBlock } from "../core/state.js";
 import { savePage } from "./page-store.js";
-import { uploadImage } from "./media-upload.js";
+import { uploadImage } from "./media-upload.js"; // 🔥 REQUIRED
 
 let activeBlockId = null;
 
@@ -55,11 +55,10 @@ export function renderBlocks(container) {
 }
 
 /* ===============================
-   TEXT BLOCK (FINAL SAFE)
+   TEXT BLOCK (UNCHANGED)
 ================================ */
 function renderTextBlock(block) {
   const blockEl = document.createElement("div");
-
   blockEl.className = "cms-text-block cms-block block-text";
 
   block.data ||= {};
@@ -67,12 +66,9 @@ function renderTextBlock(block) {
   block.data.style ||= {};
 
   blockEl.innerHTML = block.data.html;
-
   applyTextStyles(blockEl, block.data.style);
 
-  const state = getState();
-
-  if (state.adminMode) {
+  if (getState().adminMode) {
     blockEl.contentEditable = "true";
     blockEl.classList.add("editable");
 
@@ -93,7 +89,7 @@ function renderTextBlock(block) {
 }
 
 /* ===============================
-   APPLY TEXT STYLES
+   APPLY TEXT STYLES (UNCHANGED)
 ================================ */
 function applyTextStyles(el, style = {}) {
   el.style.fontSize = style.fontSize
@@ -107,7 +103,8 @@ function applyTextStyles(el, style = {}) {
 }
 
 /* ===============================
-   IMAGE BLOCK (PHASE-1 UPLOAD)
+   IMAGE BLOCK (PHASE-1 – FIXED)
+   🔥 ONLY THIS PART CHANGED
 ================================ */
 function renderImageBlock(block) {
   const div = document.createElement("div");
@@ -115,15 +112,15 @@ function renderImageBlock(block) {
 
   block.data ||= {};
 
-  /* IMAGE PREVIEW OR PLACEHOLDER */
-  div.innerHTML = block.data.src
-    ? `<img src="${block.data.src}" />`
-    : `<div class="media-placeholder">🖼 Upload Image</div>`;
+  /* IMAGE EXISTS */
+  if (block.data.src) {
+    div.innerHTML = `<img src="${block.data.src}" />`;
+  } else {
+    div.innerHTML = `<div class="media-placeholder">🖼 Upload Image</div>`;
+  }
 
-  const state = getState();
-
-  if (state.adminMode) {
-    /* FILE INPUT */
+  /* ADMIN MODE – UPLOAD */
+  if (getState().adminMode) {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
@@ -139,7 +136,6 @@ function renderImageBlock(block) {
       if (!url) return;
 
       block.data.src = url;
-
       div.innerHTML = `<img src="${url}" />`;
       div.appendChild(input);
     };
@@ -156,7 +152,7 @@ function renderImageBlock(block) {
 }
 
 /* ===============================
-   VIDEO BLOCK
+   VIDEO BLOCK (UNCHANGED)
 ================================ */
 function renderVideoBlock(block) {
   const div = document.createElement("div");
@@ -195,7 +191,6 @@ export function addBlock(type) {
   setActiveBlock(newBlock.id);
 
   document.dispatchEvent(new Event("cms-rerender"));
-  console.log("➕ Block added:", type);
 }
 
 /* ===============================
