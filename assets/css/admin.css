@@ -178,3 +178,18 @@ body.admin-mode {
   font-weight: bold;
   margin-bottom: 6px;
 }
+
+/* =================================================
+   🔥 TEXT BLOCK BACKGROUND – FINAL OVERRIDE FIX
+   (DO NOT MOVE THIS – MUST BE LAST)
+================================================== */
+
+/* Allow wrapper background to show */
+body.admin-mode .cms-block-wrapper {
+  background: transparent !important;
+}
+
+/* Actual text block background */
+body.admin-mode .cms-block-wrapper.has-bg {
+  background: var(--block-bg) !important;
+}
