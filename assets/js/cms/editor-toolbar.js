@@ -1,9 +1,10 @@
 /***************************************************
- * EDITOR TOOLBAR – CLEANED (TEXT TOOLBAR REMOVED)
- * ✔ Floating text toolbar COMPLETELY DISABLED
- * ✔ Safe admin state sync preserved
- * ✔ No selection / execCommand / positioning
+ * EDITOR TOOLBAR – CLEANED + PAGE BG BUTTON (STEP-2)
+ * ✔ Text toolbar handled elsewhere
+ * ✔ Page background color (per-page)
  ***************************************************/
+
+import { getState } from "../core/state.js";
 
 let toolbar = null;
 
@@ -19,20 +20,67 @@ document.addEventListener("ADMIN_STATE_CHANGED", e => {
     admin
   );
 
-  // SAFETY: remove any leftover toolbar if exists
   if (!admin && toolbar) {
     toolbar.remove();
     toolbar = null;
   }
+
+  if (admin) {
+    initEditorToolbar();
+  }
 });
 
 /* ===============================
-   NOTE
-================================
-❌ Floating text toolbar REMOVED
-❌ Selection based editor REMOVED
-❌ execCommand REMOVED
-
-✅ Block-attached text toolbar is handled ONLY by:
-   admin-text-toolbar.js
+   INIT EDITOR TOOLBAR
 ================================ */
+function initEditorToolbar() {
+  if (toolbar) return;
+
+  toolbar = document.createElement("div");
+  toolbar.className = "editor-toolbar";
+  toolbar.style.display = "flex";
+  toolbar.style.gap = "8px";
+
+  /* 🎨 PAGE BG BUTTON */
+  const pageBgBtn = document.createElement("button");
+  pageBgBtn.textContent = "🎨 Page BG";
+
+  const colorInput = document.createElement("input");
+  colorInput.type = "color";
+  colorInput.style.display = "none";
+
+  pageBgBtn.onclick = () => {
+    colorInput.click();
+  };
+
+  colorInput.oninput = e => {
+    const state = getState();
+    if (!state.page) return;
+
+    state.page.style ||= {};
+    state.page.style.backgroundColor = e.target.value;
+
+    applyPageBackground(e.target.value);
+  };
+
+  toolbar.appendChild(pageBgBtn);
+  toolbar.appendChild(colorInput);
+
+  document.body.appendChild(toolbar);
+
+  /* LOAD SAVED VALUE */
+  const state = getState();
+  if (state.page?.style?.backgroundColor) {
+    applyPageBackground(state.page.style.backgroundColor);
+  }
+}
+
+/* ===============================
+   APPLY PAGE BACKGROUND
+================================ */
+function applyPageBackground(color) {
+  const pageRoot =
+    document.getElementById("pageRoot") || document.body;
+
+  pageRoot.style.backgroundColor = color;
+}
