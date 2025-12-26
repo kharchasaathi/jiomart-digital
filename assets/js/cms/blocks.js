@@ -5,10 +5,12 @@
  * ✔ NO re-render while typing
  * ✔ Cursor / Enter / Selection SAFE
  * ✔ Toolbar + Fonts + Telugu fully working
+ * ✔ Image upload (Phase-1 direct)
  ***************************************************/
 
 import { getState, setActiveBlock } from "../core/state.js";
 import { savePage } from "./page-store.js";
+import { uploadImage } from "./media-upload.js";
 
 let activeBlockId = null;
 
@@ -58,7 +60,6 @@ export function renderBlocks(container) {
 function renderTextBlock(block) {
   const blockEl = document.createElement("div");
 
-  /* 🔥 REQUIRED CLASSES */
   blockEl.className = "cms-text-block cms-block block-text";
 
   block.data ||= {};
@@ -67,7 +68,6 @@ function renderTextBlock(block) {
 
   blockEl.innerHTML = block.data.html;
 
-  /* ✅ APPLY SAVED STYLES */
   applyTextStyles(blockEl, block.data.style);
 
   const state = getState();
@@ -84,7 +84,6 @@ function renderTextBlock(block) {
     blockEl.addEventListener("focus", activate);
     blockEl.addEventListener("click", activate);
 
-    /* 🔥 LIVE HTML UPDATE (NO RERENDER) */
     blockEl.addEventListener("input", () => {
       block.data.html = blockEl.innerHTML;
     });
@@ -94,11 +93,9 @@ function renderTextBlock(block) {
 }
 
 /* ===============================
-   APPLY TEXT STYLES (CORE FIX)
+   APPLY TEXT STYLES
 ================================ */
 function applyTextStyles(el, style = {}) {
-  if (!style) return;
-
   el.style.fontSize = style.fontSize
     ? style.fontSize + "px"
     : "";
@@ -110,17 +107,45 @@ function applyTextStyles(el, style = {}) {
 }
 
 /* ===============================
-   IMAGE BLOCK
+   IMAGE BLOCK (PHASE-1 UPLOAD)
 ================================ */
 function renderImageBlock(block) {
   const div = document.createElement("div");
   div.className = "cms-image-block cms-block";
 
-  div.innerHTML = block.data?.src
-    ? `<img src="${block.data.src}" />`
-    : `<div class="media-placeholder">🖼 Image Block</div>`;
+  block.data ||= {};
 
-  if (getState().adminMode) {
+  /* IMAGE PREVIEW OR PLACEHOLDER */
+  div.innerHTML = block.data.src
+    ? `<img src="${block.data.src}" />`
+    : `<div class="media-placeholder">🖼 Upload Image</div>`;
+
+  const state = getState();
+
+  if (state.adminMode) {
+    /* FILE INPUT */
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.style.marginTop = "10px";
+
+    input.onchange = async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      div.innerHTML = "⏳ Uploading image...";
+
+      const url = await uploadImage(file);
+      if (!url) return;
+
+      block.data.src = url;
+
+      div.innerHTML = `<img src="${url}" />`;
+      div.appendChild(input);
+    };
+
+    div.appendChild(input);
+
     div.addEventListener("click", () => {
       activeBlockId = block.id;
       setActiveBlock(block.id);
@@ -169,9 +194,7 @@ export function addBlock(type) {
   activeBlockId = newBlock.id;
   setActiveBlock(newBlock.id);
 
-  /* 🔥 SAFE RERENDER ONLY ON ADD */
   document.dispatchEvent(new Event("cms-rerender"));
-
   console.log("➕ Block added:", type);
 }
 
