@@ -1,8 +1,8 @@
 /***************************************************
  * ADMIN SESSION – FINAL & STABLE (CMS + EDITOR READY)
  ***************************************************/
-import { onAuthChange } from "../../core/firebase.js";
-import { setAdminMode } from "../../core/state.js";
+import { onAuthChange } from "/jiomart-digital/assets/js/core/firebase.js";
+import { setAdminMode } from "/jiomart-digital/assets/js/core/state.js";
 
 const ADMIN_EMAIL = "abidalimohammad94@gmail.com";
 
@@ -14,22 +14,16 @@ onAuthChange(user => {
 
   console.log("🔐 Auth state changed. Admin?", isAdmin);
 
-  /* ===============================
-     GLOBAL ADMIN STATE
-  ================================ */
+  /* GLOBAL ADMIN STATE */
   setAdminMode(isAdmin);
 
-  /* ===============================
-     BODY FLAG (VERY IMPORTANT)
-  ================================ */
+  /* BODY FLAG */
   document.body.classList.toggle(
     "admin-mode",
     isAdmin
   );
 
-  /* ===============================
-     LOGIN / LOGOUT VISIBILITY
-  ================================ */
+  /* LOGIN / LOGOUT BUTTONS */
   document
     .getElementById("adminLoginBtn")
     ?.classList.toggle("hidden", isAdmin);
@@ -38,9 +32,7 @@ onAuthChange(user => {
     .getElementById("adminLogoutBtn")
     ?.classList.toggle("hidden", !isAdmin);
 
-  /* ===============================
-     PUBLIC CMS AWARENESS
-  ================================ */
+  /* CMS BROADCAST */
   document.dispatchEvent(
     new CustomEvent("ADMIN_STATE_CHANGED", {
       detail: { adminMode: isAdmin }
@@ -52,9 +44,7 @@ onAuthChange(user => {
     isAdmin
   );
 
-  /* ===============================
-     ENABLE INLINE CMS EDITOR
-  ================================ */
+  /* ENABLE EDITOR */
   if (isAdmin) {
     document.dispatchEvent(
       new Event("ENABLE_ADMIN_EDITOR")
