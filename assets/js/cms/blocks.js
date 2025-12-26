@@ -6,11 +6,12 @@
  * ✔ Cursor / Enter / Selection SAFE
  * ✔ Toolbar + Fonts + Telugu fully working
  * ✔ Image upload (Phase-1 direct)
+ * ✔ Video: YouTube + Upload (Phase-1)
  ***************************************************/
 
 import { getState, setActiveBlock } from "../core/state.js";
 import { savePage } from "./page-store.js";
-import { uploadImage } from "./media-upload.js"; // 🔥 REQUIRED
+import { uploadImage, uploadVideo } from "./media-upload.js";
 
 let activeBlockId = null;
 
@@ -35,7 +36,6 @@ export function renderBlocks(container) {
     if (block.type === "image") blockEl = renderImageBlock(block);
     if (block.type === "video") blockEl = renderVideoBlock(block);
 
-    /* ❌ DELETE BUTTON (ADMIN ONLY) */
     if (state.adminMode) {
       const del = document.createElement("button");
       del.className = "block-delete-btn";
@@ -58,44 +58,40 @@ export function renderBlocks(container) {
    TEXT BLOCK (UNCHANGED)
 ================================ */
 function renderTextBlock(block) {
-  const blockEl = document.createElement("div");
-  blockEl.className = "cms-text-block cms-block block-text";
+  const el = document.createElement("div");
+  el.className = "cms-text-block cms-block block-text";
 
   block.data ||= {};
   block.data.html ||= "<p>Edit this content</p>";
   block.data.style ||= {};
 
-  blockEl.innerHTML = block.data.html;
-  applyTextStyles(blockEl, block.data.style);
+  el.innerHTML = block.data.html;
+  applyTextStyles(el, block.data.style);
 
   if (getState().adminMode) {
-    blockEl.contentEditable = "true";
-    blockEl.classList.add("editable");
+    el.contentEditable = "true";
+    el.classList.add("editable");
 
     const activate = () => {
       activeBlockId = block.id;
       setActiveBlock(block.id);
     };
 
-    blockEl.addEventListener("focus", activate);
-    blockEl.addEventListener("click", activate);
-
-    blockEl.addEventListener("input", () => {
-      block.data.html = blockEl.innerHTML;
+    el.addEventListener("focus", activate);
+    el.addEventListener("click", activate);
+    el.addEventListener("input", () => {
+      block.data.html = el.innerHTML;
     });
   }
 
-  return blockEl;
+  return el;
 }
 
 /* ===============================
-   APPLY TEXT STYLES (UNCHANGED)
+   APPLY TEXT STYLES
 ================================ */
 function applyTextStyles(el, style = {}) {
-  el.style.fontSize = style.fontSize
-    ? style.fontSize + "px"
-    : "";
-
+  el.style.fontSize = style.fontSize ? style.fontSize + "px" : "";
   el.style.color = style.color || "";
   el.style.fontFamily = style.fontFamily || "";
   el.style.fontWeight = style.bold ? "bold" : "normal";
@@ -103,8 +99,7 @@ function applyTextStyles(el, style = {}) {
 }
 
 /* ===============================
-   IMAGE BLOCK (PHASE-1 – FIXED)
-   🔥 ONLY THIS PART CHANGED
+   IMAGE BLOCK (UNCHANGED)
 ================================ */
 function renderImageBlock(block) {
   const div = document.createElement("div");
@@ -112,14 +107,10 @@ function renderImageBlock(block) {
 
   block.data ||= {};
 
-  /* IMAGE EXISTS */
-  if (block.data.src) {
-    div.innerHTML = `<img src="${block.data.src}" />`;
-  } else {
-    div.innerHTML = `<div class="media-placeholder">🖼 Upload Image</div>`;
-  }
+  div.innerHTML = block.data.src
+    ? `<img src="${block.data.src}" />`
+    : `<div class="media-placeholder">🖼 Upload Image</div>`;
 
-  /* ADMIN MODE – UPLOAD */
   if (getState().adminMode) {
     const input = document.createElement("input");
     input.type = "file";
@@ -131,7 +122,6 @@ function renderImageBlock(block) {
       if (!file) return;
 
       div.innerHTML = "⏳ Uploading image...";
-
       const url = await uploadImage(file);
       if (!url) return;
 
@@ -152,17 +142,87 @@ function renderImageBlock(block) {
 }
 
 /* ===============================
-   VIDEO BLOCK (UNCHANGED)
+   VIDEO BLOCK (PHASE-1 SAFE)
 ================================ */
 function renderVideoBlock(block) {
   const div = document.createElement("div");
   div.className = "cms-video-block cms-block";
 
-  div.innerHTML = block.data?.src
-    ? `<video controls src="${block.data.src}"></video>`
-    : `<div class="media-placeholder">🎥 Video Block</div>`;
+  block.data ||= {};
+
+  function renderVideo() {
+    if (!block.data.src) {
+      div.innerHTML = `<div class="media-placeholder">🎥 Video Block</div>`;
+      return;
+    }
+
+    if (block.data.type === "youtube") {
+      div.innerHTML = `
+        <iframe
+          src="${block.data.src}"
+          frameborder="0"
+          allowfullscreen
+        ></iframe>`;
+    } else {
+      div.innerHTML = `
+        <video controls src="${block.data.src}"></video>`;
+    }
+  }
+
+  renderVideo();
 
   if (getState().adminMode) {
+    const ytInput = document.createElement("input");
+    ytInput.type = "text";
+    ytInput.placeholder = "Paste YouTube URL";
+    ytInput.style.marginTop = "10px";
+
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "video/mp4";
+    fileInput.style.marginTop = "10px";
+
+    ytInput.onchange = () => {
+      const url = ytInput.value.trim();
+      if (!url) return;
+
+      let id = null;
+      try {
+        id = url.includes("youtu.be")
+          ? url.split("/").pop()
+          : new URL(url).searchParams.get("v");
+      } catch {}
+
+      if (!id) {
+        alert("Invalid YouTube URL");
+        return;
+      }
+
+      block.data.type = "youtube";
+      block.data.src = `https://www.youtube.com/embed/${id}`;
+      renderVideo();
+      div.appendChild(ytInput);
+      div.appendChild(fileInput);
+    };
+
+    fileInput.onchange = async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      div.innerHTML = "⏳ Uploading video...";
+      const url = await uploadVideo(file);
+      if (!url) return;
+
+      block.data.type = "upload";
+      block.data.src = url;
+      renderVideo();
+      div.appendChild(ytInput);
+      div.appendChild(fileInput);
+    };
+
+    div.appendChild(ytInput);
+    div.appendChild(fileInput);
+
     div.addEventListener("click", () => {
       activeBlockId = block.id;
       setActiveBlock(block.id);
@@ -173,46 +233,36 @@ function renderVideoBlock(block) {
 }
 
 /* ===============================
-   ADD BLOCK
+   ADD / DELETE / SAVE (UNCHANGED)
 ================================ */
 export function addBlock(type) {
   const state = getState();
-  const page = state.page;
-  if (!page) return;
+  if (!state.page) return;
 
-  const newBlock = {
+  const block = {
     id: crypto.randomUUID(),
     type,
     data: {}
   };
 
-  page.blocks.push(newBlock);
-  activeBlockId = newBlock.id;
-  setActiveBlock(newBlock.id);
+  state.page.blocks.push(block);
+  activeBlockId = block.id;
+  setActiveBlock(block.id);
 
   document.dispatchEvent(new Event("cms-rerender"));
 }
 
-/* ===============================
-   DELETE BLOCK
-================================ */
 function deleteBlock(id) {
   if (!confirm("Delete this block?")) return;
 
   const state = getState();
-  state.page.blocks = state.page.blocks.filter(
-    b => b.id !== id
-  );
-
+  state.page.blocks = state.page.blocks.filter(b => b.id !== id);
   activeBlockId = null;
   setActiveBlock(null);
 
   document.dispatchEvent(new Event("cms-rerender"));
 }
 
-/* ===============================
-   SAVE PAGE
-================================ */
 document.addEventListener("cms-save", async () => {
   const state = getState();
   await savePage(state.page);
