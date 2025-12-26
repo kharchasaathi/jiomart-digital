@@ -1,10 +1,8 @@
 /***************************************************
  * ADMIN TEXT TOOLBAR – FINAL (BLOCK ATTACHED)
- * ✔ Toolbar appears BELOW active TEXT block
- * ✔ NO floating / NO absolute
- * ✔ SAME behaviour as OLD BACKUP
- * ✔ LOGIC FIXED – styles APPLY LIVE
- * ✔ 10 English + 10 Telugu fonts
+ * ✔ Root + inner text styling preserved
+ * ✔ Text block background color (STEP-3)
+ * ✔ Instant repaint (cursor safe)
  ***************************************************/
 
 import { getActiveBlock, getState } from "../core/state.js";
@@ -13,14 +11,12 @@ let toolbar = null;
 
 /* ===============================
    🔥 FORCE REPAINT (CRITICAL FIX)
-   contentEditable repaint bug fix
 ================================ */
 function forceRepaint(el) {
   if (!el) return;
 
   if (el.isContentEditable) {
     el.contentEditable = "false";
-    // force browser reflow
     el.offsetHeight;
     el.contentEditable = "true";
     el.focus();
@@ -39,6 +35,7 @@ function createToolbar() {
   toolbar.innerHTML = `
     <input type="number" min="10" max="80" title="Font size" />
     <input type="color" title="Text color" />
+    <input type="color" title="Text block background" data-bg />
 
     <select title="Font family">
       <option value="">Default</option>
@@ -80,26 +77,34 @@ function createToolbar() {
 }
 
 /* ===============================
-   ATTACH TOOLBAR BELOW BLOCK
+   ATTACH TOOLBAR
 ================================ */
 function attachToolbar(blockEl) {
-  if (!toolbar || !blockEl) return;
-
   toolbar.remove();
   blockEl.after(toolbar);
   toolbar.style.display = "flex";
 }
 
 /* ===============================
-   🔥 APPLY STYLES (ROOT + INNER)
+   APPLY STYLES (ROOT + INNER)
 ================================ */
 function applyStylesToElement(blockEl, style = {}) {
   if (!blockEl) return;
 
   applyStyle(blockEl, style);
+
   blockEl.querySelectorAll("*").forEach(el => {
     applyStyle(el, style);
   });
+
+  /* ✅ TEXT BLOCK BACKGROUND (ROOT ONLY) */
+  if (style.backgroundColor) {
+    blockEl.style.backgroundColor = style.backgroundColor;
+    blockEl.style.padding = "10px";
+    blockEl.style.borderRadius = "6px";
+  } else {
+    blockEl.style.backgroundColor = "";
+  }
 }
 
 function applyStyle(el, style) {
@@ -118,7 +123,7 @@ function applyStyle(el, style) {
 }
 
 /* ===============================
-   APPLY STYLES – INPUTS
+   INPUT HANDLER
 ================================ */
 function onChange(e) {
   const block = getSelectedBlock();
@@ -130,8 +135,12 @@ function onChange(e) {
     block.data.style.fontSize = Number(e.target.value);
   }
 
-  if (e.target.type === "color") {
+  if (e.target.type === "color" && !e.target.dataset.bg) {
     block.data.style.color = e.target.value;
+  }
+
+  if (e.target.dataset.bg) {
+    block.data.style.backgroundColor = e.target.value;
   }
 
   if (e.target.tagName === "SELECT") {
@@ -139,15 +148,12 @@ function onChange(e) {
   }
 
   const el = getActiveBlockElement();
-
   applyStylesToElement(el, block.data.style);
-
-  // 🔥 REAL FIX – repaint immediately
   forceRepaint(el);
 }
 
 /* ===============================
-   APPLY STYLES – BUTTONS
+   BUTTON HANDLER
 ================================ */
 function onClick(e) {
   const btn = e.target.closest("button");
@@ -160,19 +166,14 @@ function onClick(e) {
 
   if (btn.dataset.style === "bold") {
     block.data.style.bold = !block.data.style.bold;
-    btn.classList.toggle("active", block.data.style.bold);
   }
 
   if (btn.dataset.style === "italic") {
     block.data.style.italic = !block.data.style.italic;
-    btn.classList.toggle("active", block.data.style.italic);
   }
 
   const el = getActiveBlockElement();
-
   applyStylesToElement(el, block.data.style);
-
-  // 🔥 REAL FIX – repaint immediately
   forceRepaint(el);
 }
 
@@ -190,15 +191,13 @@ function getSelectedBlock() {
 
 function getActiveBlockElement() {
   const id = getActiveBlock();
-  if (!id) return null;
-
   return document.querySelector(
     `.cms-block-wrapper[data-block-id="${id}"] .cms-text-block`
   );
 }
 
 /* ===============================
-   BLOCK CLICK LISTENER
+   BLOCK CLICK
 ================================ */
 document.addEventListener("click", e => {
   const blockEl = e.target.closest(".cms-text-block.editable");
