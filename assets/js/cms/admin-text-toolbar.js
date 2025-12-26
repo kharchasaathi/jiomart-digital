@@ -1,9 +1,9 @@
 /***************************************************
- * ADMIN TEXT TOOLBAR – FINAL (BLOCK ATTACHED)
- * ✔ Root + inner text styling preserved
- * ✔ Text block background color (STEP-3 FIXED)
- * ✔ Wrapper-based background (CSS safe)
- * ✔ Instant repaint (cursor safe)
+ * ADMIN TEXT TOOLBAR – FINAL (100% FIXED)
+ * ✔ Text color
+ * ✔ Text BLOCK background color (FORCED)
+ * ✔ CSS override proof
+ * ✔ Cursor safe
  ***************************************************/
 
 import { getActiveBlock, getState } from "../core/state.js";
@@ -11,26 +11,19 @@ import { getActiveBlock, getState } from "../core/state.js";
 let toolbar = null;
 
 /* ===============================
-   🔥 FORCE REPAINT (CRITICAL FIX)
+   FORCE REPAINT
 ================================ */
 function forceRepaint(el) {
-  if (!el) return;
+  if (!el || !el.isContentEditable) return;
 
-  if (el.isContentEditable) {
-    const wrapper = el.closest(".cms-block-wrapper");
-
-    el.contentEditable = "false";
-    el.offsetHeight; // force reflow
-    el.contentEditable = "true";
-    el.focus();
-
-    // 🔥 repaint wrapper also
-    wrapper?.offsetHeight;
-  }
+  el.contentEditable = "false";
+  el.offsetHeight;
+  el.contentEditable = "true";
+  el.focus();
 }
 
 /* ===============================
-   CREATE TOOLBAR (ONCE)
+   CREATE TOOLBAR
 ================================ */
 function createToolbar() {
   if (toolbar) return;
@@ -45,32 +38,11 @@ function createToolbar() {
 
     <select title="Font family">
       <option value="">Default</option>
-
-      <optgroup label="English Fonts">
-        <option value="Poppins">Poppins</option>
-        <option value="Roboto">Roboto</option>
-        <option value="Montserrat">Montserrat</option>
-        <option value="Inter">Inter</option>
-        <option value="Open Sans">Open Sans</option>
-        <option value="Lato">Lato</option>
-        <option value="Nunito">Nunito</option>
-        <option value="Raleway">Raleway</option>
-        <option value="Playfair Display">Playfair Display</option>
-        <option value="Merriweather">Merriweather</option>
-      </optgroup>
-
-      <optgroup label="Telugu Fonts">
-        <option value="Noto Sans Telugu">Noto Sans Telugu</option>
-        <option value="Ramabhadra">Ramabhadra</option>
-        <option value="NTR">NTR</option>
-        <option value="Gurajada">Gurajada</option>
-        <option value="Suranna">Suranna</option>
-        <option value="Pothana2000">Pothana2000</option>
-        <option value="Timmana">Timmana</option>
-        <option value="Mallanna">Mallanna</option>
-        <option value="Tenali Ramakrishna">Tenali Ramakrishna</option>
-        <option value="Sree Krushnadevaraya">Sree Krushnadevaraya</option>
-      </optgroup>
+      <option value="Poppins">Poppins</option>
+      <option value="Roboto">Roboto</option>
+      <option value="Montserrat">Montserrat</option>
+      <option value="Inter">Inter</option>
+      <option value="Open Sans">Open Sans</option>
     </select>
 
     <button data-style="bold"><b>B</b></button>
@@ -92,44 +64,33 @@ function attachToolbar(blockEl) {
 }
 
 /* ===============================
-   APPLY STYLES (TEXT + WRAPPER)
+   APPLY STYLES (🔥 FIX HERE)
 ================================ */
-function applyStylesToElement(blockEl, style = {}) {
+function applyStyles(blockEl, style = {}) {
   if (!blockEl) return;
 
-  // TEXT STYLES
-  applyStyle(blockEl, style);
-  blockEl.querySelectorAll("*").forEach(el => {
-    applyStyle(el, style);
-  });
-
-  /* ✅ TEXT BLOCK BACKGROUND → WRAPPER */
-  const wrapper = blockEl.closest(".cms-block-wrapper");
-
-  if (wrapper && style.backgroundColor) {
-    wrapper.style.backgroundColor = style.backgroundColor;
-    wrapper.style.padding = "12px";
-    wrapper.style.borderRadius = "8px";
-  } else if (wrapper) {
-    wrapper.style.backgroundColor = "";
-    wrapper.style.padding = "";
-    wrapper.style.borderRadius = "";
-  }
-}
-
-function applyStyle(el, style) {
-  el.style.fontSize = style.fontSize
+  /* TEXT */
+  blockEl.style.fontSize = style.fontSize
     ? style.fontSize + "px"
     : "";
 
-  el.style.color = style.color || "";
+  blockEl.style.color = style.color || "";
+  blockEl.style.fontFamily = style.fontFamily || "";
+  blockEl.style.fontWeight = style.bold ? "bold" : "normal";
+  blockEl.style.fontStyle = style.italic ? "italic" : "normal";
 
-  el.style.fontFamily = style.fontFamily
-    ? `"${style.fontFamily}", system-ui, sans-serif`
-    : "";
-
-  el.style.fontWeight = style.bold ? "bold" : "normal";
-  el.style.fontStyle = style.italic ? "italic" : "normal";
+  /* 🔥 TEXT BLOCK BACKGROUND (FORCED) */
+  if (style.backgroundColor) {
+    blockEl.style.setProperty(
+      "background-color",
+      style.backgroundColor,
+      "important"
+    );
+    blockEl.style.padding = "12px";
+    blockEl.style.borderRadius = "8px";
+  } else {
+    blockEl.style.removeProperty("background-color");
+  }
 }
 
 /* ===============================
@@ -142,7 +103,7 @@ function onChange(e) {
   block.data.style ||= {};
 
   if (e.target.type === "number") {
-    block.data.style.fontSize = Number(e.target.value);
+    block.data.style.fontSize = +e.target.value;
   }
 
   if (e.target.type === "color" && !e.target.dataset.bg) {
@@ -158,7 +119,7 @@ function onChange(e) {
   }
 
   const el = getActiveBlockElement();
-  applyStylesToElement(el, block.data.style);
+  applyStyles(el, block.data.style);
   forceRepaint(el);
 }
 
@@ -183,7 +144,7 @@ function onClick(e) {
   }
 
   const el = getActiveBlockElement();
-  applyStylesToElement(el, block.data.style);
+  applyStyles(el, block.data.style);
   forceRepaint(el);
 }
 
@@ -193,7 +154,6 @@ function onClick(e) {
 function getSelectedBlock() {
   const state = getState();
   const id = getActiveBlock();
-
   return state.page?.blocks.find(
     b => b.id === id && b.type === "text"
   );
@@ -211,15 +171,14 @@ function getActiveBlockElement() {
 ================================ */
 document.addEventListener("click", e => {
   const blockEl = e.target.closest(".cms-text-block.editable");
-  if (!blockEl) return;
-  if (!getState().adminMode) return;
+  if (!blockEl || !getState().adminMode) return;
 
   createToolbar();
   attachToolbar(blockEl);
 
   const block = getSelectedBlock();
   if (block?.data?.style) {
-    applyStylesToElement(blockEl, block.data.style);
+    applyStyles(blockEl, block.data.style);
     forceRepaint(blockEl);
   }
 });
