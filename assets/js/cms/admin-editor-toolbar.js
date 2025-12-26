@@ -1,5 +1,9 @@
 /***************************************************
- * ADMIN EDITOR TOOLBAR – FINAL (STABLE + SAFE)
+ * ADMIN EDITOR TOOLBAR – FINAL + PAGE BG (STEP-2)
+ * ✔ Single source toolbar
+ * ✔ Per-page background color
+ * ✔ No floating panels
+ * ✔ Safe admin lifecycle
  ***************************************************/
 import { addBlock } from "./blocks.js";
 import { getState } from "../core/state.js";
@@ -16,7 +20,7 @@ function createToolbar() {
   toolbar.id = "cms-toolbar";
   toolbar.className = "editor-toolbar";
 
-  // 🔥 FORCE VISIBLE POSITION
+  /* FORCE POSITION */
   Object.assign(toolbar.style, {
     position: "fixed",
     bottom: "16px",
@@ -31,13 +35,22 @@ function createToolbar() {
     boxShadow: "0 6px 20px rgba(0,0,0,0.35)"
   });
 
+  /* BUTTONS */
   toolbar.innerHTML = `
     <button data-action="text">➕ Text</button>
     <button data-action="image">🖼 Image</button>
     <button data-action="video">🎥 Video</button>
+    <button data-action="page-bg">🎨 Page BG</button>
     <button data-action="save">💾 Save</button>
   `;
 
+  /* COLOR INPUT (HIDDEN) */
+  const colorInput = document.createElement("input");
+  colorInput.type = "color";
+  colorInput.style.display = "none";
+  toolbar.appendChild(colorInput);
+
+  /* EVENTS */
   toolbar.addEventListener("click", e => {
     const btn = e.target.closest("button");
     if (!btn) return;
@@ -46,15 +59,48 @@ function createToolbar() {
 
     if (action === "save") {
       document.dispatchEvent(new Event("cms-save"));
-    } else {
-      addBlock(action);
+      return;
     }
+
+    if (action === "page-bg") {
+      colorInput.click();
+      return;
+    }
+
+    addBlock(action);
   });
+
+  /* COLOR CHANGE */
+  colorInput.oninput = e => {
+    const state = getState();
+    if (!state.page) return;
+
+    state.page.style ||= {};
+    state.page.style.backgroundColor = e.target.value;
+
+    applyPageBackground(e.target.value);
+  };
 
   document.body.appendChild(toolbar);
   toolbarCreated = true;
 
-  console.log("🧰 Toolbar CREATED & VISIBLE");
+  /* LOAD SAVED COLOR */
+  const state = getState();
+  if (state.page?.style?.backgroundColor) {
+    applyPageBackground(state.page.style.backgroundColor);
+  }
+
+  console.log("🧰 Admin editor toolbar ready (Page BG enabled)");
+}
+
+/* ===============================
+   APPLY PAGE BACKGROUND
+================================ */
+function applyPageBackground(color) {
+  const pageRoot =
+    document.getElementById("pageRoot") || document.body;
+
+  pageRoot.style.backgroundColor = color;
 }
 
 /* ===============================
@@ -63,33 +109,24 @@ function createToolbar() {
 function removeToolbar() {
   document.getElementById("cms-toolbar")?.remove();
   toolbarCreated = false;
-  console.log("🧹 Toolbar REMOVED");
 }
 
 /* ===============================
-   ENABLE ADMIN EDITOR (🔥 IMPORTANT)
+   ENABLE ADMIN EDITOR
 ================================ */
 document.addEventListener("ENABLE_ADMIN_EDITOR", () => {
   const state = getState();
-
   if (!state.adminMode) return;
 
-  console.log("✏️ Admin editor enabled (event)");
-
   document.body.classList.add("admin-mode");
-
-  // slight delay to avoid race condition
   setTimeout(createToolbar, 50);
 });
 
 /* ===============================
-   ADMIN STATE CHANGED (GLOBAL)
+   ADMIN STATE CHANGED
 ================================ */
 document.addEventListener("ADMIN_STATE_CHANGED", e => {
-  const isAdmin =
-    e.detail?.adminMode ?? false;
-
-  console.log("🔔 ADMIN_STATE_CHANGED (toolbar):", isAdmin);
+  const isAdmin = e.detail?.adminMode ?? false;
 
   if (isAdmin) {
     document.body.classList.add("admin-mode");
