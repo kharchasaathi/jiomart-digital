@@ -1,12 +1,10 @@
 /***************************************************
- * ADMIN EDITOR TOOLBAR – FINAL + PAGE BG (FIXED)
- * ✔ Add blocks (Text / Image / Video)
- * ✔ Save
- * ✔ Per-page background color
- * ✔ Page BG DOES NOT affect text blocks
- * ✔ Same architecture (NO regression)
+ * ADMIN EDITOR TOOLBAR â€“ FINAL + PAGE BG (STEP-2)
+ * âœ” Single source toolbar
+ * âœ” Per-page background color
+ * âœ” No floating panels
+ * âœ” Safe admin lifecycle
  ***************************************************/
-
 import { addBlock } from "./blocks.js";
 import { getState } from "../core/state.js";
 
@@ -39,11 +37,11 @@ function createToolbar() {
 
   /* BUTTONS */
   toolbar.innerHTML = `
-    <button data-action="text">➕ Text</button>
-    <button data-action="image">🖼 Image</button>
-    <button data-action="video">🎥 Video</button>
-    <button data-action="page-bg">🎨 Page BG</button>
-    <button data-action="save">💾 Save</button>
+    <button data-action="text">âž• Text</button>
+    <button data-action="image">ðŸ–¼ Image</button>
+    <button data-action="video">ðŸŽ¥ Video</button>
+    <button data-action="page-bg">ðŸŽ¨ Page BG</button>
+    <button data-action="save">ðŸ’¾ Save</button>
   `;
 
   /* COLOR INPUT (HIDDEN) */
@@ -52,7 +50,7 @@ function createToolbar() {
   colorInput.style.display = "none";
   toolbar.appendChild(colorInput);
 
-  /* BUTTON EVENTS */
+  /* EVENTS */
   toolbar.addEventListener("click", e => {
     const btn = e.target.closest("button");
     if (!btn) return;
@@ -72,7 +70,7 @@ function createToolbar() {
     addBlock(action);
   });
 
-  /* PAGE BG CHANGE */
+  /* COLOR CHANGE */
   colorInput.oninput = e => {
     const state = getState();
     if (!state.page) return;
@@ -86,22 +84,21 @@ function createToolbar() {
   document.body.appendChild(toolbar);
   toolbarCreated = true;
 
-  /* APPLY SAVED PAGE BG */
+  /* LOAD SAVED COLOR */
   const state = getState();
   if (state.page?.style?.backgroundColor) {
     applyPageBackground(state.page.style.backgroundColor);
   }
 
-  console.log("🧰 Admin editor toolbar ready (Page BG FIXED)");
+  console.log("ðŸ§° Admin editor toolbar ready (Page BG enabled)");
 }
 
 /* ===============================
-   ✅ APPLY PAGE BACKGROUND (REAL FIX)
-   ⚠️ ONLY pageRoot, NOT body
+   APPLY PAGE BACKGROUND
 ================================ */
 function applyPageBackground(color) {
-  const pageRoot = document.getElementById("pageRoot");
-  if (!pageRoot) return;
+  const pageRoot =
+    document.getElementById("pageRoot") || document.body;
 
   pageRoot.style.backgroundColor = color;
 }
@@ -115,7 +112,7 @@ function removeToolbar() {
 }
 
 /* ===============================
-   ENABLE ADMIN EDITOR (FALLBACK)
+   ENABLE ADMIN EDITOR
 ================================ */
 document.addEventListener("ENABLE_ADMIN_EDITOR", () => {
   const state = getState();
