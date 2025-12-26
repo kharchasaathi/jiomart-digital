@@ -1,10 +1,12 @@
 /***************************************************
- * ADMIN EDITOR TOOLBAR – FINAL + PAGE BG (STEP-2)
- * ✔ Single source toolbar
+ * ADMIN EDITOR TOOLBAR – FINAL + PAGE BG (FIXED)
+ * ✔ Add blocks (Text / Image / Video)
+ * ✔ Save
  * ✔ Per-page background color
- * ✔ No floating panels
- * ✔ Safe admin lifecycle
+ * ✔ Page BG DOES NOT affect text blocks
+ * ✔ Same architecture (NO regression)
  ***************************************************/
+
 import { addBlock } from "./blocks.js";
 import { getState } from "../core/state.js";
 
@@ -50,7 +52,7 @@ function createToolbar() {
   colorInput.style.display = "none";
   toolbar.appendChild(colorInput);
 
-  /* EVENTS */
+  /* BUTTON EVENTS */
   toolbar.addEventListener("click", e => {
     const btn = e.target.closest("button");
     if (!btn) return;
@@ -70,7 +72,7 @@ function createToolbar() {
     addBlock(action);
   });
 
-  /* COLOR CHANGE */
+  /* PAGE BG CHANGE */
   colorInput.oninput = e => {
     const state = getState();
     if (!state.page) return;
@@ -84,21 +86,22 @@ function createToolbar() {
   document.body.appendChild(toolbar);
   toolbarCreated = true;
 
-  /* LOAD SAVED COLOR */
+  /* APPLY SAVED PAGE BG */
   const state = getState();
   if (state.page?.style?.backgroundColor) {
     applyPageBackground(state.page.style.backgroundColor);
   }
 
-  console.log("🧰 Admin editor toolbar ready (Page BG enabled)");
+  console.log("🧰 Admin editor toolbar ready (Page BG FIXED)");
 }
 
 /* ===============================
-   APPLY PAGE BACKGROUND
+   ✅ APPLY PAGE BACKGROUND (REAL FIX)
+   ⚠️ ONLY pageRoot, NOT body
 ================================ */
 function applyPageBackground(color) {
-  const pageRoot =
-    document.getElementById("pageRoot") || document.body;
+  const pageRoot = document.getElementById("pageRoot");
+  if (!pageRoot) return;
 
   pageRoot.style.backgroundColor = color;
 }
@@ -112,7 +115,7 @@ function removeToolbar() {
 }
 
 /* ===============================
-   ENABLE ADMIN EDITOR
+   ENABLE ADMIN EDITOR (FALLBACK)
 ================================ */
 document.addEventListener("ENABLE_ADMIN_EDITOR", () => {
   const state = getState();
