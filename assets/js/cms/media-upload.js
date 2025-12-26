@@ -1,8 +1,9 @@
 /***************************************************
- * MEDIA UPLOAD – IMAGE (PHASE-1)
+ * MEDIA UPLOAD – IMAGE + VIDEO (PHASE-1)
  * ✔ Firebase Storage (CDN)
  * ✔ Uses shared app from core/firebase.js
  * ✔ SAFE for browser (no Node imports)
+ * ✔ Error handled (no silent failures)
  ***************************************************/
 
 import {
@@ -40,6 +41,31 @@ export async function uploadImage(file) {
     return url;
   } catch (err) {
     console.error("❌ Image upload failed", err);
+    return null;
+  }
+}
+
+/* ===============================
+   VIDEO UPLOAD (PHASE-1)
+================================ */
+export async function uploadVideo(file) {
+  try {
+    if (!file) return null;
+
+    const safeName = file.name.replace(/\s+/g, "_");
+    const fileName = `${Date.now()}-${safeName}`;
+
+    const videoRef = ref(
+      storage,
+      `cms/videos/${fileName}`
+    );
+
+    await uploadBytes(videoRef, file);
+    const url = await getDownloadURL(videoRef);
+
+    return url;
+  } catch (err) {
+    console.error("❌ Video upload failed", err);
     return null;
   }
 }
