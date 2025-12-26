@@ -1,7 +1,8 @@
 /***************************************************
  * ADMIN TEXT TOOLBAR – FINAL (BLOCK ATTACHED)
  * ✔ Root + inner text styling preserved
- * ✔ Text block background color (STEP-3)
+ * ✔ Text block background color (STEP-3 FIXED)
+ * ✔ Wrapper-based background (CSS safe)
  * ✔ Instant repaint (cursor safe)
  ***************************************************/
 
@@ -16,10 +17,15 @@ function forceRepaint(el) {
   if (!el) return;
 
   if (el.isContentEditable) {
+    const wrapper = el.closest(".cms-block-wrapper");
+
     el.contentEditable = "false";
-    el.offsetHeight;
+    el.offsetHeight; // force reflow
     el.contentEditable = "true";
     el.focus();
+
+    // 🔥 repaint wrapper also
+    wrapper?.offsetHeight;
   }
 }
 
@@ -86,24 +92,28 @@ function attachToolbar(blockEl) {
 }
 
 /* ===============================
-   APPLY STYLES (ROOT + INNER)
+   APPLY STYLES (TEXT + WRAPPER)
 ================================ */
 function applyStylesToElement(blockEl, style = {}) {
   if (!blockEl) return;
 
+  // TEXT STYLES
   applyStyle(blockEl, style);
-
   blockEl.querySelectorAll("*").forEach(el => {
     applyStyle(el, style);
   });
 
-  /* ✅ TEXT BLOCK BACKGROUND (ROOT ONLY) */
-  if (style.backgroundColor) {
-    blockEl.style.backgroundColor = style.backgroundColor;
-    blockEl.style.padding = "10px";
-    blockEl.style.borderRadius = "6px";
-  } else {
-    blockEl.style.backgroundColor = "";
+  /* ✅ TEXT BLOCK BACKGROUND → WRAPPER */
+  const wrapper = blockEl.closest(".cms-block-wrapper");
+
+  if (wrapper && style.backgroundColor) {
+    wrapper.style.backgroundColor = style.backgroundColor;
+    wrapper.style.padding = "12px";
+    wrapper.style.borderRadius = "8px";
+  } else if (wrapper) {
+    wrapper.style.backgroundColor = "";
+    wrapper.style.padding = "";
+    wrapper.style.borderRadius = "";
   }
 }
 
