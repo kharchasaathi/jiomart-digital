@@ -1,8 +1,8 @@
 /***************************************************
  * ADMIN SESSION – FINAL & STABLE (CMS + EDITOR READY)
  ***************************************************/
-import { onAuthChange } from "../core/firebase.js";
-import { setAdminMode } from "../core/state.js";
+import { onAuthChange } from "../../core/firebase.js";
+import { setAdminMode } from "../../core/state.js";
 
 const ADMIN_EMAIL = "abidalimohammad94@gmail.com";
 
@@ -40,7 +40,6 @@ onAuthChange(user => {
 
   /* ===============================
      PUBLIC CMS AWARENESS
-     (adminKnown FIX)
   ================================ */
   document.dispatchEvent(
     new CustomEvent("ADMIN_STATE_CHANGED", {
@@ -54,13 +53,12 @@ onAuthChange(user => {
   );
 
   /* ===============================
-     🔥 ENABLE INLINE CMS EDITOR
+     ENABLE INLINE CMS EDITOR
   ================================ */
   if (isAdmin) {
     document.dispatchEvent(
       new Event("ENABLE_ADMIN_EDITOR")
     );
-
     console.log("✏️ Admin editor enabled");
   }
 });
