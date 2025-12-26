@@ -1,3 +1,23 @@
+/* =================================================
+   🔥 FINAL SEPARATION FIX (PAGE vs BLOCK)
+================================================== */
+
+/* Page background only */
+#pageRoot {
+  background: var(--page-bg, #fff);
+}
+
+/* Block wrapper default transparent */
+.cms-block-wrapper {
+  background: transparent;
+}
+
+/* Text block background (controlled via JS) */
+.cms-block-wrapper.has-bg {
+  background: var(--block-bg) !important;
+}
+
+
 /* 🔥 Allow block background override */
 body.admin-mode .cms-block {
   background: transparent !important;
@@ -157,9 +177,7 @@ body.admin-mode {
 }
 
 /* =================================================
-   🟢 PAGE STYLE TOOLBAR (STEP 1 – NEW ADDITION)
-   ✔ Page background color
-   ✔ Admin only
+   🟢 PAGE STYLE TOOLBAR (STEP 1)
 ================================================== */
 
 .page-style-toolbar {
@@ -181,7 +199,7 @@ body.admin-mode {
 
 /* =================================================
    🔥 TEXT BLOCK BACKGROUND – FINAL OVERRIDE FIX
-   (DO NOT MOVE THIS – MUST BE LAST)
+   (DO NOT MOVE BELOW THIS)
 ================================================== */
 
 /* Allow wrapper background to show */
