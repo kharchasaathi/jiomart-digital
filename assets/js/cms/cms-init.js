@@ -1,14 +1,14 @@
 /***************************************************
- * CMS INIT – PAGE STYLES + PAGE TOOLBAR
+ * CMS INIT – PAGE STYLES ONLY
+ * ✔ Page styles apply on load
+ * ✔ NO page-style-toolbar
  ***************************************************/
 
 import { applyPageStyles } from "./page-style.js";
-import { initPageStyleToolbar } from "../admin/page-style-toolbar.js";
 
 /* ===============================
    CMS BOOTSTRAP
 ================================ */
 document.addEventListener("DOMContentLoaded", () => {
   applyPageStyles();
-  initPageStyleToolbar();
 });
