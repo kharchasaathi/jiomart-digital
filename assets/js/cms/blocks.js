@@ -53,7 +53,7 @@ export function renderBlocks(container) {
 }
 
 /* ===============================
-   TEXT BLOCK (FULL REHYDRATION)
+   TEXT BLOCK (FULL STYLE REHYDRATION FIX)
 ================================ */
 function renderTextBlock(block, wrapper) {
   const el = document.createElement("div");
@@ -63,13 +63,16 @@ function renderTextBlock(block, wrapper) {
   block.data.html ||= "<p>Edit this content</p>";
   block.data.style ||= {};
 
-  /* TEXT CONTENT */
+  /* CONTENT */
   el.innerHTML = block.data.html;
 
-  /* TEXT STYLES */
+  /* 🔥 APPLY TEXT STYLES (ROOT + CHILDREN) */
   applyTextStyles(el, block.data.style);
+  el.querySelectorAll("*").forEach(child => {
+    applyTextStyles(child, block.data.style);
+  });
 
-  /* 🔥 TEXT BLOCK BACKGROUND (WRAPPER-BASED) */
+  /* 🔥 TEXT BLOCK BACKGROUND */
   if (block.data.style.backgroundColor) {
     wrapper.classList.add("has-bg");
     wrapper.style.setProperty(
