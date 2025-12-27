@@ -1,12 +1,10 @@
 /***************************************************
- * BLOCKS – FINAL STABLE (ADMIN EDIT SAFE)
+ * BLOCKS – FINAL STABLE (PERSISTENCE FIXED)
  * ✔ Text / Image / Video blocks
  * ✔ Admin-only editing
  * ✔ NO re-render while typing
  * ✔ Cursor / Enter / Selection SAFE
- * ✔ Toolbar + Fonts + Telugu fully working
- * ✔ Image upload (Phase-1 direct)
- * ✔ Video: YouTube + Upload (Phase-1)
+ * ✔ Text + Styles + BG fully rehydrated
  ***************************************************/
 
 import { getState, setActiveBlock } from "../core/state.js";
@@ -32,7 +30,7 @@ export function renderBlocks(container) {
     wrapper.style.position = "relative";
 
     let blockEl;
-    if (block.type === "text") blockEl = renderTextBlock(block);
+    if (block.type === "text") blockEl = renderTextBlock(block, wrapper);
     if (block.type === "image") blockEl = renderImageBlock(block);
     if (block.type === "video") blockEl = renderVideoBlock(block);
 
@@ -51,13 +49,13 @@ export function renderBlocks(container) {
     container.appendChild(wrapper);
   });
 
-  console.log("🧱 Blocks rendered");
+  console.log("🧱 Blocks rendered (rehydrated)");
 }
 
 /* ===============================
-   TEXT BLOCK (UNCHANGED)
+   TEXT BLOCK (FULL REHYDRATION)
 ================================ */
-function renderTextBlock(block) {
+function renderTextBlock(block, wrapper) {
   const el = document.createElement("div");
   el.className = "cms-text-block cms-block block-text";
 
@@ -65,8 +63,23 @@ function renderTextBlock(block) {
   block.data.html ||= "<p>Edit this content</p>";
   block.data.style ||= {};
 
+  /* TEXT CONTENT */
   el.innerHTML = block.data.html;
+
+  /* TEXT STYLES */
   applyTextStyles(el, block.data.style);
+
+  /* 🔥 TEXT BLOCK BACKGROUND (WRAPPER-BASED) */
+  if (block.data.style.backgroundColor) {
+    wrapper.classList.add("has-bg");
+    wrapper.style.setProperty(
+      "--block-bg",
+      block.data.style.backgroundColor
+    );
+  } else {
+    wrapper.classList.remove("has-bg");
+    wrapper.style.removeProperty("--block-bg");
+  }
 
   if (getState().adminMode) {
     el.contentEditable = "true";
@@ -79,6 +92,7 @@ function renderTextBlock(block) {
 
     el.addEventListener("focus", activate);
     el.addEventListener("click", activate);
+
     el.addEventListener("input", () => {
       block.data.html = el.innerHTML;
     });
@@ -93,13 +107,15 @@ function renderTextBlock(block) {
 function applyTextStyles(el, style = {}) {
   el.style.fontSize = style.fontSize ? style.fontSize + "px" : "";
   el.style.color = style.color || "";
-  el.style.fontFamily = style.fontFamily || "";
+  el.style.fontFamily = style.fontFamily
+    ? `"${style.fontFamily}", system-ui, sans-serif`
+    : "";
   el.style.fontWeight = style.bold ? "bold" : "normal";
   el.style.fontStyle = style.italic ? "italic" : "normal";
 }
 
 /* ===============================
-   IMAGE BLOCK (UNCHANGED)
+   IMAGE BLOCK (SAFE)
 ================================ */
 function renderImageBlock(block) {
   const div = document.createElement("div");
@@ -142,7 +158,7 @@ function renderImageBlock(block) {
 }
 
 /* ===============================
-   VIDEO BLOCK (PHASE-1 SAFE)
+   VIDEO BLOCK (SAFE)
 ================================ */
 function renderVideoBlock(block) {
   const div = document.createElement("div");
@@ -158,14 +174,9 @@ function renderVideoBlock(block) {
 
     if (block.data.type === "youtube") {
       div.innerHTML = `
-        <iframe
-          src="${block.data.src}"
-          frameborder="0"
-          allowfullscreen
-        ></iframe>`;
+        <iframe src="${block.data.src}" frameborder="0" allowfullscreen></iframe>`;
     } else {
-      div.innerHTML = `
-        <video controls src="${block.data.src}"></video>`;
+      div.innerHTML = `<video controls src="${block.data.src}"></video>`;
     }
   }
 
@@ -233,7 +244,7 @@ function renderVideoBlock(block) {
 }
 
 /* ===============================
-   ADD / DELETE / SAVE (UNCHANGED)
+   ADD / DELETE / SAVE
 ================================ */
 export function addBlock(type) {
   const state = getState();
