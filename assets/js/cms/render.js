@@ -1,10 +1,13 @@
 /***************************************************
- * CMS RENDER – CONTENT ONLY (Phase 4.1 FIXED)
+ * CMS RENDER – CONTENT ONLY (Phase 4.2 FINAL FIX)
+ * ✔ Blocks render
+ * ✔ Page background restored on every render
+ * ✔ No reset on Home click
  ***************************************************/
 
 import { renderBlocks } from "./blocks.js";
 import { getState } from "../core/state.js";
-import "./admin-text-toolbar.js"; // 🔥 LOAD TEXT STYLE TOOLBAR
+import "./admin-text-toolbar.js"; // 🔥 TEXT STYLE TOOLBAR
 
 export function renderPage() {
   console.log("🧩 renderPage() called");
@@ -22,15 +25,26 @@ export function renderPage() {
     return;
   }
 
+  /* ===============================
+     🔥 APPLY PAGE BACKGROUND (CRITICAL)
+  ================================ */
+  if (state.page.style?.backgroundColor) {
+    root.style.backgroundColor = state.page.style.backgroundColor;
+  } else {
+    root.style.backgroundColor = "";
+  }
+
+  /* ===============================
+     RENDER BLOCKS
+  ================================ */
   root.innerHTML = "";
   renderBlocks(root);
 
-  console.log("🧱 Blocks rendered");
+  console.log("🧱 Blocks rendered with page background");
 }
 
 /* =================================================
-   🔥 VERY IMPORTANT
-   Re-render when styles / blocks change
+   🔁 RE-RENDER ON BLOCK / STYLE CHANGE
 ================================================= */
 document.addEventListener("cms-rerender", () => {
   console.log("🔁 cms-rerender received");
