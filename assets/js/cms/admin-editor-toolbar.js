@@ -1,10 +1,11 @@
 /***************************************************
- * ADMIN EDITOR TOOLBAR â€“ FINAL + PAGE BG (STEP-2)
- * âœ” Single source toolbar
- * âœ” Per-page background color
- * âœ” No floating panels
- * âœ” Safe admin lifecycle
+ * ADMIN EDITOR TOOLBAR – FINAL + PAGE BG
+ * ✔ Emoji buttons (UTF-8 safe)
+ * ✔ Page background support
+ * ✔ Single toolbar
+ * ✔ No encoding crash
  ***************************************************/
+
 import { addBlock } from "./blocks.js";
 import { getState } from "../core/state.js";
 
@@ -20,7 +21,6 @@ function createToolbar() {
   toolbar.id = "cms-toolbar";
   toolbar.className = "editor-toolbar";
 
-  /* FORCE POSITION */
   Object.assign(toolbar.style, {
     position: "fixed",
     bottom: "16px",
@@ -28,29 +28,27 @@ function createToolbar() {
     transform: "translateX(-50%)",
     zIndex: "99999",
     background: "#111",
-    padding: "10px",
+    padding: "10px 12px",
     borderRadius: "14px",
     display: "flex",
-    gap: "8px",
+    gap: "10px",
     boxShadow: "0 6px 20px rgba(0,0,0,0.35)"
   });
 
-  /* BUTTONS */
-  toolbar.innerHTML = `
-    <button data-action="text">âž• Text</button>
-    <button data-action="image">ðŸ–¼ Image</button>
-    <button data-action="video">ðŸŽ¥ Video</button>
-    <button data-action="page-bg">ðŸŽ¨ Page BG</button>
-    <button data-action="save">ðŸ’¾ Save</button>
-  `;
+  /* BUTTONS – EMOJIS (SAFE) */
+  toolbar.appendChild(createButton("➕ Text", "text"));
+  toolbar.appendChild(createButton("🖼 Image", "image"));
+  toolbar.appendChild(createButton("🎥 Video", "video"));
+  toolbar.appendChild(createButton("🎨 Page BG", "page-bg"));
+  toolbar.appendChild(createButton("💾 Save", "save"));
 
-  /* COLOR INPUT (HIDDEN) */
+  /* COLOR INPUT */
   const colorInput = document.createElement("input");
   colorInput.type = "color";
   colorInput.style.display = "none";
   toolbar.appendChild(colorInput);
 
-  /* EVENTS */
+  /* BUTTON ACTIONS */
   toolbar.addEventListener("click", e => {
     const btn = e.target.closest("button");
     if (!btn) return;
@@ -70,7 +68,7 @@ function createToolbar() {
     addBlock(action);
   });
 
-  /* COLOR CHANGE */
+  /* PAGE BACKGROUND CHANGE */
   colorInput.oninput = e => {
     const state = getState();
     if (!state.page) return;
@@ -84,21 +82,43 @@ function createToolbar() {
   document.body.appendChild(toolbar);
   toolbarCreated = true;
 
-  /* LOAD SAVED COLOR */
+  /* RESTORE SAVED PAGE BG */
   const state = getState();
   if (state.page?.style?.backgroundColor) {
     applyPageBackground(state.page.style.backgroundColor);
   }
 
-  console.log("ðŸ§° Admin editor toolbar ready (Page BG enabled)");
+  console.log("Admin editor toolbar ready (emoji safe)");
+}
+
+/* ===============================
+   CREATE BUTTON (SAFE)
+================================ */
+function createButton(label, action) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.dataset.action = action;
+  btn.textContent = label;
+
+  Object.assign(btn.style, {
+    background: "#fff",
+    color: "#000",
+    border: "none",
+    borderRadius: "10px",
+    padding: "6px 12px",
+    fontSize: "14px",
+    cursor: "pointer"
+  });
+
+  return btn;
 }
 
 /* ===============================
    APPLY PAGE BACKGROUND
 ================================ */
 function applyPageBackground(color) {
-  const pageRoot =
-    document.getElementById("pageRoot") || document.body;
+  const pageRoot = document.getElementById("pageRoot");
+  if (!pageRoot) return;
 
   pageRoot.style.backgroundColor = color;
 }
