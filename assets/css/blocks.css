@@ -189,12 +189,12 @@ body.admin-mode .cms-video-block:hover {
 }
 
 /* =================================================
-   TABS BLOCK STYLES (NEW ADDITION)
+   TABS BLOCK STYLES (FINAL MERGED)
 ================================================= */
 
 .cms-tabs-block {
   border: 1px solid #ddd;
-  padding: 10px;
+  padding: 12px;
   border-radius: 12px;
   background: #fff;
 }
@@ -202,24 +202,25 @@ body.admin-mode .cms-video-block:hover {
 .tabs-bar {
   display: flex;
   gap: 6px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .tabs-bar button {
+  border: none;
   padding: 6px 12px;
   border-radius: 6px;
-  border: 1px solid #ccc;
-  background: #f5f5f5;
   cursor: pointer;
+  background: #f5f5f5;
 }
 
 .tabs-bar button.active {
   background: #1877f2;
   color: #fff;
-  border-color: #1877f2;
+  font-weight: 600;
 }
 
 .tabs-content .editable {
   min-height: 60px;
+  outline: none;
   cursor: text;
 }
