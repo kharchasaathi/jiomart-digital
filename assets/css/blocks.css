@@ -16,7 +16,7 @@
 }
 
 /* =================================================
-   TEXT BLOCK (🔥 CRITICAL FIX)
+   TEXT BLOCK (CRITICAL FIX)
 ================================================= */
 .cms-text-block {
   pointer-events: auto;
@@ -186,4 +186,40 @@ body.admin-mode .cms-image-block:hover,
 body.admin-mode .cms-video-block:hover {
   outline: 2px dashed var(--site-primary);
   outline-offset: 2px;
+}
+
+/* =================================================
+   TABS BLOCK STYLES (NEW ADDITION)
+================================================= */
+
+.cms-tabs-block {
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.tabs-bar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.tabs-bar button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  cursor: pointer;
+}
+
+.tabs-bar button.active {
+  background: #1877f2;
+  color: #fff;
+  border-color: #1877f2;
+}
+
+.tabs-content .editable {
+  min-height: 60px;
+  cursor: text;
 }
