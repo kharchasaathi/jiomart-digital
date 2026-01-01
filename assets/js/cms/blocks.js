@@ -302,10 +302,40 @@ export function addBlock(type) {
   const state = getState();
   if (!state.page) return;
 
+  let data = {};
+
+  if (type === "text") {
+    data = {
+      html: "<p>Edit text</p>",
+      style: {}
+    };
+  }
+
+  if (type === "image") {
+    data = {};
+  }
+
+  if (type === "video") {
+    data = {};
+  }
+
+  if (type === "tabs") {
+    data = {
+      active: 0,
+      tabs: [
+        {
+          title: "Tab 1",
+          html: "<p>Tab content</p>",
+          style: {}
+        }
+      ]
+    };
+  }
+
   state.page.blocks.push({
     id: crypto.randomUUID(),
     type,
-    data: {}
+    data
   });
 
   document.dispatchEvent(new Event("cms-rerender"));
