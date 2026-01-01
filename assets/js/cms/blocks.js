@@ -1,10 +1,8 @@
 /***************************************************
- * BLOCKS – FINAL STABLE (PERSISTENCE FIXED)
- * ✔ Text / Image / Video blocks
- * ✔ Admin-only editing
- * ✔ NO re-render while typing
+ * BLOCKS – FINAL ALL-IN-ONE (TEXT + IMAGE + VIDEO + TABS)
+ * ✔ Full persistence
+ * ✔ No rerender while typing
  * ✔ Cursor / Enter / Selection SAFE
- * ✔ Text + Styles + BG fully rehydrated
  ***************************************************/
 
 import { getState, setActiveBlock } from "../core/state.js";
@@ -33,6 +31,7 @@ export function renderBlocks(container) {
     if (block.type === "text") blockEl = renderTextBlock(block, wrapper);
     if (block.type === "image") blockEl = renderImageBlock(block);
     if (block.type === "video") blockEl = renderVideoBlock(block);
+    if (block.type === "tabs") blockEl = renderTabsBlock(block);
 
     if (state.adminMode) {
       const del = document.createElement("button");
@@ -48,37 +47,29 @@ export function renderBlocks(container) {
     wrapper.appendChild(blockEl);
     container.appendChild(wrapper);
   });
-
-  console.log("🧱 Blocks rendered (rehydrated)");
 }
 
 /* ===============================
-   TEXT BLOCK (FULL STYLE REHYDRATION FIX)
+   TEXT BLOCK (FULL REHYDRATION)
 ================================ */
 function renderTextBlock(block, wrapper) {
   const el = document.createElement("div");
-  el.className = "cms-text-block cms-block block-text";
+  el.className = "cms-text-block cms-block block-text editable";
 
   block.data ||= {};
   block.data.html ||= "<p>Edit this content</p>";
   block.data.style ||= {};
 
-  /* CONTENT */
   el.innerHTML = block.data.html;
 
-  /* 🔥 APPLY TEXT STYLES (ROOT + CHILDREN) */
   applyTextStyles(el, block.data.style);
-  el.querySelectorAll("*").forEach(child => {
-    applyTextStyles(child, block.data.style);
-  });
+  el.querySelectorAll("*").forEach(child =>
+    applyTextStyles(child, block.data.style)
+  );
 
-  /* 🔥 TEXT BLOCK BACKGROUND */
   if (block.data.style.backgroundColor) {
     wrapper.classList.add("has-bg");
-    wrapper.style.setProperty(
-      "--block-bg",
-      block.data.style.backgroundColor
-    );
+    wrapper.style.setProperty("--block-bg", block.data.style.backgroundColor);
   } else {
     wrapper.classList.remove("has-bg");
     wrapper.style.removeProperty("--block-bg");
@@ -86,7 +77,6 @@ function renderTextBlock(block, wrapper) {
 
   if (getState().adminMode) {
     el.contentEditable = "true";
-    el.classList.add("editable");
 
     const activate = () => {
       activeBlockId = block.id;
@@ -95,7 +85,6 @@ function renderTextBlock(block, wrapper) {
 
     el.addEventListener("focus", activate);
     el.addEventListener("click", activate);
-
     el.addEventListener("input", () => {
       block.data.html = el.innerHTML;
     });
@@ -105,20 +94,78 @@ function renderTextBlock(block, wrapper) {
 }
 
 /* ===============================
-   APPLY TEXT STYLES
+   TABS BLOCK (NEW – SAFE)
 ================================ */
-function applyTextStyles(el, style = {}) {
-  el.style.fontSize = style.fontSize ? style.fontSize + "px" : "";
-  el.style.color = style.color || "";
-  el.style.fontFamily = style.fontFamily
-    ? `"${style.fontFamily}", system-ui, sans-serif`
-    : "";
-  el.style.fontWeight = style.bold ? "bold" : "normal";
-  el.style.fontStyle = style.italic ? "italic" : "normal";
+function renderTabsBlock(block) {
+  block.data ||= {
+    active: 0,
+    tabs: [
+      { title: "Tab 1", html: "<p>Tab content</p>", style: {} }
+    ]
+  };
+
+  const root = document.createElement("div");
+  root.className = "cms-tabs-block cms-block";
+
+  const tabsBar = document.createElement("div");
+  tabsBar.className = "tabs-bar";
+
+  const content = document.createElement("div");
+  content.className = "tabs-content";
+
+  block.data.tabs.forEach((tab, i) => {
+    const btn = document.createElement("button");
+    btn.textContent = tab.title;
+    btn.className = i === block.data.active ? "active" : "";
+    btn.onclick = () => {
+      block.data.active = i;
+      document.dispatchEvent(new Event("cms-rerender"));
+    };
+    tabsBar.appendChild(btn);
+  });
+
+  if (getState().adminMode) {
+    const addBtn = document.createElement("button");
+    addBtn.textContent = "+";
+    addBtn.onclick = () => {
+      block.data.tabs.push({
+        title: "New Tab",
+        html: "<p>New content</p>",
+        style: {}
+      });
+      block.data.active = block.data.tabs.length - 1;
+      document.dispatchEvent(new Event("cms-rerender"));
+    };
+    tabsBar.appendChild(addBtn);
+  }
+
+  const activeTab = block.data.tabs[block.data.active];
+  const editable = document.createElement("div");
+  editable.className = "editable";
+  editable.contentEditable = getState().adminMode;
+  editable.innerHTML = activeTab.html;
+
+  applyTextStyles(editable, activeTab.style);
+  editable.querySelectorAll("*").forEach(c =>
+    applyTextStyles(c, activeTab.style)
+  );
+
+  editable.onfocus = () => {
+    activeBlockId = block.id;
+    setActiveBlock(block.id);
+  };
+  editable.oninput = () => (activeTab.html = editable.innerHTML);
+
+  content.appendChild(editable);
+
+  root.appendChild(tabsBar);
+  root.appendChild(content);
+
+  return root;
 }
 
 /* ===============================
-   IMAGE BLOCK (SAFE)
+   IMAGE BLOCK (UNCHANGED & SAFE)
 ================================ */
 function renderImageBlock(block) {
   const div = document.createElement("div");
@@ -128,7 +175,7 @@ function renderImageBlock(block) {
 
   div.innerHTML = block.data.src
     ? `<img src="${block.data.src}" />`
-    : `<div class="media-placeholder">🖼 Upload Image</div>`;
+    : `<div class="media-placeholder">Upload Image</div>`;
 
   if (getState().adminMode) {
     const input = document.createElement("input");
@@ -140,13 +187,12 @@ function renderImageBlock(block) {
       const file = e.target.files[0];
       if (!file) return;
 
-      div.innerHTML = "⏳ Uploading image...";
+      div.innerHTML = "Uploading image...";
       const url = await uploadImage(file);
       if (!url) return;
 
       block.data.src = url;
-      div.innerHTML = `<img src="${url}" />`;
-      div.appendChild(input);
+      document.dispatchEvent(new Event("cms-rerender"));
     };
 
     div.appendChild(input);
@@ -161,7 +207,7 @@ function renderImageBlock(block) {
 }
 
 /* ===============================
-   VIDEO BLOCK (SAFE)
+   VIDEO BLOCK (FULL RESTORED)
 ================================ */
 function renderVideoBlock(block) {
   const div = document.createElement("div");
@@ -171,16 +217,14 @@ function renderVideoBlock(block) {
 
   function renderVideo() {
     if (!block.data.src) {
-      div.innerHTML = `<div class="media-placeholder">🎥 Video Block</div>`;
+      div.innerHTML = `<div class="media-placeholder">Video Block</div>`;
       return;
     }
 
-    if (block.data.type === "youtube") {
-      div.innerHTML = `
-        <iframe src="${block.data.src}" frameborder="0" allowfullscreen></iframe>`;
-    } else {
-      div.innerHTML = `<video controls src="${block.data.src}"></video>`;
-    }
+    div.innerHTML =
+      block.data.type === "youtube"
+        ? `<iframe src="${block.data.src}" frameborder="0" allowfullscreen></iframe>`
+        : `<video controls src="${block.data.src}"></video>`;
   }
 
   renderVideo();
@@ -207,31 +251,23 @@ function renderVideoBlock(block) {
           : new URL(url).searchParams.get("v");
       } catch {}
 
-      if (!id) {
-        alert("Invalid YouTube URL");
-        return;
-      }
+      if (!id) return alert("Invalid YouTube URL");
 
       block.data.type = "youtube";
       block.data.src = `https://www.youtube.com/embed/${id}`;
-      renderVideo();
-      div.appendChild(ytInput);
-      div.appendChild(fileInput);
+      document.dispatchEvent(new Event("cms-rerender"));
     };
 
     fileInput.onchange = async e => {
       const file = e.target.files[0];
       if (!file) return;
 
-      div.innerHTML = "⏳ Uploading video...";
       const url = await uploadVideo(file);
       if (!url) return;
 
       block.data.type = "upload";
       block.data.src = url;
-      renderVideo();
-      div.appendChild(ytInput);
-      div.appendChild(fileInput);
+      document.dispatchEvent(new Event("cms-rerender"));
     };
 
     div.appendChild(ytInput);
@@ -247,21 +283,30 @@ function renderVideoBlock(block) {
 }
 
 /* ===============================
+   HELPERS
+================================ */
+function applyTextStyles(el, style = {}) {
+  el.style.fontSize = style.fontSize ? style.fontSize + "px" : "";
+  el.style.color = style.color || "";
+  el.style.fontFamily = style.fontFamily
+    ? `"${style.fontFamily}", system-ui, sans-serif`
+    : "";
+  el.style.fontWeight = style.bold ? "bold" : "normal";
+  el.style.fontStyle = style.italic ? "italic" : "normal";
+}
+
+/* ===============================
    ADD / DELETE / SAVE
 ================================ */
 export function addBlock(type) {
   const state = getState();
   if (!state.page) return;
 
-  const block = {
+  state.page.blocks.push({
     id: crypto.randomUUID(),
     type,
     data: {}
-  };
-
-  state.page.blocks.push(block);
-  activeBlockId = block.id;
-  setActiveBlock(block.id);
+  });
 
   document.dispatchEvent(new Event("cms-rerender"));
 }
@@ -271,14 +316,12 @@ function deleteBlock(id) {
 
   const state = getState();
   state.page.blocks = state.page.blocks.filter(b => b.id !== id);
-  activeBlockId = null;
   setActiveBlock(null);
 
   document.dispatchEvent(new Event("cms-rerender"));
 }
 
 document.addEventListener("cms-save", async () => {
-  const state = getState();
-  await savePage(state.page);
-  alert("✅ Page saved");
+  await savePage(getState().page);
+  alert("Page saved");
 });
