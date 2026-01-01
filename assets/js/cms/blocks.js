@@ -3,6 +3,7 @@
  * ✔ Full persistence
  * ✔ No rerender while typing
  * ✔ Cursor / Enter / Selection SAFE
+ * ✔ Tabs: heading + content + colors fully editable
  ***************************************************/
 
 import { getState, setActiveBlock } from "../core/state.js";
@@ -78,13 +79,16 @@ function renderTextBlock(block, wrapper) {
   if (getState().adminMode) {
     el.contentEditable = "true";
 
-    const activate = () => {
+    el.addEventListener("focus", () => {
       activeBlockId = block.id;
       setActiveBlock(block.id);
-    };
+    });
 
-    el.addEventListener("focus", activate);
-    el.addEventListener("click", activate); // 🔥 RESTORED
+    el.addEventListener("click", () => {
+      activeBlockId = block.id;
+      setActiveBlock(block.id);
+    });
+
     el.addEventListener("input", () => {
       block.data.html = el.innerHTML;
     });
@@ -94,7 +98,7 @@ function renderTextBlock(block, wrapper) {
 }
 
 /* ===============================
-   TABS BLOCK (FULL + SAFE)
+   TABS BLOCK – COMPLETE
 ================================ */
 function renderTabsBlock(block) {
   block.data ||= {};
@@ -107,7 +111,11 @@ function renderTabsBlock(block) {
     block.data.tabs.push({
       title: "Tab 1",
       html: "<p>Tab content</p>",
-      style: {}
+      style: {
+        color: "#333",
+        activeBg: "#1877f2",
+        activeColor: "#ffffff"
+      }
     });
   }
 
@@ -120,46 +128,58 @@ function renderTabsBlock(block) {
   const content = document.createElement("div");
   content.className = "tabs-content";
 
+  /* ---------- TAB HEADERS ---------- */
   block.data.tabs.forEach((tab, i) => {
     const btn = document.createElement("button");
-btn.textContent = tab.title;
+    btn.textContent = tab.title;
 
-if (i === block.data.active) btn.classList.add("active");
+    const isActive = i === block.data.active;
 
-/* Single click → switch tab */
-btn.onclick = () => {
-  block.data.active = i;
-  document.dispatchEvent(new Event("cms-rerender"));
-};
+    btn.style.color = isActive
+      ? tab.style.activeColor
+      : tab.style.color;
 
-/* Double click → edit title (ADMIN only) */
-if (getState().adminMode) {
-  btn.ondblclick = e => {
-    e.stopPropagation();
+    btn.style.background = isActive
+      ? tab.style.activeBg
+      : "#e5e7eb";
 
-    const input = document.createElement("input");
-    input.type = "text";
-    input.value = tab.title;
-    input.style.width = "80px";
+    if (isActive) btn.classList.add("active");
 
-    btn.replaceWith(input);
-    input.focus();
-
-    const saveTitle = () => {
-      tab.title = input.value || "Tab";
+    /* Switch tab */
+    btn.onclick = () => {
+      block.data.active = i;
       document.dispatchEvent(new Event("cms-rerender"));
     };
 
-    input.onblur = saveTitle;
-    input.onkeydown = e => {
-      if (e.key === "Enter") saveTitle();
-    };
-  };
-}
+    /* Edit tab heading (double click) */
+    if (getState().adminMode) {
+      btn.ondblclick = e => {
+        e.stopPropagation();
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = tab.title;
+        input.style.width = "90px";
+
+        btn.replaceWith(input);
+        input.focus();
+
+        const save = () => {
+          tab.title = input.value || "Tab";
+          document.dispatchEvent(new Event("cms-rerender"));
+        };
+
+        input.onblur = save;
+        input.onkeydown = e => {
+          if (e.key === "Enter") save();
+        };
+      };
+    }
 
     tabsBar.appendChild(btn);
   });
 
+  /* ---------- ADD TAB ---------- */
   if (getState().adminMode) {
     const addBtn = document.createElement("button");
     addBtn.textContent = "+";
@@ -167,7 +187,11 @@ if (getState().adminMode) {
       block.data.tabs.push({
         title: "New Tab",
         html: "<p>New content</p>",
-        style: {}
+        style: {
+          color: "#333",
+          activeBg: "#1877f2",
+          activeColor: "#ffffff"
+        }
       });
       block.data.active = block.data.tabs.length - 1;
       document.dispatchEvent(new Event("cms-rerender"));
@@ -175,7 +199,9 @@ if (getState().adminMode) {
     tabsBar.appendChild(addBtn);
   }
 
+  /* ---------- TAB CONTENT ---------- */
   const activeTab = block.data.tabs[block.data.active];
+
   const editable = document.createElement("div");
   editable.className = "editable";
   editable.contentEditable = getState().adminMode;
@@ -188,7 +214,6 @@ if (getState().adminMode) {
   });
 
   editable.addEventListener("focus", () => {
-    activeBlockId = block.id;
     setActiveBlock(block.id);
   });
 
@@ -292,7 +317,15 @@ export function addBlock(type) {
   if (type === "tabs") {
     data = {
       active: 0,
-      tabs: [{ title: "Tab 1", html: "<p>Tab content</p>", style: {} }]
+      tabs: [{
+        title: "Tab 1",
+        html: "<p>Tab content</p>",
+        style: {
+          color: "#333",
+          activeBg: "#1877f2",
+          activeColor: "#ffffff"
+        }
+      }]
     };
   }
 
