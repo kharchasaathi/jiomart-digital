@@ -50,7 +50,7 @@ export function renderBlocks(container) {
 }
 
 /* ===============================
-   TEXT BLOCK (FULL REHYDRATION)
+   TEXT BLOCK
 ================================ */
 function renderTextBlock(block, wrapper) {
   const el = document.createElement("div");
@@ -63,8 +63,8 @@ function renderTextBlock(block, wrapper) {
   el.innerHTML = block.data.html;
 
   applyTextStyles(el, block.data.style);
-  el.querySelectorAll("*").forEach(child =>
-    applyTextStyles(child, block.data.style)
+  el.querySelectorAll("*").forEach(c =>
+    applyTextStyles(c, block.data.style)
   );
 
   if (block.data.style.backgroundColor) {
@@ -84,7 +84,7 @@ function renderTextBlock(block, wrapper) {
     };
 
     el.addEventListener("focus", activate);
-    el.addEventListener("click", activate);
+    el.addEventListener("click", activate); // 🔥 RESTORED
     el.addEventListener("input", () => {
       block.data.html = el.innerHTML;
     });
@@ -94,15 +94,22 @@ function renderTextBlock(block, wrapper) {
 }
 
 /* ===============================
-   TABS BLOCK (NEW – SAFE)
+   TABS BLOCK (FULL + SAFE)
 ================================ */
 function renderTabsBlock(block) {
-  block.data ||= {
-    active: 0,
-    tabs: [
-      { title: "Tab 1", html: "<p>Tab content</p>", style: {} }
-    ]
-  };
+  block.data ||= {};
+  block.data.active ??= 0;
+  block.data.tabs ??= [];
+
+  if (!Array.isArray(block.data.tabs)) block.data.tabs = [];
+
+  if (block.data.tabs.length === 0) {
+    block.data.tabs.push({
+      title: "Tab 1",
+      html: "<p>Tab content</p>",
+      style: {}
+    });
+  }
 
   const root = document.createElement("div");
   root.className = "cms-tabs-block cms-block";
@@ -116,11 +123,13 @@ function renderTabsBlock(block) {
   block.data.tabs.forEach((tab, i) => {
     const btn = document.createElement("button");
     btn.textContent = tab.title;
-    btn.className = i === block.data.active ? "active" : "";
+    if (i === block.data.active) btn.classList.add("active");
+
     btn.onclick = () => {
       block.data.active = i;
       document.dispatchEvent(new Event("cms-rerender"));
     };
+
     tabsBar.appendChild(btn);
   });
 
@@ -146,18 +155,17 @@ function renderTabsBlock(block) {
   editable.innerHTML = activeTab.html;
 
   applyTextStyles(editable, activeTab.style);
-  editable.querySelectorAll("*").forEach(c =>
-    applyTextStyles(c, activeTab.style)
-  );
 
-  editable.onfocus = () => {
+  editable.addEventListener("input", () => {
+    activeTab.html = editable.innerHTML;
+  });
+
+  editable.addEventListener("focus", () => {
     activeBlockId = block.id;
     setActiveBlock(block.id);
-  };
-  editable.oninput = () => (activeTab.html = editable.innerHTML);
+  });
 
   content.appendChild(editable);
-
   root.appendChild(tabsBar);
   root.appendChild(content);
 
@@ -165,7 +173,7 @@ function renderTabsBlock(block) {
 }
 
 /* ===============================
-   IMAGE BLOCK (UNCHANGED & SAFE)
+   IMAGE BLOCK
 ================================ */
 function renderImageBlock(block) {
   const div = document.createElement("div");
@@ -181,13 +189,11 @@ function renderImageBlock(block) {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
-    input.style.marginTop = "10px";
 
     input.onchange = async e => {
       const file = e.target.files[0];
       if (!file) return;
 
-      div.innerHTML = "Uploading image...";
       const url = await uploadImage(file);
       if (!url) return;
 
@@ -196,18 +202,13 @@ function renderImageBlock(block) {
     };
 
     div.appendChild(input);
-
-    div.addEventListener("click", () => {
-      activeBlockId = block.id;
-      setActiveBlock(block.id);
-    });
   }
 
   return div;
 }
 
 /* ===============================
-   VIDEO BLOCK (FULL RESTORED)
+   VIDEO BLOCK
 ================================ */
 function renderVideoBlock(block) {
   const div = document.createElement("div");
@@ -215,68 +216,13 @@ function renderVideoBlock(block) {
 
   block.data ||= {};
 
-  function renderVideo() {
-    if (!block.data.src) {
-      div.innerHTML = `<div class="media-placeholder">Video Block</div>`;
-      return;
-    }
-
+  if (!block.data.src) {
+    div.innerHTML = `<div class="media-placeholder">Video Block</div>`;
+  } else {
     div.innerHTML =
       block.data.type === "youtube"
-        ? `<iframe src="${block.data.src}" frameborder="0" allowfullscreen></iframe>`
+        ? `<iframe src="${block.data.src}" allowfullscreen></iframe>`
         : `<video controls src="${block.data.src}"></video>`;
-  }
-
-  renderVideo();
-
-  if (getState().adminMode) {
-    const ytInput = document.createElement("input");
-    ytInput.type = "text";
-    ytInput.placeholder = "Paste YouTube URL";
-    ytInput.style.marginTop = "10px";
-
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "video/mp4";
-    fileInput.style.marginTop = "10px";
-
-    ytInput.onchange = () => {
-      const url = ytInput.value.trim();
-      if (!url) return;
-
-      let id = null;
-      try {
-        id = url.includes("youtu.be")
-          ? url.split("/").pop()
-          : new URL(url).searchParams.get("v");
-      } catch {}
-
-      if (!id) return alert("Invalid YouTube URL");
-
-      block.data.type = "youtube";
-      block.data.src = `https://www.youtube.com/embed/${id}`;
-      document.dispatchEvent(new Event("cms-rerender"));
-    };
-
-    fileInput.onchange = async e => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const url = await uploadVideo(file);
-      if (!url) return;
-
-      block.data.type = "upload";
-      block.data.src = url;
-      document.dispatchEvent(new Event("cms-rerender"));
-    };
-
-    div.appendChild(ytInput);
-    div.appendChild(fileInput);
-
-    div.addEventListener("click", () => {
-      activeBlockId = block.id;
-      setActiveBlock(block.id);
-    });
   }
 
   return div;
@@ -305,10 +251,7 @@ export function addBlock(type) {
   let data = {};
 
   if (type === "text") {
-    data = {
-      html: "<p>Edit text</p>",
-      style: {}
-    };
+    data = { html: "<p>Edit text</p>", style: {} };
   }
 
   if (type === "image") {
@@ -322,13 +265,7 @@ export function addBlock(type) {
   if (type === "tabs") {
     data = {
       active: 0,
-      tabs: [
-        {
-          title: "Tab 1",
-          html: "<p>Tab content</p>",
-          style: {}
-        }
-      ]
+      tabs: [{ title: "Tab 1", html: "<p>Tab content</p>", style: {} }]
     };
   }
 
