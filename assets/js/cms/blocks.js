@@ -122,13 +122,40 @@ function renderTabsBlock(block) {
 
   block.data.tabs.forEach((tab, i) => {
     const btn = document.createElement("button");
-    btn.textContent = tab.title;
-    if (i === block.data.active) btn.classList.add("active");
+btn.textContent = tab.title;
 
-    btn.onclick = () => {
-      block.data.active = i;
+if (i === block.data.active) btn.classList.add("active");
+
+/* Single click → switch tab */
+btn.onclick = () => {
+  block.data.active = i;
+  document.dispatchEvent(new Event("cms-rerender"));
+};
+
+/* Double click → edit title (ADMIN only) */
+if (getState().adminMode) {
+  btn.ondblclick = e => {
+    e.stopPropagation();
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = tab.title;
+    input.style.width = "80px";
+
+    btn.replaceWith(input);
+    input.focus();
+
+    const saveTitle = () => {
+      tab.title = input.value || "Tab";
       document.dispatchEvent(new Event("cms-rerender"));
     };
+
+    input.onblur = saveTitle;
+    input.onkeydown = e => {
+      if (e.key === "Enter") saveTitle();
+    };
+  };
+}
 
     tabsBar.appendChild(btn);
   });
